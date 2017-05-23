@@ -1,0 +1,11 @@
+---
+contentdir: "content"
+layoutdir: "layouts"
+publishdir: "public"
+indexes:
+  category: "categories"
+baseurl: "http://guotie.github.io/"
+title: "铁哥"
+canonifyurls: true
+theme: "slim"
+...
