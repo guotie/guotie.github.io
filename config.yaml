@@ -4,7 +4,7 @@ layoutdir: "layouts"
 publishdir: "."
 indexes:
   category: "categories"
-baseurl: "http://guotie.github.io/"
+baseurl: "https://guotie.github.io/"
 title: "铁哥"
 canonifyurls: true
 theme: "slim"
