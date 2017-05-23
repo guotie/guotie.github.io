@@ -16,5 +16,6 @@ fi
 git commit -m "$msg"
 
 # Push source and build repos.
-git push origin master
-git subtree push --prefix=public git@github.com:guotie/guotie.github.io.git gh-pages
+git push origin gh-pages
+git subtree push --prefix=public git@github.com:guotie/guotie.github.io.git master
+
