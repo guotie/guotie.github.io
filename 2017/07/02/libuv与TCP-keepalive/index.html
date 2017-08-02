@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="libuv,keepalive,TCP keepalive," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信是，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。 HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。">
+<meta name="keywords" content="libuv,keepalive,TCP keepalive">
+<meta property="og:type" content="article">
+<meta property="og:title" content="libuv与TCP keepalive">
+<meta property="og:url" content="http://yoursite.com/2017/07/02/libuv与TCP-keepalive/index.html">
+<meta property="og:site_name" content="铁哥">
+<meta property="og:description" content="这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信是，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。 HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-02T03:12:08.211Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="libuv与TCP keepalive">
+<meta name="twitter:description" content="这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信是，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。 HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/07/02/libuv与TCP-keepalive/"/>
+
+
+
+
+
+  <title>libuv与TCP keepalive | 铁哥</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">铁哥</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/02/libuv与TCP-keepalive/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="guotie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="铁哥">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">libuv与TCP keepalive</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-02T10:47:22+08:00">
+                2017-07-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index">
+                    <span itemprop="name">C</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信是，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。
+HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。 
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="libuv-与-TCP-keepalive"><a href="#libuv-与-TCP-keepalive" class="headerlink" title="libuv 与 TCP keepalive"></a>libuv 与 TCP keepalive</h1><h2 id="关于-keepalive"><a href="#关于-keepalive" class="headerlink" title="关于 keepalive"></a>关于 keepalive</h2><p>这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信是，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。</p>
+<p>HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。</p>
+<p>Linux内核关于keepalive的说明在这里： <a href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html" target="_blank" rel="external">http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html</a></p>
+<p>其中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">tcp_keepalive_time</div><div class="line"></div><div class="line"> the interval between the last data packet sent (simple ACKs are not considered data) and the first keepalive probe; after the connection is marked to need keepalive, this counter is not used any further</div><div class="line"></div><div class="line">tcp_keepalive_intvl</div><div class="line"></div><div class="line"> the interval between subsequential keepalive probes, regardless of what the connection has exchanged in the meantime</div><div class="line"></div><div class="line">tcp_keepalive_probes</div><div class="line"></div><div class="line"> the number of unacknowledged probes to send before considering the connection dead and notifying the application layer</div></pre></td></tr></table></figure>
+<p>大致翻译一下就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">tcp_keepalive_time</div><div class="line"></div><div class="line">当一台机器在 N 秒内，还没有收到对方的任何数据时，开始 keepalive 探测对方是否正常</div><div class="line"></div><div class="line">tcp_keepalive_intvl</div><div class="line"></div><div class="line">keepalive报文发送的间隔，单位秒</div><div class="line"></div><div class="line">tcp_keepalive_probes</div><div class="line"></div><div class="line">keepalive报文探测次数</div></pre></td></tr></table></figure>
+<p>也就是说，在 tcp_keepalive_time 秒内仍未收到对端数据时，开始发起 keepalive 探测，每隔 tcp_keepalive_intvl 发送一个探测报文，当 发送 tcp_keepalive_probes 探测报文，对方仍未响应时，关闭连接。</p>
+<p>在Linux下，可以通过以下方式查看系统的keepalive配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]# cat /proc/sys/net/ipv4/ </div><div class="line">1800</div><div class="line">[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_keepalive_probes </div><div class="line">9</div><div class="line">[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_keepalive_intvl  </div><div class="line">75</div></pre></td></tr></table></figure>
+<h2 id="keepalive-接口"><a href="#keepalive-接口" class="headerlink" title="keepalive 接口"></a>keepalive 接口</h2><p>设置一个套接字的keepalive的方法如下：</p>
+<h3 id="enable-keepalive"><a href="#enable-keepalive" class="headerlink" title="enable keepalive"></a>enable keepalive</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">int on = 1;</div><div class="line">if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &amp;on, sizeof(on))) &#123;</div><div class="line">	// log</div><div class="line">    return -1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="设置-tcp-keepalive-time"><a href="#设置-tcp-keepalive-time" class="headerlink" title="设置 tcp_keepalive_time"></a>设置 tcp_keepalive_time</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">int idle = 10;</div><div class="line">if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;idle, sizeof(int)) &lt; 0) &#123;</div><div class="line">  // log</div><div class="line">  return -1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="设置-tcp-keepalive-probes"><a href="#设置-tcp-keepalive-probes" class="headerlink" title="设置 tcp_keepalive_probes"></a>设置 tcp_keepalive_probes</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">int probes = 4;</div><div class="line">if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;probes, sizeof(int)) &lt; 0) &#123;</div><div class="line">  // log</div><div class="line">  return -1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="设置-tcp-keepalive-intvl"><a href="#设置-tcp-keepalive-intvl" class="headerlink" title="设置 tcp_keepalive_intvl"></a>设置 tcp_keepalive_intvl</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">int intvl = 1;</div><div class="line">if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;intvl, sizeof(int)) &lt; 0) &#123;</div><div class="line">  // log</div><div class="line">  return -1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="libuv-的-keepalive"><a href="#libuv-的-keepalive" class="headerlink" title="libuv 的 keepalive"></a>libuv 的 keepalive</h2><p>libuv提供的接口只能设置上面的两个：</p>
+<ol>
+<li>enable keepalive</li>
+<li>设置 tcp_keepalive_time</li>
+</ol>
+<p>libuv提供的接口为 uv_tcp_keepalive, 函数原型如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">int uv_tcp_keepalive(uv_tcp_t* handle, int enable, unsigned int delay)</div><div class="line">   Enable / disable TCP keep-alive. delay is the initial delay in seconds, ignored when enable is zero.</div></pre></td></tr></table></figure>
+<p>该函数的实现代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">int uv__tcp_keepalive(int fd, int on, unsigned int delay) &#123;</div><div class="line">  if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &amp;on, sizeof(on)))</div><div class="line">    return -errno;</div><div class="line"></div><div class="line">#ifdef TCP_KEEPIDLE</div><div class="line">  if (on &amp;&amp; setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;delay, sizeof(delay)))</div><div class="line">    return -errno;</div><div class="line">#endif</div><div class="line"></div><div class="line">  /* Solaris/SmartOS, if you don&apos;t support keep-alive,</div><div class="line">   * then don&apos;t advertise it in your system headers...</div><div class="line">   */</div><div class="line">  /* FIXME(bnoordhuis) That&apos;s possibly because sizeof(delay) should be 1. */</div><div class="line">#if defined(TCP_KEEPALIVE) &amp;&amp; !defined(__sun)</div><div class="line">  if (on &amp;&amp; setsockopt(fd, IPPROTO_TCP, TCP_KEEPALIVE, &amp;delay, sizeof(delay)))</div><div class="line">    return -errno;</div><div class="line">#endif</div><div class="line"></div><div class="line">  return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int uv_tcp_keepalive(uv_tcp_t* handle, int on, unsigned int delay) &#123;</div><div class="line">  int err;</div><div class="line"></div><div class="line">  if (uv__stream_fd(handle) != -1) &#123;</div><div class="line">    err =uv__tcp_keepalive(uv__stream_fd(handle), on, delay);</div><div class="line">    if (err)</div><div class="line">      return err;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  if (on)</div><div class="line">    handle-&gt;flags |= UV_TCP_KEEPALIVE;</div><div class="line">  else</div><div class="line">    handle-&gt;flags &amp;= ~UV_TCP_KEEPALIVE;</div><div class="line"></div><div class="line">  /* TODO Store delay if uv__stream_fd(handle) == -1 but don&apos;t want to enlarge</div><div class="line">   *      uv_tcp_t with an int that&apos;s almost never used...</div><div class="line">   */</div><div class="line"></div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从上面的代码可以看出，当 uv__stream_fd(handle) 不成功时，仅仅设置该连接的flags位，实际上并没有用到delay这个参数。也就是说，只有当连接已经成功建立时，才能设置 tcp_keepalive_time，如果连接还没有建立成功，则这个值根本没有设置。</p>
+<p>如果要设置后面两个数值的话，需要自己实现, 示例代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">//</div><div class="line">// 设置 keepalive 相关的2个参数</div><div class="line">// probes: 对应内核 tcp_keepalive_probes, 发送多少次keepalive报文还未收到回应时, close该连接</div><div class="line">// intvl:  对应内核 tcp_keepalive_intvl, 发送keepalive报文的间隔时间</div><div class="line">// idle:   对应内核 tcp_keepalive_time</div><div class="line">int set_keep_alive(const uv_handle_t* handle, int probes, int intvl, int idle) &#123;</div><div class="line">    int ret;</div><div class="line">    uv_os_fd_t fd;</div><div class="line"></div><div class="line">    ret = uv_fileno(handle, &amp;fd);</div><div class="line">    if (ret &lt; 0) &#123;</div><div class="line">        return ret;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (idle &gt; 0) &#123;</div><div class="line">        if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;idle, sizeof(idle)))</div><div class="line">            return -1;</div><div class="line">    &#125;</div><div class="line">    // 设置 tcp_keepalive_intvl</div><div class="line">    if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL,</div><div class="line">                (const void *) &amp;intvl, sizeof(int)) &lt; 0 ) &#123;</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // 设置 tcp_keepalive_probes</div><div class="line">    if ( setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT,</div><div class="line">                (const void *) &amp;probes, sizeof(int)) &lt; 0) &#123;</div><div class="line">        return -1;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个函数只能在连接建立成功后调用，因为只有连接建立成功才有fd，即uv_fileno才会返回成功。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/libuv/" rel="tag"># libuv</a>
+          
+            <a href="/tags/keepalive/" rel="tag"># keepalive</a>
+          
+            <a href="/tags/TCP-keepalive/" rel="tag"># TCP keepalive</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/02/hexo的分类和标签/" rel="prev" title="hexo的分类和标签">
+                hexo的分类和标签 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="guotie" />
+          <p class="site-author-name" itemprop="name">guotie</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#libuv-与-TCP-keepalive"><span class="nav-number">1.</span> <span class="nav-text">libuv 与 TCP keepalive</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于-keepalive"><span class="nav-number">1.1.</span> <span class="nav-text">关于 keepalive</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#keepalive-接口"><span class="nav-number">1.2.</span> <span class="nav-text">keepalive 接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#enable-keepalive"><span class="nav-number">1.2.1.</span> <span class="nav-text">enable keepalive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-tcp-keepalive-time"><span class="nav-number">1.2.2.</span> <span class="nav-text">设置 tcp_keepalive_time</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-tcp-keepalive-probes"><span class="nav-number">1.2.3.</span> <span class="nav-text">设置 tcp_keepalive_probes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置-tcp-keepalive-intvl"><span class="nav-number">1.2.4.</span> <span class="nav-text">设置 tcp_keepalive_intvl</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#libuv-的-keepalive"><span class="nav-number">1.3.</span> <span class="nav-text">libuv 的 keepalive</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">guotie</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
