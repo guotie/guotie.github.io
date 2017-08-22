@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="铁哥, golang" />
+  <meta name="keywords" content="webpack,screw_ie8,uglifyJS," />
 
 
 
@@ -94,13 +94,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="铁哥">
-<meta property="og:url" content="http://yoursite.com/tags/hexo-category/index.html">
+<meta name="description" content="webpack使用uglifyJS来打包压缩js文件时，mangle有一个选项：screw_ie8，这个选项告诉uglifyJS，是否需要支持ie8，在webpack 2之后的版本中，这个选项默认为true，即不支持ie8，如果需要支持ie8，需要把这个选项设置为false。">
+<meta name="keywords" content="webpack,screw_ie8,uglifyJS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack的screw_ie8选项">
+<meta property="og:url" content="http://yoursite.com/2017/08/22/webpack的screw-ie8选项/index.html">
 <meta property="og:site_name" content="铁哥">
+<meta property="og:description" content="webpack使用uglifyJS来打包压缩js文件时，mangle有一个选项：screw_ie8，这个选项告诉uglifyJS，是否需要支持ie8，在webpack 2之后的版本中，这个选项默认为true，即不支持ie8，如果需要支持ie8，需要把这个选项设置为false。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-08-22T02:01:45.398Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="铁哥">
+<meta name="twitter:title" content="webpack的screw_ie8选项">
+<meta name="twitter:description" content="webpack使用uglifyJS来打包压缩js文件时，mangle有一个选项：screw_ie8，这个选项告诉uglifyJS，是否需要支持ie8，在webpack 2之后的版本中，这个选项默认为true，即不支持ie8，如果需要支持ie8，需要把这个选项设置为false。">
 
 
 
@@ -129,13 +134,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/tags/hexo-category/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/08/22/webpack的screw-ie8选项/"/>
 
 
 
 
 
-  <title>标签: hexo category | 铁哥</title>
+  <title>webpack的screw_ie8选项 | 铁哥</title>
   
 
 
@@ -170,7 +175,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -264,54 +269,182 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block tag">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h2>hexo category<small>标签</small>
-        </h2>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/22/webpack的screw-ie8选项/">
 
-      <h3 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="guotie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="铁哥">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2017/08/02/hexo的分类和标签/" itemprop="url">
-              
-                <span itemprop="name">hexo的分类和标签</span>
-              
-            </a>
         
-      </h3>
+          <h2 class="post-title" itemprop="name headline">webpack的screw_ie8选项</h2>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-08-02T11:12:33+08:00"
-              content="2017-08-02" >
-          08-02
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-22T09:55:50+08:00">
+                2017-08-22
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/webpack/" itemprop="url" rel="index">
+                    <span itemprop="name">webpack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  webpack使用uglifyJS来打包压缩js文件时，mangle有一个选项：screw_ie8，这个选项告诉uglifyJS，是否需要支持ie8，在webpack 2之后的版本中，这个选项默认为true，即不支持ie8，如果需要支持ie8，需要把这个选项设置为false。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="webpack打包时uglifyJS的screw-ie8选项"><a href="#webpack打包时uglifyJS的screw-ie8选项" class="headerlink" title="webpack打包时uglifyJS的screw_ie8选项"></a>webpack打包时uglifyJS的screw_ie8选项</h1><p>webpack使用uglifyJS来打包压缩js文件时，mangle有一个选项：screw_ie8，这个选项告诉uglifyJS，是否需要支持ie8，在webpack 2之后的版本中，这个选项默认为true，即不支持ie8，如果需要支持ie8，需要把这个选项设置为false。</p>
+<p>例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  plugins: [</div><div class="line">    <span class="keyword">new</span> webpack.optimize.UglifyJsPlugin(&#123;</div><div class="line">      beautify: <span class="literal">false</span>,</div><div class="line">      mangle: &#123;</div><div class="line">        screw_ie8: <span class="literal">true</span>,</div><div class="line">        keep_fnames: <span class="literal">true</span></div><div class="line">      &#125;,</div><div class="line">      compress: &#123;</div><div class="line">        screw_ie8: <span class="literal">true</span></div><div class="line">      &#125;,</div><div class="line">      comments: <span class="literal">false</span></div><div class="line">    &#125;)</div><div class="line">  ]</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>上面的设置不支持ie8.</p>
+<p>参考：</p>
+<p><a href="https://github.com/SamHwang1990/blog/issues/6" target="_blank" rel="external">https://github.com/SamHwang1990/blog/issues/6</a></p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/webpack/" rel="tag"># webpack</a>
+          
+            <a href="/tags/screw-ie8/" rel="tag"># screw_ie8</a>
+          
+            <a href="/tags/uglifyJS/" rel="tag"># uglifyJS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/02/hexo的分类和标签/" rel="next" title="hexo的分类和标签">
+                <i class="fa fa-chevron-left"></i> hexo的分类和标签
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -319,6 +452,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -339,8 +476,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -402,6 +548,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#webpack打包时uglifyJS的screw-ie8选项"><span class="nav-number">1.</span> <span class="nav-text">webpack打包时uglifyJS的screw_ie8选项</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -515,10 +677,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
 
-  
+
 
   
 
