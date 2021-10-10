@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>About</title><url>https://www.tiege.dev/about/</url><categories/><tags/><content type="html"> 铁叔 老年程序员，以代码为生计，正在为世界的去中心化事业而奋斗。
 Older programmers, who coding for a living, and fighting for a decentralize world.
-projects technology Rust golang C/C++ smart contract &amp; solidity java/Spring frontend</content></entry><entry><title>libuv与TCP Keepalive</title><url>https://www.tiege.dev/post/libuv-and-tcp-keepalive/</url><categories><category>c/c++</category></categories><tags><tag>libuv</tag><tag>tcp</tag><tag>TCP Keepalive</tag><tag>linux</tag></tags><content type="html"> libuv 与 TCP Keepalive 关于 keepalive 这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。
+projects technology Rust golang C/C++ smart contract &amp; solidity java/Spring frontend</content></entry><entry><title>solidity函数selector的计算</title><url>https://www.tiege.dev/post/evm-selector/</url><categories><category>Defi</category><category>Solidity</category></categories><tags><tag>selector</tag><tag>Solidity</tag><tag>EVM</tag><tag>ABI</tag><tag>Ethereum</tag></tags><content type="html"> solidity 中有函数选择器(selector)的概念.
+什么是 selector 在 solidity 中，所有 public (或 external) 函数有一个特殊的成员selector, 它对应一个ABI 函数选择器。
+evm 函数选择器是一个函数调用数据的前 4 字节，指定了要调用的函数。这就是某个函数签名的 Keccak 哈希的前 4 字节(高位在左的大端序) (译注：这里的 高位在左的大端序，指最高位字节存储在最低位地址上的一种串行化编码方式，即高位字节在左)。 这种签名被定义为基础原型的规范表达，基础原型即是函数名称加上由括号括起来的参数类型列表，参数类型间由一个逗号分隔开，且没有空格。
+简单来说，就是函数原型的 sha-3 hash值。
+selector 有什么用途 在 以太坊Ethereum 生态系统中， 应用二进制接口 Application Binary Interface(ABI) 是从区块链外部与合约进行交互以及合约与合约间进行交互的一种标准方式。 数据会根据其类型按照这份手册中说明的方法进行编码。这种编码并不是可以自描述的，而是需要一种特定的概要（schema）来进行解码。
+我们假定合约函数的接口都是强类型的，且在编译时是可知的和静态的；不提供自我检查机制。我们假定在编译时，所有合约要调用的其他合约接口定义都是可用的。
+这份手册并不针对那些动态合约接口或者仅在运行时才可获知的合约接口。如果这种场景变得很重要，你可以使用 以太坊Ethereum 生态系统中其他更合适的基础设施来处理它们。
+官方说明： https://docs.soliditylang.org/en/v0.8.7/abi-spec.html
+如何计算 selector selector 可以通过两种方式获取，一种是查询 function.selector，另一种就是自己计算。
+写个简单的测试合约，就能秒懂。
+// SPDX-License-Identifier: MIT pragma solidity >=0.6.0; pragma experimental ABIEncoderV2; interface IABI { function initialize(address a, address b, address c, address d) external; } contract ABI { function initiliaze(address a, address b, address c, address d) public { } function getCodeByKeccak() public pure returns (bytes4) { return bytes4(keccak256(bytes("initialize(address,address,address,address)"))); } function getCodeBySelector() public view returns (bytes4) { IABI addr = IABI(address(this)); return addr.initialize.selector; } } 当计算函数选择器(selector)时，计算传入bytes数组有两点需要注意：
+函数参数只有类型，没有名称，例如上例中的 initialize(address,address,address,address) 参数中间没有空格！参数中间没有空格！参数中间没有空格！ 如果要在链下计算，可以通过 ethers 提供的工具函数 id，代码如下：
+import { id } from 'ethers/lib/utils'; const hash = id('initialize(address,address,address,address)') , selector = hash..slice(0, 10) selector 重复怎么办？ 如果一个合约中有重复的 selector，编译器会报错。</content></entry><entry><title>AAVE借贷协议简介</title><url>https://www.tiege.dev/post/how-aave-interest-update/</url><categories><category>Defi</category><category>AAVE</category></categories><tags><tag>AAVE</tag><tag>Compound</tag><tag>Defi</tag><tag>Solidity</tag><tag>Dapp</tag><tag>Lend protocol</tag></tags><content type="html"> DEFI 上最初的应用就是借贷应用。借贷，顾名思义，是一个允许用户借贷代币的智能合约，它与银行类似，存款人把钱存入到借贷应用中(更具体的说，就是某个智能合约)，借贷应用把你的钱借给借款人，并随着时间的推移赚取利息。当借款人资不抵债时，会触发清算，任何人都可以参与清算，清算成功时清算人将获取一定比例的清算奖励。同时，借贷应用的清算系统能够确保借贷系统的稳定，进而保证存款人的利益。
+DEFI 借贷在以下几个方面与银行不同:
+利息的计算; a. DEFI 借贷利息的计算是从你存入的块开始计算，到你取出的块停止计算； b. DEFI 借贷的利息浮动范围很广，跟资金利用率(可以简单理解为 贷出资金/总借贷金额)息息相关，大多数借贷系统都设置比例，当资金利用率超过该比例时，利息会上涨的非常快，且利息很高，因此，这对于借款人来说，是非常不利的; c. 所有借款都必须有超额抵押，不存在信用贷款的概念;
+清算 a. DEFI 借贷的所有存入，借出都是公开透明的; b. DEFI 借贷的清算标准是固定的; c. 任何人都可以进行清算，并且，清算人可以获取丰厚的清算奖励，通常是清算金额10% d. 由于清算奖励的巨大诱惑，且公开透明的数据，可以保证清算工作的稳定运行；
+闪电贷 闪电贷是 AAVE 的一个巨大创新，所谓闪电贷，不是银行的闪电贷，这里的闪电贷是指，在一个区块交易中，同时完成先贷后还的操作。举个例子，现在有一个套利机会，但是你有没有资金，这时候，你就可以使用闪电贷，借出资产，完成套利，归还资金和利息，剩下的就是你的套利收益。
+闪电贷也被很多人用于合约攻击，获取更大的收益。最近发生的很多起攻击事件，都是使用闪电贷的资金作为来源。
+存款标的。 你可以将很多标的存入银行，由银行来对你的标的进行资产评估；而 DEFI 借贷只能存入部分 token, 因为 token 有公开定价, 而资产评估必须要链下评估，难以在链上完成。 DEFI 的借贷经历了三个发展阶段, 第一阶段的代表作是 MakerDAO, 第二阶段的代表作是 Compound, 第三阶段的代表作是 AAVE.
+毫无疑问, Makerdao 是开创者; Compound 重新设计了利率模型, 可以说此后所有的借贷模型都是在 Compound 的基础之上发展而来, 从而奠定了 Compound 的江湖地位; AAVE 则是集大成者, AAVE 的借贷模型与 Compound 相同, 与Compound, MakerDAO 相比, AAVE 有以下特点:
+AAVE 最大的创新就是引入了 闪电贷 (flashloan) 这个大杀器, 从此以后, 只有在链上有机会套利或者攻击, 你根本不用担心资金问题; 闪电贷也是链上借贷的独特优势, 在传统的金融行业中, 根本不存在这样的功能; AAVE 还有固定利率功能。我们知道, Compound 的利率是在不断的变化的，跟资金使用率息息相关, 当资金使用率突然升高时，借款利率会急速上升，对于长期资金使用者来说，这是无法承受的，AAVE引入了固定利率，从而解决了有长期资金需求借款人的借贷问题； AAVE 的代码比 Compound 写的更好, 更加工整, 框架清晰, 可读性, 可维护性都比 Compound 高几个档次 AAVE 更加安全。AAVE 的代码质量更高，模块化、结构化更好，测试更加充分，安全性更高。前几天 Cream protocol 发生的被攻击事件，让 Cream 损失了几千万美元。如果 Cream 当初是 fork 了 AAVE 的代码，这个攻击就无法进行。原理后面再详细分析 与swap市场 uniswap 一家独大不同，目前，借贷市场还处于三国鼎立的阶段，MakerDao, Compound, AAVE 各有优势, AAVE 在存款数量上有一定优势, Compound用户数最多，群众基础较好; MakerDao 锁仓金额较多；当然，这三者各有所长，差距不是非常明显, 其他模仿者就和这三大巨头的差距比较大，在没有大的创新的情况下，很难挑战这三大巨头。
+由于 AAVE 比 Compound 代码更复杂，因此，目前 bsc、heco 这些链上的借贷市场几乎都是 fork Compound 代码，同时，由于这些团队追求快速上线，也没有对 Compound 进行深入研究，导致最终上线的产品不敢改也不能改，最多的就是把 cToken 改成各种 xToken，反正圈钱发币为主，不影响使用。
+从学习的角度看，AAVE 代码质量非常优秀，比 Compound 高出好几个档次, AAVE v1版本就已经非常规范，v2版本更是青出于蓝而胜于蓝，从各个方面来看，都堪称典范:
+结构非常清晰，interface, library, 实现，核心代码，适配层分门别类，各司其职； 完整的测试代码； 完整的部署代码； 完善的官方文档，白皮书等； 完善的周边 sdk，代码示例； 统一的代码风格，统一的注释风格，所有函数都有注释； 完善的代码检查，lint； Library 的应用真是炉火纯青 WETHGateway 的引入，统一了 ETH 和 Token, 这一点我觉得比 uniswap 做的好，uniswap 的 Router 合约有很多专门为 ETH 服务的接口，如果改成这种方式，会更加清晰； 教科书级别 Proxy 应用, 当然, 目前 openzeppelin 的代理是更加通用的解决方案 唯一能与之相提并论的是 uniswap, 当然, uniswap 把前端界面也开源了， 而 AAVE 并没有开源前端界面, 这是 AAVE 不如 uniswap 的地方。
+我们将推出有一系列的文章来讲解 AAVE 的代码:
+AAVE 代码整体结构介绍; AAVE 借贷原理介绍; AAVE 固定利率和浮动利率; AAVE 闪电贷; AAVE 如何灵活升级; AAVE 测试及部署;</content></entry><entry><title>libuv与TCP Keepalive</title><url>https://www.tiege.dev/post/libuv-and-tcp-keepalive/</url><categories><category>c/c++</category></categories><tags><tag>libuv</tag><tag>tcp</tag><tag>TCP Keepalive</tag><tag>linux</tag></tags><content type="html"> libuv 与 TCP Keepalive 关于 keepalive 这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。
 HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。
 Linux内核关于TCP keepalive的说明在这里： http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html
 其中：
