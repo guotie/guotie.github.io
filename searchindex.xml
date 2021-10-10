@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>About</title><url>http://tiege.dev/about/</url><categories/><tags/><content type="html"> 铁叔 老年程序员，以代码为生计，正在为世界的去中心化事业而奋斗。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>About</title><url>https://www.tiege.dev/about/</url><categories/><tags/><content type="html"> 铁叔 老年程序员，以代码为生计，正在为世界的去中心化事业而奋斗。
 Older programmers, who coding for a living, and fighting for a decentralize world.
-projects technology Rust golang C/C++ smart contract &amp; solidity java/Spring frontend</content></entry><entry><title>libuv与TCP Keepalive</title><url>http://tiege.dev/post/libuv-and-tcp-keepalive/</url><categories><category>c/c++</category></categories><tags><tag>libuv</tag><tag>tcp</tag><tag>TCP Keepalive</tag><tag>linux</tag></tags><content type="html"> libuv 与 TCP Keepalive 关于 keepalive 这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。
+projects technology Rust golang C/C++ smart contract &amp; solidity java/Spring frontend</content></entry><entry><title>libuv与TCP Keepalive</title><url>https://www.tiege.dev/post/libuv-and-tcp-keepalive/</url><categories><category>c/c++</category></categories><tags><tag>libuv</tag><tag>tcp</tag><tag>TCP Keepalive</tag><tag>linux</tag></tags><content type="html"> libuv 与 TCP Keepalive 关于 keepalive 这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。
 HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。
 Linux内核关于TCP keepalive的说明在这里： http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html
 其中：
