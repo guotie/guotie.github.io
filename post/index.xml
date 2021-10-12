@@ -1,8 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on 铁叔</title><link>https://www.tiege.dev/post/</link><description>Recent content in Posts on 铁叔</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 04 Sep 2021 13:43:50 +0000</lastBuildDate><atom:link href="https://www.tiege.dev/post/index.xml" rel="self" type="application/rss+xml"/><item><title>solidity函数selector的计算</title><link>https://www.tiege.dev/post/evm-selector/</link><pubDate>Sat, 04 Sep 2021 13:43:50 +0000</pubDate><guid>https://www.tiege.dev/post/evm-selector/</guid><description>&lt;p>solidity 中有函数选择器(selector)的概念.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on 铁叔</title><link>https://www.tiege.dev/post/</link><description>Recent content in Posts on 铁叔</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 12 Oct 2021 10:43:50 +0000</lastBuildDate><atom:link href="https://www.tiege.dev/post/index.xml" rel="self" type="application/rss+xml"/><item><title>元交易及其实现</title><link>https://www.tiege.dev/post/meta-transaction-and-implement/</link><pubDate>Tue, 12 Oct 2021 10:43:50 +0000</pubDate><guid>https://www.tiege.dev/post/meta-transaction-and-implement/</guid><description>&lt;h1 id="什么是元交易">什么是元交易&lt;/h1>
+&lt;p>简单来说，元交易(meta transaction)就是由第三方代理用户发送的交易。&lt;/p>
+&lt;p>元交易的流程如下：&lt;/p>
+&lt;ol>
+&lt;li>用户构建交易参数，对交易参数签名&lt;/li>
+&lt;li>第三方将交易签名发送至 Relay/Forwarder 合约&lt;/li>
+&lt;li>Relay/Forwarder 合约验证用户的签名是否相符&lt;/li>
+&lt;li>Relay/Forwarder 调用最终的合约&lt;/li>
+&lt;/ol></description></item><item><title>AAVE源代码分析 -- AAVE 利率</title><link>https://www.tiege.dev/post/aave/aave-interest-model/</link><pubDate>Mon, 11 Oct 2021 10:14:12 +0000</pubDate><guid>https://www.tiege.dev/post/aave/aave-interest-model/</guid><description>&lt;p>利率模型和风险控制是借贷协议的核心, 在AAVE中，利率的更新可以分为三个部分:&lt;/p>
+&lt;ol>
+&lt;li>存币利率&lt;/li>
+&lt;li>活期借款利率&lt;/li>
+&lt;li>定期借款利率&lt;/li>
+&lt;/ol>
+&lt;p>至于风险控制，在后面的章节中，我们单独讨论。&lt;/p></description></item><item><title>AAVE源代码分析 -- AAVE代码整体架构</title><link>https://www.tiege.dev/post/aave/how-aave-interest-update/</link><pubDate>Sun, 10 Oct 2021 14:28:11 +0000</pubDate><guid>https://www.tiege.dev/post/aave/how-aave-interest-update/</guid><description>&lt;h1 id="aave-整体架构">AAVE 整体架构&lt;/h1>
+&lt;p>AAVE是一个借贷协议, 因此, 核心是围绕着存款，借款，还款，清算这四大环节展开的。我认为, AAVE 之所以看起来很复杂, 非常重要的一点是因为定期借款的存在, 极大的提高了利率模型的复杂度, 否则, AAVE 应该更加清晰。&lt;/p>
+&lt;p>AAVE 架构图如下:&lt;/p></description></item><item><title>solidity函数selector的计算</title><link>https://www.tiege.dev/post/evm-selector/</link><pubDate>Sat, 04 Sep 2021 13:43:50 +0000</pubDate><guid>https://www.tiege.dev/post/evm-selector/</guid><description>&lt;p>solidity 中有函数选择器(selector)的概念.&lt;/p>
 &lt;h2 id="什么是-selector">什么是 selector&lt;/h2>
 &lt;p>在 solidity 中，所有 public (或 external) 函数有一个特殊的成员selector, 它对应一个ABI 函数选择器。&lt;/p>
 &lt;p>evm 函数选择器是一个函数调用数据的前 4 字节，指定了要调用的函数。这就是某个函数签名的 Keccak 哈希的前 4 字节(高位在左的大端序) (译注：这里的 &lt;code>高位在左的大端序&lt;/code>，指最高位字节存储在最低位地址上的一种串行化编码方式，即高位字节在左)。 这种签名被定义为基础原型的规范表达，基础原型即是函数名称加上由括号括起来的参数类型列表，参数类型间由一个逗号分隔开，且没有空格。&lt;/p>
-&lt;p>简单来说，就是函数原型的 sha-3 hash值。&lt;/p></description></item><item><title>AAVE借贷协议简介</title><link>https://www.tiege.dev/post/how-aave-interest-update/</link><pubDate>Wed, 01 Sep 2021 14:28:11 +0000</pubDate><guid>https://www.tiege.dev/post/how-aave-interest-update/</guid><description>&lt;p>DEFI 上最初的应用就是借贷应用。借贷，顾名思义，是一个允许用户借贷代币的智能合约，它与银行类似，存款人把钱存入到借贷应用中(更具体的说，就是某个智能合约)，借贷应用把你的钱借给借款人，并随着时间的推移赚取利息。当借款人资不抵债时，会触发清算，任何人都可以参与清算，清算成功时清算人将获取一定比例的清算奖励。同时，借贷应用的清算系统能够确保借贷系统的稳定，进而保证存款人的利益。&lt;/p></description></item><item><title>libuv与TCP Keepalive</title><link>https://www.tiege.dev/post/libuv-and-tcp-keepalive/</link><pubDate>Sun, 02 Jul 2017 15:36:21 +0800</pubDate><guid>https://www.tiege.dev/post/libuv-and-tcp-keepalive/</guid><description>&lt;h1 id="libuv-与-tcp-keepalive">libuv 与 TCP Keepalive&lt;/h1>
+&lt;p>简单来说，就是函数原型的 sha-3 hash值。&lt;/p></description></item><item><title>AAVE源代码分析 -- AAVE借贷协议简介</title><link>https://www.tiege.dev/post/aave/brief-introduction-to-aave-protocol/</link><pubDate>Wed, 01 Sep 2021 14:28:11 +0000</pubDate><guid>https://www.tiege.dev/post/aave/brief-introduction-to-aave-protocol/</guid><description>&lt;p>DEFI 上最初的应用就是借贷应用。借贷，顾名思义，是一个允许用户借贷代币的智能合约，它与银行类似，存款人把钱存入到借贷应用中(更具体的说，就是某个智能合约)，借贷应用把你的钱借给借款人，并随着时间的推移赚取利息。当借款人资不抵债时，会触发清算，任何人都可以参与清算，清算成功时清算人将获取一定比例的清算奖励。同时，借贷应用的清算系统能够确保借贷系统的稳定，进而保证存款人的利益。&lt;/p></description></item><item><title>libuv与TCP Keepalive</title><link>https://www.tiege.dev/post/libuv-and-tcp-keepalive/</link><pubDate>Sun, 02 Jul 2017 15:36:21 +0800</pubDate><guid>https://www.tiege.dev/post/libuv-and-tcp-keepalive/</guid><description>&lt;h1 id="libuv-与-tcp-keepalive">libuv 与 TCP Keepalive&lt;/h1>
 &lt;h2 id="关于-keepalive">关于 keepalive&lt;/h2>
 &lt;p>这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。&lt;/p>
 &lt;p>HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。&lt;/p>

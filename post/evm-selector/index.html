@@ -136,13 +136,13 @@ solidity函数selector的计算
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>848 字</span>
+<span class=leancloud-world-count>1165 字</span>
 </span>
 <span>
 |
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>2分钟</span>
+<span class=leancloud-view-count>3分钟</span>
 </span>
 <span id=/post/evm-selector/ class=leancloud_visitors data-flag-title=solidity函数selector的计算>
 |
@@ -199,9 +199,76 @@ contract ABI {
 <div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>import { id } from &#39;ethers/lib/utils&#39;;
 
 const hash = id(&#39;initialize(address,address,address,address)&#39;)
-    , selector = hash..slice(0, 10)
+    , selector = hash.slice(0, 10)
 </code></pre></div><h2 id=selector-重复怎么办>selector 重复怎么办？</h2>
 <p>如果一个合约中有重复的 <code>selector</code>，编译器会报错。</p>
+<h2 id=如果函数原型的参数是自定义的结构体-怎么办>如果函数原型的参数是自定义的结构体, 怎么办?</h2>
+<p>如果是结构体, 在计算 selector 时, 将结构体展开为 tuple 来计算。例如：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>        struct Reward {
+            address ctoken;
+            address underlying;
+            uint256 amount;
+            uint256 debt;
+            uint256 pending;
+            address benefit;
+            address owner;
+            address[] path;  
+        },
+
+        function calcReward(Reword r, address to) returns (uint256);
+</code></pre></div><p>在计算函数 <code>calcReward</code> 的selector时, 实际上是计算</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>calcReward((address,address,uint256,uint256,uint256,address,address,address[]),address)
+</code></pre></div><p>这个字符串的 id</p>
+<p>对于比较复杂的情况，我建议使用 <code>ethers</code> 库的 <code>Interface</code> 来计算函数的 selector, 链接: <a href=https://docs.ethers.io/v5/api/utils/abi/interface/>https://docs.ethers.io/v5/api/utils/abi/interface/</a></p>
+<ol>
+<li>
+<p>根据ABI创建 Interface</p>
+</li>
+<li>
+<p>使用 <code>Interface.getSighash()</code> 获取函数的 selector</p>
+</li>
+<li>
+<p>使用 <code>Interface.getFunction('xxx').format('sighash')</code> 获取计算 selector 的函数签名</p>
+</li>
+</ol>
+<p>完整的示例如下:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>const { expect } = require(&#34;chai&#34;);
+const { ethers } = require(&#34;hardhat&#34;);
+
+describe(&#34;ABI selector&#34;, function() {
+    it(&#39;selector&#39;, async () =&gt; {
+        const iface = new ethers.utils.Interface([
+            // Constructor
+            &#34;constructor(string symbol, string name)&#34;,
+          
+            // State mutating method
+            &#34;function transferFrom(address from, address to, uint amount)&#34;,
+          
+            // State mutating method, which is payable
+            &#34;function mint(uint amount) payable&#34;,
+          
+            // Constant method (i.e. &#34;view&#34; or &#34;pure&#34;)
+            &#34;function balanceOf(address owner) view returns (uint)&#34;,
+          
+            // An Event
+            &#34;event Transfer(address indexed from, address indexed to, uint256 amount)&#34;,
+
+            // A Custom Solidity Error
+            &#34;error AccountLocked(address owner, uint256 balance)&#34;,
+          
+            // Examples with structured types
+            &#34;function addUser(tuple(string name, address addr) user) returns (uint id)&#34;,
+            &#34;function addUsers(tuple(string name, address addr)[] user) returns (uint[] id)&#34;,
+            &#34;function getUser(uint id) view returns (tuple(string name, address addr) user)&#34;
+          ]);
+
+        console.log(&#39;addUsers getSighash: %s&#39;, iface.getSighash(&#39;addUsers&#39;))
+        let addUserFormat = iface.getFunction(&#39;addUsers&#39;).format(ethers.utils.FormatTypes.getSighash)
+        console.log(&#39;addUsers format: %s&#39;, addUserFormat)
+        console.log(&#39;addUsers selector:&#39;, ethers.utils.id(addUserFormat).slice(0, 10))
+    })
+})
+</code></pre></div>
 </div>
 <footer class=post-footer>
 <div class=post-tags>
@@ -248,10 +315,13 @@ const hash = id(&#39;initialize(address,address,address,address)&#39;)
 </div>
 <div class=post-nav>
 <div class="post-nav-next post-nav-item">
+<a href=https://www.tiege.dev/post/aave/how-aave-interest-update/ rel=next title="AAVE源代码分析 -- AAVE代码整体架构">
+<i class="fa fa-chevron-left"></i> AAVE源代码分析 -- AAVE代码整体架构
+</a>
 </div>
 <div class="post-nav-prev post-nav-item">
-<a href=https://www.tiege.dev/post/how-aave-interest-update/ rel=prev title=AAVE借贷协议简介>
-AAVE借贷协议简介
+<a href=https://www.tiege.dev/post/aave/brief-introduction-to-aave-protocol/ rel=prev title="AAVE源代码分析 -- AAVE借贷协议简介">
+AAVE源代码分析 -- AAVE借贷协议简介
 <i class="fa fa-chevron-right"></i>
 </a>
 </div>
@@ -282,7 +352,7 @@ AAVE借贷协议简介
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>3</span>
+<span class=site-state-item-count>6</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
@@ -294,7 +364,7 @@ AAVE借贷协议简介
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>14</span>
+<span class=site-state-item-count>17</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>
@@ -332,6 +402,9 @@ telegram
 <a href=https://www.tiege.dev/tags/aave>Aave</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/tags/defi>Defi</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/tags/abi>Abi</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
@@ -339,9 +412,6 @@ telegram
 </li>
 <li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/tags/dapp>Dapp</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/defi>Defi</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/tags/ethereum>Ethereum</a>
@@ -353,7 +423,7 @@ telegram
 <a href=https://www.tiege.dev/tags/lend-protocol>Lend protocol</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/libuv>Libuv</a>
+<a href=https://www.tiege.dev/tags/selector>Selector</a>
 </li>
 </ul>
 </div>

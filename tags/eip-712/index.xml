@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>EIP-712 on 铁叔</title><link>https://www.tiege.dev/tags/eip-712/</link><description>Recent content in EIP-712 on 铁叔</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 12 Oct 2021 10:43:50 +0000</lastBuildDate><atom:link href="https://www.tiege.dev/tags/eip-712/index.xml" rel="self" type="application/rss+xml"/><item><title>元交易及其实现</title><link>https://www.tiege.dev/post/meta-transaction-and-implement/</link><pubDate>Tue, 12 Oct 2021 10:43:50 +0000</pubDate><guid>https://www.tiege.dev/post/meta-transaction-and-implement/</guid><description>&lt;h1 id="什么是元交易">什么是元交易&lt;/h1>
+&lt;p>简单来说，元交易(meta transaction)就是由第三方代理用户发送的交易。&lt;/p>
+&lt;p>元交易的流程如下：&lt;/p>
+&lt;ol>
+&lt;li>用户构建交易参数，对交易参数签名&lt;/li>
+&lt;li>第三方将交易签名发送至 Relay/Forwarder 合约&lt;/li>
+&lt;li>Relay/Forwarder 合约验证用户的签名是否相符&lt;/li>
+&lt;li>Relay/Forwarder 调用最终的合约&lt;/li>
+&lt;/ol></description></item></channel></rss>
