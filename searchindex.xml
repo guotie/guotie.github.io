@@ -1,4 +1,21 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>元交易及其实现</title><url>https://www.tiege.dev/post/meta-transaction-and-implement/</url><categories><category>Defi</category><category>Solidity</category></categories><tags><tag>selector</tag><tag>Solidity</tag><tag>EVM</tag><tag>ABI</tag><tag>Ethereum</tag><tag>EIP-712</tag><tag>meta-transaction</tag></tags><content type="html"> 什么是元交易 简单来说，元交易(meta transaction)就是由第三方代理用户发送的交易。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>下一代撮合引擎 -- 基于消息驱动的并行撮合引擎</title><url>https://www.tiege.dev/post/next-generation-matching-engine-parallel-matching-engine-base-on-message/</url><categories><category>Defi</category><category>Matching-engine</category></categories><tags><tag>Matching-engine</tag><tag>Matching</tag><tag>撮合</tag><tag>撮合引擎</tag><tag>并行撮合</tag><tag>kafka</tag><tag>消息队列</tag></tags><content type="html"> 现有撮合系统的容灾方案 复杂度高 脆弱性 耦合高 难以测试 难以定位问题 难以扩展 基于消息驱动的并行撮合 这里提出一种并行撮合的方式，首先，什么是 并行撮合 ?
+并行撮合是指，多台机器对订单同时撮合，不是1主N从的方式，也不是 Round-Robin，而是 同时撮合.
+并行撮合的原理是，如果我们把撮合引擎看做一个状态机，输入是 kafka 消息，输出是下一个状态。该状态机依赖于上一个状态和输入消息，用数学表达如下:
+f(0) = 初始状态 f(t) = f(m(t), f(t-1)) f(t) 是消息 t 对应的状态; m(t) 是消息 t 对于撮合引擎而言，当系统载入初始数据后，撮合过程不再依赖环境变量，也不依赖任何随机数据，对于数据的处理，结果是完全确定的。因此，从理论上说，撮合系统，在相同的初始条件，相同的输入，必然产生相同的输出，这就是并行撮合的原理。也就是说，我们不需要像传统的做法那样，在多台撮合引擎之间通过多播协议来同步数据，而是靠相同的初始条件，相同的输入数据，相同的处理流程，以及定时检查，来保证在 同一消息点 上，各个撮合引擎之间的数据的一致性。
+Ok，撮合引擎之间的数据一致性可以保证了，这只是整个系统容灾的一小部分，对于整个系统来说，每个环节都是需要确保正确，可容灾。
+对于持久存储，例如redis和数据库，我们通过 kafka sequece id 来保证不可重入。
+首先，对于一个订单生命周期的每一次变动，都是由kafka消息触发的。例如，订单的创建，由用户发送买入或卖出请求触发；订单的撮合，是由新订单的进入触发；订单的结束，是撮合的结果，自然也是新的订单触发； 其次，用户的资产变动，也可以认为是由消息触发。用户的资产变动，主要由以下几个方面:
+充币 提币 OTC 各种交易 最后，从更大的层面来说，不单是订单，资产，我们可以将所有的输入，都抽象为消息，然后，整个系统的任何变动，都是由基于消息触发。
+问题来了，如何实现，如何保证正确性，如何保证一致性，如何容灾？
+如何实现 先是架构图： kafka 是我们的核心单元，kafka的每一条消息都有一个sequence id，这是一个64位自增的正整数。我们依赖 kafka 的 sequence id 来保证数据的一致性。具体来讲，对于订单数据，我们保存在三个地方，撮合引擎的内存中，redis中，数据库中。三者之间的数据一致，也就是说，在同一个 sequence
+撮合引擎的数据一致性
+如何保证一致性 理论上，每台撮合引擎初始数据一致，处理相同的消息，并且是按照相同的顺序处理，因此，在同一个消息点上，所有撮合引擎的内存中的orderbook是应该完全一致的。
+其他机器启动时如何同步数据 如何容灾 因为多台机器同时撮合, 因此，该方案本身天生就是容灾的!
+定期检查机制 通过 kafka 发送 检查指令 消息, 撮合引擎收到该消息后, 对本引擎的交易对的 orderbook 做 hash 运算, 然后将结果发出来对比，必须保证多台撮合引擎的 hash 值完全一致, 否则就需要定位排查为何 hash 值不一致。
+实现细节 redis 高可用 redis 事务 orderbook 在 redis 中的存储 数据库结构及订单存储 撮合引起启动时初始数据，及同步验证 启动
+异步 哪些可以异步，哪些必须顺序执行?
+故障定位，故障解决 性能 优势 多台撮合引擎解耦 多台撮合引擎数据时刻一致 易于升级，易于测试 实时验证, 实时监测 缺点 消息量增加 1/N 倍 (架构1增加N倍，架构2增加1倍)
+redis 写入次数增加 N 倍</content></entry><entry><title>元交易及其实现</title><url>https://www.tiege.dev/post/meta-transaction-and-implement/</url><categories><category>Defi</category><category>Solidity</category></categories><tags><tag>selector</tag><tag>Solidity</tag><tag>EVM</tag><tag>ABI</tag><tag>Ethereum</tag><tag>EIP-712</tag><tag>meta-transaction</tag></tags><content type="html"> 什么是元交易 简单来说，元交易(meta transaction)就是由第三方代理用户发送的交易。
 元交易的流程如下：
 用户构建交易参数，对交易参数签名 第三方将交易签名发送至 Relay/Forwarder 合约 Relay/Forwarder 合约验证用户的签名是否相符 Relay/Forwarder 调用最终的合约 普通的交易如下图所示:
 元交易的如下图所示:
