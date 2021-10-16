@@ -105,6 +105,65 @@
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.tiege.dev/en/post/uniswap/uniswap-loopback-swap-fee/ itemprop=url>
+rate fee of loopback swap in uniswap
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-time>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>Published at:</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021/10/15">
+2021/10/15
+</time>
+</span>
+<span class=post-category>
+&nbsp; | &nbsp;
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>Categories:</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/en/categories/defi itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Defi</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/en/categories/uniswap itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>uniswap</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span>
+|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>Words:</span>
+<span class=leancloud-world-count>734 words</span>
+</span>
+<span>
+|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>Reading:</span>
+<span class=leancloud-view-count>4 minutes</span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<p>The transaction fee of <code>uniswap</code> is derived from the identity of <code>x * y = K</code>. In a specific transaction scenario, such as a loopback transaction, our transaction cost can be far lower than the rated fee.</p>
+<h2 id=what-is-a-loopback-transaction>What is a loopback transaction</h2>
+<p>The loopback transaction is a transaction in a transaction pair <code>tokenA/tokenB</code>, first exchange <code>tokenA</code> to get <code>tokenB</code>, and then immediately exchange the obtained <code>tokenB</code> back to <code>tokenA</code>.</p>
+<p>The standard rate of <code>uniswap v2</code> is <code>0.3%</code>, then the cost of loopback transaction is <code>0.6%</code>, this cost is quite high. If we are just to brush the transaction volume, we need an effective way to reduce Handling fees, loopback transactions are a very effective way.</p>
+</div>
+<div class="post-more-link text-center">
+<a class=btn href=https://www.tiege.dev/en/post/uniswap/uniswap-loopback-swap-fee/ rel=contents>
+Read More &#187;
+</a>
+</div>
+<footer class=post-footer><div class=post-eof></div></footer>
+</article>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
 <a class=post-title-link href=https://www.tiege.dev/en/post/libuv-and-tcp-keepalive/ itemprop=url>
 libuv与TCP Keepalive
 </a>
@@ -182,19 +241,19 @@ A journey of a thousand miles begins with a single step
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/en/post/>
-<span class=site-state-item-count>1</span>
+<span class=site-state-item-count>2</span>
 <span class=site-state-item-name>Blogs</span>
 </a>
 </div>
 <div class="site-state-item site-state-categories">
 <a href=https://www.tiege.dev/en/categories/>
-<span class=site-state-item-count>1</span>
+<span class=site-state-item-count>3</span>
 <span class=site-state-item-name>Categories</span>
 </a>
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/en/tags/>
-<span class=site-state-item-count>4</span>
+<span class=site-state-item-count>9</span>
 <span class=site-state-item-name>Tags</span>
 </a>
 </div>
@@ -244,16 +303,31 @@ TagCloud
 </div>
 <ul class=tagcloud-of-blogroll-list>
 <li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/arbitrage>Arbitrage</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/defi>Defi</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/en/tags/libuv>Libuv</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/en/tags/linux>Linux</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/solidity>Solidity</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/en/tags/tcp>Tcp</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/en/tags/tcp-keepalive>Tcp keepalive</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/uniswap>Uniswap</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/uniswap-v2>Uniswap v2</a>
 </li>
 </ul>
 </div>

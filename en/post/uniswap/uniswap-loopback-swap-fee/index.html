@@ -1,0 +1,506 @@
+<!doctype html><html lang=en dir=content/en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> rate fee of loopback swap in uniswap - Uncle Tony </title>
+<meta name=keywords content="Blog,Software,Product,Architecture,defi,solidity,rust,golang,blockchain">
+<meta name=author content="guotie">
+<meta property="og:title" content="rate fee of loopback swap in uniswap">
+<meta property="og:site_name" content="Uncle Tony">
+<meta property="og:image" content="/img/author.jpg">
+<meta name=title content="rate fee of loopback swap in uniswap - Uncle Tony">
+<meta name=description content="The transaction fee of `uniswap` is derived from the identity of `x * y = K`. In a specific transaction scenario, such as a loopback transaction, our transaction cost can be far lower than the rated fee.">
+<link rel="shortcut icon" href=https://www.tiege.dev/img/favicon.ico>
+<link rel=apple-touch-icon href=https://www.tiege.dev/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=https://www.tiege.dev/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=https://www.tiege.dev/css/main.css rel=stylesheet type=text/css>
+<link href=https://www.tiege.dev/css/syntax.css rel=stylesheet type=text/css>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-103849967-1"></script>
+<script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','UA-103849967-1 ')</script>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class="site-meta custom-logo">
+<div class=multi-lang-switch>
+<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=https://www.tiege.dev/post/uniswap/uniswap-loopback-swap-fee/>中文</a>
+<span class=lang-line> / </span>
+<a class=lang-link id=en href=#>English</a>
+</div>
+<div class=custom-logo-site-title>
+<a href=https://www.tiege.dev/en/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>Uncle Tony</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>A journey of a thousand miles begins with a single step</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=https://www.tiege.dev/en/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home
+</a>
+</li>
+<li class=menu-item>
+<a href=https://www.tiege.dev/en/post rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archive
+</a>
+</li>
+<li class=menu-item>
+<a href=https://www.tiege.dev/en/about/index.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>About
+</a>
+</li>
+<li class=menu-item>
+<a href=https://www.tiege.dev/en/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>Page404
+</a>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> Search</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder="Enter key words..." spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav>
+</div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.tiege.dev/en/post/uniswap/uniswap-loopback-swap-fee/ itemprop=url>
+rate fee of loopback swap in uniswap
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-time>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>Published at:</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021/10/15">
+2021/10/15
+</time>
+</span>
+<span class=post-category>
+&nbsp; | &nbsp;
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>Categories:</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/en/categories/defi itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Defi</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/en/categories/uniswap itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>uniswap</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span>
+|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>Words:</span>
+<span class=leancloud-world-count>734 words</span>
+</span>
+<span>
+|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>Reading:</span>
+<span class=leancloud-view-count>4 minutes</span>
+</span>
+<span id=/en/post/uniswap/uniswap-loopback-swap-fee/ class=leancloud_visitors data-flag-title="rate fee of loopback swap in uniswap">
+|
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>Visited:</span>
+<span class=leancloud-visitors-count></span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<p>The transaction fee of <code>uniswap</code> is derived from the identity of <code>x * y = K</code>. In a specific transaction scenario, such as a loopback transaction, our transaction cost can be far lower than the rated fee.</p>
+<h2 id=what-is-a-loopback-transaction>What is a loopback transaction</h2>
+<p>The loopback transaction is a transaction in a transaction pair <code>tokenA/tokenB</code>, first exchange <code>tokenA</code> to get <code>tokenB</code>, and then immediately exchange the obtained <code>tokenB</code> back to <code>tokenA</code>.</p>
+<p>The standard rate of <code>uniswap v2</code> is <code>0.3%</code>, then the cost of loopback transaction is <code>0.6%</code>, this cost is quite high. If we are just to brush the transaction volume, we need an effective way to reduce Handling fees, loopback transactions are a very effective way.</p>
+<p><img src=https://www.tiege.dev/images/uniswap/xyk.png alt="uniswap formula"></p>
+<h2 id=theoretical-derivation>Theoretical Derivation</h2>
+<p>The following is our detailed derivation process. Assumptions are as follows:</p>
+<ul>
+<li>dx: the number of tokenA entered</li>
+<li>r0: the reserve quantity of tokenA</li>
+<li>r1: The reserve quantity of tokenB</li>
+<li>dy: the amount of the first tokenA -> tokenB swap</li>
+<li>ex: the second swap tokenB -> the number of tokenA</li>
+</ul>
+<p>According to the formula of uniswap, the calculation is as follows:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>dy = dx*997*r1/(1000*r0 + dx*997)
+
+R1 = r1-dy
+R0 = r0 + dx
+
+ex = dy*997*R0/(1000*R1 + dy*997)
+</code></pre></div><p>Substituting dy, after simplification, we can get:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>ex = 997*997*dx*(r0+dx) / (1000*1000*r0 + 997*997*dx)
+</code></pre></div><p>Divide by dx at the same time:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>ex/dx = 997*997*(r0+dx) / (1000*1000*r0 + 997*997*dx)
+</code></pre></div><p>Since <code>ex</code> is our tokenA quantity at the end of the final loopback transaction, <code>dx</code> is our tokenA input quantity, and <code>1-ex/dx</code> is our handling fee ratio.</p>
+<p>It can be seen from the above formula that the final loopback transaction <code>ex</code> is only related to the input <code>dx</code> and the <code>reserve</code> of <code>tokenA</code>, and the higher the ratio of the input number <code>dx</code> to <code>tokenA reserve</code>, the final result is <code> The closer the ex/dx</code> is to 1, the less the fee is paid.</p>
+<h2 id=code-calculation>Code calculation</h2>
+<p>The test code is as following:</p>
+<p>Filename: loopbackSwap.js</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>const BigNumber = require(&#39;ethers&#39;).BigNumber
+
+const e18 = BigNumber.from(&#39;1000000000000000000&#39;)
+
+const getAmountOut = (amountIn, r0, r1) =&gt; {
+    const amountInWithFee = amountIn.mul(997)
+        , numerator = amountInWithFee.mul(r1)
+        , denominator = r0.mul(1000).add(amountInWithFee);
+
+    return numerator.div(denominator)
+}
+
+const getAmountBack = (amtIn, r0, r1, printable = false) =&gt; {
+    const out = getAmountOut(amtIn, r0, r1)
+    
+    r0 = r0.add(amtIn)
+    r1 = r1.sub(out)
+
+    const dx = getAmountOut(out, r1, r0)
+    if (printable) {
+        console.info(&#39;swap x-&gt;y: out=%s r0=%s r1=%s backx=%s&#39;,
+            out.toString(), r0.toString(), r1.toString(), dx.toString())
+    }
+    return {amtInter: out, amtOut: dx}
+}
+
+function loopbackSwap() {
+    const reserveA = BigNumber.from(1000000).mul(e18)
+    , reserveB = BigNumber.from(2000000).mul(e18)
+    , ratio = (multor) =&gt; reserveA.mul(multor).div(1000)
+
+    let amts = [
+        1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 3000, 5000, 10000]
+
+    for (let amt of amts) {
+        let amtIn = ratio(amt)
+        let {amtOut} = getAmountBack(amtIn, reserveA, reserveB)
+        console.info(&#39;dx/reserve=%s amtOut/amtIn=%s&#39;, amt/1000, amtOut.mul(10000).div(amtIn).toNumber()/10000)
+    }
+}
+
+loopbackSwap()
+</code></pre></div><p>run the scripts:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>npx hardhat run loopbackSwap.js
+
+dx/reserve=0.001 amtOut/amtIn=0.994
+dx/reserve=0.002 amtOut/amtIn=0.994
+dx/reserve=0.005 amtOut/amtIn=0.994
+dx/reserve=0.01 amtOut/amtIn=0.994
+dx/reserve=0.02 amtOut/amtIn=0.9941
+dx/reserve=0.05 amtOut/amtIn=0.9942
+dx/reserve=0.1 amtOut/amtIn=0.9945
+dx/reserve=0.2 amtOut/amtIn=0.995
+dx/reserve=0.5 amtOut/amtIn=0.9959
+dx/reserve=1 amtOut/amtIn=0.9969
+dx/reserve=2 amtOut/amtIn=0.9979
+dx/reserve=3 amtOut/amtIn=0.9984
+dx/reserve=5 amtOut/amtIn=0.9989
+dx/reserve=10 amtOut/amtIn=0.9994
+</code></pre></div><p>It can be seen from the results that when <code>dx/reserve</code> exceeds 1, the handling fee rate drops rapidly, and when <code>dx/reserve=10</code>, the handling fee is only 6/10000.</p>
+<p>As a result, lightning loans can be used to lend a large amount of funds from the borrowing pool at a lower interest rate, and then perform loopback transactions. In some exchanges where transactions are mining, mining can be reduced in this way Handling fee, arbitrage profit.</p>
+<h2 id=action>Action</h2>
+<p>Now, We can write a contract to execute our loopback transaction.</p>
+<p>It should be noted that we cannot directly set the <code>path</code> parameter of <code>uniswap router</code> to <code>[tokenA, tokenB, tokenA]</code> for loopback transactions, but must be divided into two swaps, the first is <code>[tokenA, tokenB] </code>, then <code>[tokenB, tokenA]</code>.</p>
+<p>The sample code is as following:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>    /// @dev swapLoopback swap tokenA to tokenB, then swap tokenB to tokenA
+    /// @param _router uniswap-like router
+    /// @param reward the reward token
+    /// @param amountIn amount in
+    /// @param amountOutMin just set to 0
+    /// @param path [tokenA, tokenB]
+    function swapLoopback(
+                    address _router, // router
+                    address reward, // reward token
+                    uint amountIn,
+                    uint amountOutMin,
+                    address[] memory path
+                )
+                public
+                onlyOwner {
+        address tokenIn = path[0];
+        uint tokenInitial = IERC20(tokenIn).balanceOf(address(this));
+
+        _approve(IERC20(tokenIn), address(_router));
+        // solhint-disable-next-line
+        uint256 ts = block.timestamp + 60;
+        uint[] memory amounts = IUniswapRouter(_router).swapExactTokensForTokens(amountIn, amountOutMin, path, address(this), ts);
+
+        path[0] = path[1];
+        path[1] = tokenIn;
+        // console.log(&#34;amounts:&#34;, amounts[1]);
+        _approve(IERC20(path[0]), address(_router));
+        amounts = IUniswapRouter(_router).swapExactTokensForTokens(amounts[1], amountOutMin, path, address(this), ts);
+
+        // other arbitrage code with reward..
+        reward;
+    }
+</code></pre></div>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=https://www.tiege.dev/en/tags/uniswap rel=tag title=uniswap>#uniswap#</a>
+<a href=https://www.tiege.dev/en/tags/uniswap-v2 rel=tag title="uniswap v2">#uniswap v2#</a>
+<a href=https://www.tiege.dev/en/tags/defi rel=tag title=Defi>#Defi#</a>
+<a href=https://www.tiege.dev/en/tags/solidity rel=tag title=Solidity>#Solidity#</a>
+<a href=https://www.tiege.dev/en/tags/arbitrage rel=tag title=arbitrage>#arbitrage#</a>
+</div>
+<div class=post-nav>
+<div class=article-copyright>
+<div class=article-copyright-info>
+<p>
+<span>Declaration：</span>rate fee of loopback swap in uniswap
+</p>
+<p>
+<span>Link：</span>https://www.tiege.dev/en/post/uniswap/uniswap-loopback-swap-fee/
+</p>
+<p>
+<span>Author：</span>guotie
+</p>
+<p>
+<span>Declaration： </span>This blog post article is under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a> license,Please indicate the source!
+</p>
+</div>
+</div>
+<div class=clear></div>
+</div>
+<div class=reward-qr-info>
+<div>If it can help you, you can give tips for blogger that how much you want. ^_^</div>
+<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>Reward</span>
+</button>
+<div id=QR style=display:none>
+<div id=wechat style=display:inline-block>
+<img id=wechat_qr src=https://www.tiege.dev/img/wechat-pay.png alt="WeChat Pay">
+<p>Wechat Pay</p>
+</div>
+<div id=alipay style=display:inline-block>
+<img id=alipay_qr src=https://www.tiege.dev/img/ali-pay.png alt=Alipay>
+<p>Ali Pay</p>
+</div>
+</div>
+</div>
+<div class=post-nav>
+<div class="post-nav-next post-nav-item">
+</div>
+<div class="post-nav-prev post-nav-item">
+<a href=https://www.tiege.dev/en/post/libuv-and-tcp-keepalive/ rel=prev title="libuv与TCP Keepalive">
+libuv与TCP Keepalive
+<i class="fa fa-chevron-right"></i>
+</a>
+</div>
+</div>
+<div id=wcomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<section class="site-overview sidebar-panel sidebar-panel-active">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=https://www.tiege.dev/img/avatar.png alt=guotie>
+<p class=site-author-name itemprop=name>guotie</p>
+<p class="site-description motion-element" itemprop=description>
+A journey of a thousand miles begins with a single step
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=https://www.tiege.dev/en/post/>
+<span class=site-state-item-count>2</span>
+<span class=site-state-item-name>Blogs</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=https://www.tiege.dev/en/categories/>
+<span class=site-state-item-count>3</span>
+<span class=site-state-item-name>Categories</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=https://www.tiege.dev/en/tags/>
+<span class=site-state-item-count>9</span>
+<span class=site-state-item-name>Tags</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/guotie/ target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://twitter.com/guotie target=_blank title=twitter>
+<i class="fa fa-fw fa-twitter"></i>
+twitter
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://t.me/anydefi target=_blank title=telegram>
+<i class="fa fa-fw fa-telegram"></i>
+telegram
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=mailto:guotie.9@gmail.com target=_blank title=email>
+<i class="fa fa-fw fa-envelope"></i>
+email
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=https://medium.com/@guotie target=_blank title=medium>
+<i class="fa fa-fw fa-medium"></i>
+medium
+</a>
+</span>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+TagCloud
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/arbitrage>Arbitrage</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/defi>Defi</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/libuv>Libuv</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/linux>Linux</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/solidity>Solidity</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/tcp>Tcp</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/tcp-keepalive>Tcp keepalive</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/uniswap>Uniswap</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=https://www.tiege.dev/en/tags/uniswap-v2>Uniswap v2</a>
+</li>
+</ul>
+</div>
+<div class="links-of-blogroll motion-element inline">
+<script type=text/javascript src="//rf.revolvermaps.com/0/0/6.js?i=53tnks7nxby&m=7&c=e63100&cr1=ffffff&f=arial&l=0&bv=90&lx=-420&ly=420&hi=20&he=7&hc=a8ddff&rs=80" async></script>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2021
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>Uncle Tony</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.88.1</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://www.ucloud.cn/ style=font-weight:700 target=_blank>UCloud Storage</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href target=_blank></a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=https://www.tiege.dev/js/search.js></script>
+<script type=text/javascript src=https://www.tiege.dev/js/affix.js></script>
+<script type=text/javascript src=https://www.tiege.dev/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var a=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':a}).show(),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' Just do what you want leave here, and don\u0027t forget give your email to make exchange. ^_^ ',requiredFields:['nick','mail'],serverURL:"https://waline-blog-api.vercel.app",lang:"en"})}):$('#wcomments').html('Sorry, Waline plugin doesn\u0027t support IE or Edge, Please swithc to Chrome browser.')})</script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>
