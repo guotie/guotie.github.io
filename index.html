@@ -106,6 +106,64 @@
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.tiege.dev/post/aave/how-aave-proxy/ itemprop=url>
+AAVE源代码分析 -- AAVE Proxy 体系
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-time>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-18">
+2021-10-18
+</time>
+</span>
+<span class=post-category>
+&nbsp; | &nbsp;
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Defi</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/aave itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>AAVE</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span>
+|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>753 字</span>
+</span>
+<span>
+|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>2分钟</span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h1 id=智能合约代理>智能合约代理</h1>
+<p>智能合约为了能够升级的需求，重要的合约基本都是代理模式。<code>AAVE</code> 的代理非常复杂，要想深入理解 <code>AAVE</code> 的代理体系，就需要剥茧抽丝，一层一层的去仔细研究，才能理解其精髓。</p>
+<p>AAVE 代理全局图：</p>
+</div>
+<div class="post-more-link text-center">
+<a class=btn href=https://www.tiege.dev/post/aave/how-aave-proxy/ rel=contents>
+阅读全文 &#187;
+</a>
+</div>
+<footer class=post-footer><div class=post-eof></div></footer>
+</article>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
 <a class=post-title-link href=https://www.tiege.dev/post/uniswap/uniswap-loopback-swap-fee/ itemprop=url>
 uniswap 环回交易的手续费
 </a>
@@ -346,66 +404,6 @@ AAVE源代码分析 -- AAVE代码整体架构
 </div>
 <footer class=post-footer><div class=post-eof></div></footer>
 </article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.tiege.dev/post/evm-selector/ itemprop=url>
-solidity函数selector的计算
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-09-04">
-2021-09-04
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Defi</span>
-</a>
-&nbsp;
-</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/solidity itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Solidity</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>1165 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>3分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<p>solidity 中有函数选择器(selector)的概念.</p>
-<h2 id=什么是-selector>什么是 selector</h2>
-<p>在 solidity 中，所有 public (或 external) 函数有一个特殊的成员selector, 它对应一个ABI 函数选择器。</p>
-<p>evm 函数选择器是一个函数调用数据的前 4 字节，指定了要调用的函数。这就是某个函数签名的 Keccak 哈希的前 4 字节(高位在左的大端序) (译注：这里的 <code>高位在左的大端序</code>，指最高位字节存储在最低位地址上的一种串行化编码方式，即高位字节在左)。 这种签名被定义为基础原型的规范表达，基础原型即是函数名称加上由括号括起来的参数类型列表，参数类型间由一个逗号分隔开，且没有空格。</p>
-<p>简单来说，就是函数原型的 sha-3 hash值。</p>
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.tiege.dev/post/evm-selector/ rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
 </section>
 <nav class=pagination>
 <span class="page-number current">1</span>
@@ -434,7 +432,7 @@ solidity函数selector的计算
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>8</span>
+<span class=site-state-item-count>10</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
@@ -446,7 +444,7 @@ solidity函数selector的计算
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>21</span>
+<span class=site-state-item-count>22</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>
@@ -505,10 +503,10 @@ medium
 <a href=https://www.tiege.dev/tags/aave>Aave</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/abi>Abi</a>
+<a href=https://www.tiege.dev/tags/compound>Compound</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/compound>Compound</a>
+<a href=https://www.tiege.dev/tags/abi>Abi</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/tags/dapp>Dapp</a>
