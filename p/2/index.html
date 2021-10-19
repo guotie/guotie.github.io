@@ -106,6 +106,64 @@
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.tiege.dev/post/aave/how-aave-interest-update/ itemprop=url>
+AAVE源代码分析 -- AAVE代码整体架构
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-time>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-10">
+2021-10-10
+</time>
+</span>
+<span class=post-category>
+&nbsp; | &nbsp;
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Defi</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/aave itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>AAVE</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span>
+|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>1318 字</span>
+</span>
+<span>
+|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>3分钟</span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h1 id=aave-整体架构>AAVE 整体架构</h1>
+<p>AAVE是一个借贷协议, 因此, 核心是围绕着存款，借款，还款，清算这四大环节展开的。我认为, AAVE 之所以看起来很复杂, 非常重要的一点是因为定期借款的存在, 极大的提高了利率模型的复杂度, 否则, AAVE 应该更加清晰。</p>
+<p>AAVE 架构图如下:</p>
+</div>
+<div class="post-more-link text-center">
+<a class=btn href=https://www.tiege.dev/post/aave/how-aave-interest-update/ rel=contents>
+阅读全文 &#187;
+</a>
+</div>
+<footer class=post-footer><div class=post-eof></div></footer>
+</article>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
 <a class=post-title-link href=https://www.tiege.dev/post/evm-selector/ itemprop=url>
 solidity函数selector的计算
 </a>
@@ -276,38 +334,6 @@ libuv与TCP Keepalive
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.tiege.dev/post/1inch/how-does-1inch-find-best-swap-path/ itemprop=url>
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="0001-01-01">
-0001-01-01
-</time>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>0 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>0分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
 <a class=post-title-link href=https://www.tiege.dev/post/futures-perps/a-great-sheet-of-perp-protocols/ itemprop=url>
 </a>
 </h1>
@@ -342,6 +368,8 @@ libuv与TCP Keepalive
 <a class="extend prev" rel=prev href=https://www.tiege.dev/><i class="fa fa-angle-left"></i></a>
 <a class=page-number href=https://www.tiege.dev/>1</a>
 <span class="page-number current">2</span>
+<a class=page-number href=https://www.tiege.dev/p/3/>3</a>
+<a class="extend next" rel=next href=https://www.tiege.dev/p/3/><i class="fa fa-angle-right"></i></a>
 </nav>
 </div>
 </div>
@@ -365,19 +393,19 @@ libuv与TCP Keepalive
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>10</span>
+<span class=site-state-item-count>11</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
 <div class="site-state-item site-state-categories">
 <a href=https://www.tiege.dev/categories/>
-<span class=site-state-item-count>5</span>
+<span class=site-state-item-count>6</span>
 <span class=site-state-item-name>分类</span>
 </a>
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>22</span>
+<span class=site-state-item-count>31</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>
