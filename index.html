@@ -106,6 +106,64 @@
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.tiege.dev/post/aave/aave-flashloan/ itemprop=url>
+AAVE源代码分析 -- AAVE 闪电贷
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-time>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-20">
+2021-10-20
+</time>
+</span>
+<span class=post-category>
+&nbsp; | &nbsp;
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Defi</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/aave itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>AAVE</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span>
+|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>747 字</span>
+</span>
+<span>
+|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>2分钟</span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=flashloan>flashloan</h2>
+<p>flashloan, 闪电贷, 是指在无需任何抵押, 一个交易内完成借款，还款的借贷行为。 核心是在一个交易内完成, 正因为在一个交易内完成, 所以才无需抵押, 也正是由于在一个交易内完成，闪电贷使用区块链交易事务的特性，可以检查还款的额度是否>借款+利息, 如果不够, 则交易回滚, 任何数据都被还原, 也就是说, 借给你的资金也同样回滚，因此，没有任何风险。</p>
+<p>此外，闪电贷的利息收入非常可观。一个块，也就几秒钟、十几秒钟时间，收取万分之9的利率，而且，一般使用闪电贷的，都是极大的借款量，动辄几千万，上亿美金。</p>
+</div>
+<div class="post-more-link text-center">
+<a class=btn href=https://www.tiege.dev/post/aave/aave-flashloan/ rel=contents>
+阅读全文 &#187;
+</a>
+</div>
+<footer class=post-footer><div class=post-eof></div></footer>
+</article>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
 <a class=post-title-link href=https://www.tiege.dev/post/aave/aave-interest-update-code/ itemprop=url>
 AAVE源代码分析 -- AAVE 利率代码分析
 </a>
@@ -139,7 +197,7 @@ AAVE源代码分析 -- AAVE 利率代码分析
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3056 字</span>
+<span class=leancloud-world-count>3078 字</span>
 </span>
 <span>
 |
@@ -340,70 +398,6 @@ uniswap 环回交易的手续费
 </div>
 <footer class=post-footer><div class=post-eof></div></footer>
 </article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.tiege.dev/post/meta-transaction-and-implement/ itemprop=url>
-元交易及其实现
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-12">
-2021-10-12
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Defi</span>
-</a>
-&nbsp;
-</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/solidity itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Solidity</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>1766 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>4分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h1 id=什么是元交易>什么是元交易</h1>
-<p>简单来说，元交易(meta transaction)就是由第三方代理用户发送的交易。</p>
-<p>元交易的流程如下：</p>
-<ol>
-<li>用户构建交易参数，对交易参数签名</li>
-<li>第三方将交易签名发送至 Relay/Forwarder 合约</li>
-<li>Relay/Forwarder 合约验证用户的签名是否相符</li>
-<li>Relay/Forwarder 调用最终的合约</li>
-</ol>
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.tiege.dev/post/meta-transaction-and-implement/ rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
 </section>
 <nav class=pagination>
 <span class="page-number current">1</span>
@@ -433,7 +427,7 @@ uniswap 环回交易的手续费
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>12</span>
+<span class=site-state-item-count>13</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
@@ -445,7 +439,7 @@ uniswap 环回交易的手续费
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>32</span>
+<span class=site-state-item-count>34</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>

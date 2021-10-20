@@ -137,7 +137,7 @@ AAVE源代码分析 -- AAVE 利率代码分析
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3056 字</span>
+<span class=leancloud-world-count>3078 字</span>
 </span>
 <span>
 |
@@ -237,6 +237,7 @@ function updateInterestRates(
 <h2 id=关键函数>关键函数</h2>
 <h3 id=_updateindexes>_updateIndexes</h3>
 <p>一个细节是，虽然资金变化都每次都调用，但由于在一个块内，只有第一次调用时 liquidityIndex 和 variableBorrowIndex 发生变化，后续调用都不会变化，因为 timestamp 相同， calculateCompoundedInterest 和 calculateLinearInterest 都是返回 Ray(1e27).</p>
+<p>不知道是否可以优化, 我提了一个issue: <a href=https://github.com/aave/protocol-v2/issues/237>https://github.com/aave/protocol-v2/issues/237</a></p>
 <div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>  function _updateIndexes(
     DataTypes.ReserveData storage reserve,
     uint256 scaledVariableDebt,
@@ -471,7 +472,7 @@ function updateInterestRates(
 
 </code></pre></div><h2 id=为什么要先调用-updatestate-然后再调用-updateinterestrates>为什么要先调用 <code>updateState</code>, 然后再调用 <code>updateInterestRates</code></h2>
 <p>简单的说，是因为 liquidityIndex 和 variableBorrowIndex 是由 currentLiquidityRate 和 currentVariableBorrowRate 计算出来的，而先调用 <code>updateState</code>, 然后再调用 <code>updateInterestRates</code>，就是说，在时刻 t1, 当存款或贷款无论变化多少次，liquidityIndex 和 variableBorrowIndex只变化一次； 而 currentLiquidityRate， currentVariableBorrowRate 和 currentStableBorrowRate 会随着金额的变化而变化。</p>
-<p>在一个块中，liquidityIndex 和 variableBorrowIndex只变化一次, 这里 AAVE 的代码不让 Compound, 如果是同一个块，多了很多无用的运算；</p>
+<p>在一个块中，liquidityIndex 和 variableBorrowIndex只变化一次, 这里 AAVE 的代码不如 Compound, 如果是同一个块，多了很多无用的运算；</p>
 <p>就是说，你存款后，下一个块才开始有利息；同理，贷款也是如此。</p>
 <h2 id=定息贷款的-averagestableborrowrate>定息贷款的 averageStableBorrowRate</h2>
 <p>averageStableBorrowRate 对于定息贷款很重要， 影响到 资金使用率，进而影响到 存款利率。</p>
@@ -568,6 +569,9 @@ function updateInterestRates(
 </div>
 <div class=post-nav>
 <div class="post-nav-next post-nav-item">
+<a href=https://www.tiege.dev/post/aave/aave-flashloan/ rel=next title="AAVE源代码分析 -- AAVE 闪电贷">
+<i class="fa fa-chevron-left"></i> AAVE源代码分析 -- AAVE 闪电贷
+</a>
 </div>
 <div class="post-nav-prev post-nav-item">
 <a href=https://www.tiege.dev/post/matching-engine/next-generation-matching-engine-parallel-matching-engine-base-on-message/ rel=prev title="下一代撮合引擎 -- 基于消息驱动的并行撮合引擎">
@@ -602,7 +606,7 @@ function updateInterestRates(
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>12</span>
+<span class=site-state-item-count>13</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
@@ -614,7 +618,7 @@ function updateInterestRates(
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>32</span>
+<span class=site-state-item-count>34</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>
