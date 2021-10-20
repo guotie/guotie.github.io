@@ -1,4 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Defi on 铁叔</title><link>https://www.tiege.dev/categories/defi/</link><description>Recent content in Defi on 铁叔</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Tue, 19 Oct 2021 10:43:50 +0000</lastBuildDate><atom:link href="https://www.tiege.dev/categories/defi/index.xml" rel="self" type="application/rss+xml"/><item><title>下一代撮合引擎 -- 基于消息驱动的并行撮合引擎</title><link>https://www.tiege.dev/post/matching-engine/next-generation-matching-engine-parallel-matching-engine-base-on-message/</link><pubDate>Tue, 19 Oct 2021 10:43:50 +0000</pubDate><guid>https://www.tiege.dev/post/matching-engine/next-generation-matching-engine-parallel-matching-engine-base-on-message/</guid><description>&lt;p>中心化交易所都是基于CLOB (中央统一订单薄)进行撮合交易, 撮合交易的交易原则是价格优先，时间优先。撮合引擎对于交易所来说，是基石，是重中之重。撮合引擎需要稳定，高效，可扩展，且能够容灾，同时，要保证在极端行情下和故障的情况下，可以迅速恢复或者回滚。&lt;/p></description></item><item><title>AAVE源代码分析 -- AAVE Proxy 体系</title><link>https://www.tiege.dev/post/aave/how-aave-proxy/</link><pubDate>Mon, 18 Oct 2021 00:14:12 +0000</pubDate><guid>https://www.tiege.dev/post/aave/how-aave-proxy/</guid><description>&lt;h1 id="智能合约代理">智能合约代理&lt;/h1>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Defi on 铁叔</title><link>https://www.tiege.dev/categories/defi/</link><description>Recent content in Defi on 铁叔</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Wed, 20 Oct 2021 00:14:12 +0000</lastBuildDate><atom:link href="https://www.tiege.dev/categories/defi/index.xml" rel="self" type="application/rss+xml"/><item><title>AAVE源代码分析 -- AAVE 利率代码分析</title><link>https://www.tiege.dev/post/aave/aave-interest-update-code/</link><pubDate>Wed, 20 Oct 2021 00:14:12 +0000</pubDate><guid>https://www.tiege.dev/post/aave/aave-interest-update-code/</guid><description>&lt;p>&lt;code>AAVE&lt;/code> 利率模型中，几个参数之间互相影响，关系错综复杂，其中，固定利率比较绕，尤其是计算平均固定利率的公式，尤其难懂。不过，在实际的借贷中，有很多token不支持固定利率借贷，而且，在支持固定利率借贷token中，使用固定利率的借贷比例也很小，几乎不到1%，因此，对于固定利率部分，对于初学者来说可以先跳过。&lt;/p>
+&lt;p>在 &lt;code>AAVE&lt;/code> 的利率计算中, 有几个地方值得说明:&lt;/p>
+&lt;ol>
+&lt;li>&lt;code>AAVE&lt;/code> 的利率更新是基于时间戳来计算利息的增加, &lt;code>Compound&lt;/code> 是根据块数来计算利息的增加；两者触发利率更新的方式相同，都是由存款，取款，借款，还款等几个动作触发，每个块只计算一次；&lt;/li>
+&lt;li>存款利率的增加是线性的，贷款利率的增加是复利，指数级；&lt;/li>
+&lt;li>贷款收益的 reserve factor% (默认10%) 纳入平台金库;&lt;/li>
+&lt;li>aToken, debtToken 中的 &lt;code>balanceOf&lt;/code> 方法，返回的 amount 都是存款/贷款对应的 token 数量;&lt;/li>
+&lt;/ol>
+&lt;p>如果你只需要知道结论，&lt;code>AAVE&lt;/code>的几个核心流程可以简单的总结如下(代码在 &lt;code>LendingPool&lt;/code> 合约中):&lt;/p></description></item><item><title>下一代撮合引擎 -- 基于消息驱动的并行撮合引擎</title><link>https://www.tiege.dev/post/matching-engine/next-generation-matching-engine-parallel-matching-engine-base-on-message/</link><pubDate>Tue, 19 Oct 2021 10:43:50 +0000</pubDate><guid>https://www.tiege.dev/post/matching-engine/next-generation-matching-engine-parallel-matching-engine-base-on-message/</guid><description>&lt;p>中心化交易所都是基于CLOB (中央统一订单薄)进行撮合交易, 撮合交易的交易原则是价格优先，时间优先。撮合引擎对于交易所来说，是基石，是重中之重。撮合引擎需要稳定，高效，可扩展，且能够容灾，同时，要保证在极端行情下和故障的情况下，可以迅速恢复或者回滚。&lt;/p></description></item><item><title>AAVE源代码分析 -- AAVE Proxy 体系</title><link>https://www.tiege.dev/post/aave/how-aave-proxy/</link><pubDate>Mon, 18 Oct 2021 00:14:12 +0000</pubDate><guid>https://www.tiege.dev/post/aave/how-aave-proxy/</guid><description>&lt;h1 id="智能合约代理">智能合约代理&lt;/h1>
 &lt;p>智能合约为了能够升级的需求，重要的合约基本都是代理模式。&lt;code>AAVE&lt;/code> 的代理非常复杂，要想深入理解 &lt;code>AAVE&lt;/code> 的代理体系，就需要剥茧抽丝，一层一层的去仔细研究，才能理解其精髓。&lt;/p>
 &lt;p>AAVE 代理全局图：&lt;/p></description></item><item><title>uniswap 环回交易的手续费</title><link>https://www.tiege.dev/post/uniswap/uniswap-loopback-swap-fee/</link><pubDate>Fri, 15 Oct 2021 10:14:12 +0000</pubDate><guid>https://www.tiege.dev/post/uniswap/uniswap-loopback-swap-fee/</guid><description>&lt;p>&lt;code>uniswap&lt;/code> 的交易费用，是通过 &lt;code>x * y = K&lt;/code> 的恒等式中推导而来, 在特定的交易场景时，例如环回交易中，我们的交易成本可以做到远远低于额定手续费。&lt;/p>
 &lt;h2 id="什么是环回交易">什么是环回交易&lt;/h2>
@@ -14,11 +22,11 @@
 &lt;/ol></description></item><item><title>AAVE源代码分析 -- AAVE 利率</title><link>https://www.tiege.dev/post/aave/aave-interest-model/</link><pubDate>Mon, 11 Oct 2021 10:14:12 +0000</pubDate><guid>https://www.tiege.dev/post/aave/aave-interest-model/</guid><description>&lt;p>利率模型和风险控制是借贷协议的核心, 在AAVE中，利率的更新可以分为三个部分:&lt;/p>
 &lt;ol>
 &lt;li>存币利率&lt;/li>
-&lt;li>活期借款利率&lt;/li>
-&lt;li>定期借款利率&lt;/li>
+&lt;li>活息借款利率&lt;/li>
+&lt;li>定息借款利率&lt;/li>
 &lt;/ol>
 &lt;p>至于风险控制，在后面的章节中，我们单独讨论。&lt;/p></description></item><item><title>AAVE源代码分析 -- AAVE代码整体架构</title><link>https://www.tiege.dev/post/aave/how-aave-interest-update/</link><pubDate>Sun, 10 Oct 2021 14:28:11 +0000</pubDate><guid>https://www.tiege.dev/post/aave/how-aave-interest-update/</guid><description>&lt;h1 id="aave-整体架构">AAVE 整体架构&lt;/h1>
-&lt;p>AAVE是一个借贷协议, 因此, 核心是围绕着存款，借款，还款，清算这四大环节展开的。我认为, AAVE 之所以看起来很复杂, 非常重要的一点是因为定期借款的存在, 极大的提高了利率模型的复杂度, 否则, AAVE 应该更加清晰。&lt;/p>
+&lt;p>AAVE是一个借贷协议, 因此, 核心是围绕着存款，借款，还款，清算这四大环节展开的。我认为, AAVE 之所以看起来很复杂, 非常重要的一点是因为定息借款的存在, 极大的提高了利率模型的复杂度, 否则, AAVE 应该更加清晰。&lt;/p>
 &lt;p>AAVE 架构图如下:&lt;/p></description></item><item><title>solidity函数selector的计算</title><link>https://www.tiege.dev/post/evm-selector/</link><pubDate>Sat, 04 Sep 2021 13:43:50 +0000</pubDate><guid>https://www.tiege.dev/post/evm-selector/</guid><description>&lt;p>solidity 中有函数选择器(selector)的概念.&lt;/p>
 &lt;h2 id="什么是-selector">什么是 selector&lt;/h2>
 &lt;p>在 solidity 中，所有 public (或 external) 函数有一个特殊的成员selector, 它对应一个ABI 函数选择器。&lt;/p>

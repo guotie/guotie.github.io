@@ -155,7 +155,7 @@ AAVE源代码分析 -- AAVE代码整体架构
 </header>
 <div class=post-body itemprop=articleBody>
 <h1 id=aave-整体架构>AAVE 整体架构</h1>
-<p>AAVE是一个借贷协议, 因此, 核心是围绕着存款，借款，还款，清算这四大环节展开的。我认为, AAVE 之所以看起来很复杂, 非常重要的一点是因为定期借款的存在, 极大的提高了利率模型的复杂度, 否则, AAVE 应该更加清晰。</p>
+<p>AAVE是一个借贷协议, 因此, 核心是围绕着存款，借款，还款，清算这四大环节展开的。我认为, AAVE 之所以看起来很复杂, 非常重要的一点是因为定息借款的存在, 极大的提高了利率模型的复杂度, 否则, AAVE 应该更加清晰。</p>
 <p>AAVE 架构图如下:</p>
 <p><img src=https://www.tiege.dev/images/aave/overview.png alt></p>
 <h2 id=目录结构及文件>目录结构及文件</h2>
@@ -255,7 +255,7 @@ AAVE 将利率的计算移到了三个library中，路径为 <code>contracts\pro
 </li>
 <li>
 <p>ValidationLogic.sol
-这个库主要是各种安全校验, 存款校验, 借款校验, 还款校验, 清算校验, 转账校验, 活期定期转换校验等等</p>
+这个库主要是各种安全校验, 存款校验, 借款校验, 还款校验, 清算校验, 转账校验, 活息定息转换校验等等</p>
 </li>
 </ul>
 <ol start=2>
@@ -285,11 +285,11 @@ AToken 的代理</p>
 </li>
 <li>
 <p>StableDebtToken
-定期借款 token, 用于记录用户的定期借款</p>
+定息借款 token, 用于记录用户的定息借款</p>
 </li>
 <li>
 <p>VariableDebtToken
-活期借款 token, 用于记录用户的活期借款</p>
+活息借款 token, 用于记录用户的活息借款</p>
 </li>
 </ol>
 <h2 id=市场及provider配置管理>市场及Provider、配置管理</h2>
@@ -420,7 +420,7 @@ solidity函数selector的计算
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>11</span>
+<span class=site-state-item-count>12</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
@@ -432,7 +432,7 @@ solidity函数selector的计算
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>31</span>
+<span class=site-state-item-count>32</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>

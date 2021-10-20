@@ -137,7 +137,7 @@
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2812 字</span>
+<span class=leancloud-world-count>2884 字</span>
 </span>
 <span>
 |
@@ -219,6 +219,8 @@ m(t) 是消息 t
 <p>因为多台机器同时撮合, 因此，该方案本身天生就是容灾的! 只需要保证所有撮合系统的内存在同一消息点的数据一致性即可。</p>
 <h2 id=定期检查机制>定期检查机制</h2>
 <p>通过 kafka 发送 <code>检查指令</code> 消息, 撮合引擎收到该消息后, 对本引擎的交易对的 orderbook 做 hash 运算, 然后将结果发出来对比，必须保证多台撮合引擎的 <code>hash</code> 值完全一致, 否则就需要定位排查为何 hash 值不一致。</p>
+<h1 id=优化>优化</h1>
+<p>按照上面的方案，撮合引擎发送到kafka的消息会成倍的增长，由此带来后续的处理负荷也会成倍增加。如何优化这个架构？通过上面的分析，我们知道，</p>
 <h1 id=实现细节>实现细节</h1>
 <p>我们后续会讨论一些实现的细节，例如撮合使用的数据结构，redis的存储格式，redis事务等。</p>
 <h2 id=方案优势>方案优势</h2>
@@ -279,6 +281,9 @@ m(t) 是消息 t
 </div>
 <div class=post-nav>
 <div class="post-nav-next post-nav-item">
+<a href=https://www.tiege.dev/post/aave/aave-interest-update-code/ rel=next title="AAVE源代码分析 -- AAVE 利率代码分析">
+<i class="fa fa-chevron-left"></i> AAVE源代码分析 -- AAVE 利率代码分析
+</a>
 </div>
 <div class="post-nav-prev post-nav-item">
 <a href=https://www.tiege.dev/post/aave/how-aave-proxy/ rel=prev title="AAVE源代码分析 -- AAVE Proxy 体系">
@@ -313,7 +318,7 @@ AAVE源代码分析 -- AAVE Proxy 体系
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>11</span>
+<span class=site-state-item-count>12</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
@@ -325,7 +330,7 @@ AAVE源代码分析 -- AAVE Proxy 体系
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>31</span>
+<span class=site-state-item-count>32</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>

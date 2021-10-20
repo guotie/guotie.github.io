@@ -137,7 +137,7 @@ AAVE源代码分析 -- AAVE 利率
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>1408 字</span>
+<span class=leancloud-world-count>1412 字</span>
 </span>
 <span>
 |
@@ -157,8 +157,8 @@ AAVE源代码分析 -- AAVE 利率
 <p>利率模型和风险控制是借贷协议的核心, 在AAVE中，利率的更新可以分为三个部分:</p>
 <ol>
 <li>存币利率</li>
-<li>活期借款利率</li>
-<li>定期借款利率</li>
+<li>活息借款利率</li>
+<li>定息借款利率</li>
 </ol>
 <p>至于风险控制，在后面的章节中，我们单独讨论。</p>
 <h2 id=reservedata-结构体>ReserveData 结构体</h2>
@@ -169,19 +169,19 @@ AAVE源代码分析 -- AAVE 利率
     // 各种配置, 就是一个 uint256, 不同的配置项使用不同为, 简单的 bitmask 算法
     ReserveConfigurationMap configuration;
     // the liquidity index. Expressed in ray
-    // 存币利率: aToken 与 token 的换算关系
+    // 存币利率指数: aToken 与 token 的换算关系
     uint128 liquidityIndex;
     // variable borrow index. Expressed in ray
-    // 活期借款利率
+    // 活息借款利率指数
     uint128 variableBorrowIndex;
     // the current supply rate. Expressed in ray
-    // 活期借款利率与定期借款利率的加权平均
+    // 活息借款利率与定息借款利率的加权平均
     uint128 currentLiquidityRate;
     // the current variable borrow rate. Expressed in ray
-    // 活期借款利率
+    // 活息借款利率
     uint128 currentVariableBorrowRate;
     // the current stable borrow rate. Expressed in ray
-    // 定期借款利率
+    // 定息借款利率
     uint128 currentStableBorrowRate;
     uint40 lastUpdateTimestamp;
     // tokens addresses
@@ -198,15 +198,15 @@ AAVE源代码分析 -- AAVE 利率
 <p>与利率相关的变量:</p>
 <ol>
 <li>liquidityIndex: 存币利率</li>
-<li>variableBorrowIndex: 活期借款利率</li>
+<li>variableBorrowIndex: 活息借款利率</li>
 <li>currentLiquidityRate: 流动率, 用于更新 liquidityIndex</li>
-<li>currentStableBorrowRate: 定期借款率</li>
-<li>currentVariableBorrowRate: 活期借款率, 用于更新 variableBorrowIndex</li>
+<li>currentStableBorrowRate: 定息借款率</li>
+<li>currentVariableBorrowRate: 活息借款率, 用于更新 variableBorrowIndex</li>
 </ol>
 <h2 id=两段式利率>两段式利率</h2>
 <p>利率的核心是供求关系。每当资金发生变化时，AAVE 都会自动调整利率. 利率的调整是基于供求关系，在 AAVE 或 Compound 中，反映资金供求关系的变量是资金利用率。资金利用率的定义是：</p>
 <div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Utilisation = 总借款 / (总存款+总借款)
-总借款 = 活期借款 + 定期借款
+总借款 = 活息借款 + 定息借款
 </code></pre></div><p>利率随供求关系变化的示意图：</p>
 <p><img src=https://www.tiege.dev/images/aave/capital-utilisation-rate.png alt></p>
 <p>这个图很清晰的说明了利率的变化:</p>
@@ -232,12 +232,12 @@ AAVE源代码分析 -- AAVE 利率
 </code></pre></div><p>由于 <code>liquidityIndex</code> 在不断增长, 由上面两个公式就可以算出用户的存币利息所得。</p>
 <h2 id=variableborrowindex-借款利率>variableBorrowIndex 借款利率</h2>
 <ol>
-<li>活期借款</li>
+<li>活息借款</li>
 </ol>
 <p>当用户借款时, 系统会给用户 mint 借款的代币, 用来记录用户的借款, 已经随时间变化产生的利息.</p>
 <div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>varDebtToken 数量 = token 数量 / variableBorrowIndex
 </code></pre></div><ol start=2>
-<li>活期还款</li>
+<li>活息还款</li>
 </ol>
 <p>当用户还款时，需要还的数量通过以下公式计算:</p>
 <div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>token 数量 = varDebtToken 数量 * variableBorrowIndex
@@ -245,18 +245,18 @@ AAVE源代码分析 -- AAVE 利率
 <li>清算</li>
 </ol>
 <p>清算是风控的核心，在风控章节详细讨论。</p>
-<h2 id=定期借款>定期借款</h2>
-<p>定期借款与活期借款类似，但有所不同。由于使用定期借款的比例非常少, 这里暂时跳过对定期借款的分析</p>
+<h2 id=定息借款>定息借款</h2>
+<p>定息借款与活息借款类似，但有所不同。由于使用定息借款的比例非常少, 这里暂时跳过对定息借款的分析</p>
 <h2 id=利率的计算过程>利率的计算过程</h2>
 <p>利率的计算主要在文件 <code>contracts\protocol\lendingpool\DefaultReserveInterestRateStrategy.sol</code> 中，函数名为 <code>calculateInterestRates</code>.</p>
 <p>计算的大概过程是:</p>
 <ol>
-<li>总借款 = 活期借款 + 定期借款</li>
+<li>总借款 = 活息借款 + 定息借款</li>
 <li>资金利用率 = 总借款 / (总存款+总借款)</li>
-<li>计算活期利率和定期利率。这两个利率都是两段式计算, 每一段的变化都是线性的。
-a. 活期利率 = 基本活期利率 + 资金利用率 * slope1活期 (如果超过第一段, 还需要计算第二段的利率)
-b. 定期利率 = 基本定期利率 + 资金利用率 * slope1定期</li>
-<li>加权平均借款利率 = (活期借款<em>活期利率 + 定期借款</em>平均定期利率) / 总借款， 这里的平均定期利率是函数入参，不再这里计算</li>
+<li>计算活息利率和定息利率。这两个利率都是两段式计算, 每一段的变化都是线性的。
+a. 活息利率 = 基本活息利率 + 资金利用率 * slope1活息 (如果超过第一段, 还需要计算第二段的利率)
+b. 定息利率 = 基本定息利率 + 资金利用率 * slope1定息</li>
+<li>加权平均借款利率 = (活息借款<em>活息利率 + 定息借款</em>平均定息利率) / 总借款， 这里的平均定息利率是函数入参，不再这里计算</li>
 <li>currentLiquidityRate = (加权平均借款利率/总借款) * 资金利用率 * (1-储备率)</li>
 </ol>
 <p>可以看到, currentLiquidityRate 的计算最复杂, 那么这个变量的用途是什么呢? 答案是用来计算存款利率(liquidityIndex)</p>
@@ -355,7 +355,7 @@ AAVE源代码分析 -- AAVE代码整体架构
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>11</span>
+<span class=site-state-item-count>12</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
@@ -367,7 +367,7 @@ AAVE源代码分析 -- AAVE代码整体架构
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>31</span>
+<span class=site-state-item-count>32</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>
