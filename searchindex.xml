@@ -1,4 +1,34 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>AAVE源代码分析 -- AAVE 闪电贷</title><url>https://www.tiege.dev/post/aave/aave-flashloan/</url><categories><category>Defi</category><category>AAVE</category></categories><tags><tag>AAVE</tag><tag>Compound</tag><tag>Defi</tag><tag>Solidity</tag><tag>flashloan</tag><tag>闪电贷</tag></tags><content type="html"> flashloan flashloan, 闪电贷, 是指在无需任何抵押, 一个交易内完成借款，还款的借贷行为。 核心是在一个交易内完成, 正因为在一个交易内完成, 所以才无需抵押, 也正是由于在一个交易内完成，闪电贷使用区块链交易事务的特性，可以检查还款的额度是否>借款+利息, 如果不够, 则交易回滚, 任何数据都被还原, 也就是说, 借给你的资金也同样回滚，因此，没有任何风险。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>AAVE源代码分析 -- AAVE 部署及初始化</title><url>https://www.tiege.dev/post/aave/how-aave-deploy-and-initialize-contracts/</url><categories><category>Defi</category><category>AAVE</category></categories><tags><tag>AAVE</tag><tag>deploy</tag><tag>Defi</tag><tag>initialize</tag></tags><content type="html"> 由于 AAVE 合约较多，因此 AAVE 的部署也比较复杂. AAVE 把部署分为7个任务，每个任务作为一个 hardhat task, 然后通过 full taks调用各个task，来完成整体的部署和初始化。
+fulltask 在工程的 package.json 文件中，有几十个部署任务，其中，这个任务是部署主网并验证合约:
+"aave:main:full:migration": "npm run compile &amp;&amp; npm run hardhat:main -- aave:mainnet --verify", 其中， aave:mainnet 是任务名称，这个任务的执行在 tasks\migrations\aave.mainnet.ts 文件中设定。文件主要内容如下:
+// 1 部署 address provider 相关合约， POOL_NAME 为 Aave await DRE.run('full:deploy-address-provider', { pool: POOL_NAME, skipRegistry }); // 2 部署 lending pool 相关合约 await DRE.run('full:deploy-lending-pool', { pool: POOL_NAME }); // 3 部署 预言机 相关合约 await DRE.run('full:deploy-oracles', { pool: POOL_NAME }); // 4 部署 data-provider 相关合约 await DRE.run('full:data-provider', { pool: POOL_NAME }); // 5 部署 weth 网关 await DRE.run('full-deploy-weth-gateway', { pool: POOL_NAME }); // 6 初始化相关合约 await DRE.run('full:initialize-lending-pool', { pool: POOL_NAME }); if (verify) { printContracts(); // 7 验证合约 await DRE.run('verify:general', { all: true, pool: POOL_NAME }); // 8 验证 aToken 合约和 debt 合约 await DRE.run('verify:tokens', { pool: POOL_NAME }); } if (usingTenderly()) { } // 打印合约信息 printContracts(); 我们来看看每个task的任务.
+1. full:deploy-address-provider 任务名称: full:deploy-address-provider
+任务文件: tasks\full\1_address_provider.ts
+任务说明： 部署 address registry 和 address provider
+任务执行:
+部署 LendingPoolAddressesProvider 合约, 参数 marketId (例如 Aave, AMM); 调用 add-market-to-registry 任务; 如果 registry 不存在, 调用 full:deploy-address-provider-registry 部署 LendingPoolAddressesProviderRegistry 合约 registerAddressesProvider setPoolAdmin setEmergencyAdmin 2. full:deploy-lending-pool 任务名称: full:deploy-lending-pool
+任务文件: tasks\full\2_lending_pool.ts
+任务说明： 部署 lending pool 及相关合约
+任务执行:
+如果 LendPool 合约未部署，部署相关 Library 和 LendPool 合约， 初始化 LendPool; 使用第一步创建的 address registry 为 LendPool 部署代理合约，并将实现的指向 LendPool 合约; 部署 LendingPoolConfigurator; 调用 addressesProvider.setLendingPoolConfiguratorImpl, 该函数为 LendingPoolConfigurator 部署Proxy， 并设置 address provider 中的 LendingPoolConfigurator 地址 部署 StableAndVariableTokensHelper 合约 部署 ATokensAndRatesHelper 合约 3. full:deploy-oracles 任务名称: full:deploy-oracles
+任务文件: tasks\full\3_oracles.ts
+任务说明: 部署预言机合约
+任务执行:
+如果 AaveOracle 合约不存在, 部署 AaveOracle 合约, 设置 setAssetSources; 如果 LendingRateOracle 合约不存在，部署 LendingRateOracle 合约，初始化 setInitialMarketRatesInRatesOracleByHelper 设置 addressesProvider 的 setPriceOracle 为 AaveOracle 合约地址 设置 addressesProvider 的 LendingRateOracle 为 LendingRateOracle 合约地址 4. full:data-provider 任务名称: full:data-provider
+任务文件: tasks\full\4_data-provider.ts
+任务说明: 部署 Data Provider 合约
+任务执行:
+部署 AaveProtocolDataProvider 合约 5. weth 网关合约 任务名称：full-deploy-weth-gateway
+任务文件: tasks\full\5-deploy-wethGateWay.ts
+任务说明: 部署 WETHGateway 合约
+任务执行:
+部署 WETHGateway 合约 6. 初始化合约 任务名称: full:initialize-lending-pool
+任务文件: tasks\full\6-initialize.ts
+任务说明： 部署合约，设置代理，初始化
+任务执行:
+initReservesByHelper，为市场上的每一个token，执行以下步骤: 部署 AToken 合约 部署 StableDebtToken 合约 部署 VariableDebtToken 合约 部署 DefaultReserveInterestRateStrategy 合约 调用 LendingPoolConfigurator 合约为 aToken 合约、debtToken 合约部署代理, 并初始化 aToken 合约，debtToken 合约， configureReservesByHelper， 如果 LendingPoolCollateralManager 不存在，部署 LendingPoolCollateralManager 合约 设置 addressesProvider 的 LendingPoolCollateralManager 地址 部署 WalletBalancerProvider 合约，这个合约是只读合约，提供一些数据 配置 WETHGateway 合约 7. 验证合约 Atoken/debtToken aToken, debtToken (VariableDebtToken, StableDebtToken) 都是通过代理来运行的, 代理方式有点类似于 openzeppelin 的透明代理模式.
+LendingPoolConfigurator 合约是 aToken debtToken 的代理的创建者和管理者, 同时， 对 aToken debtToken 的初始化，升级;
+同时, LendingPoolConfigurator 又是由 AddressProvider 合约创建代理合约代理, 并通过 AddressProvider 合约来管理升级的;</content></entry><entry><title>AAVE源代码分析 -- AAVE 闪电贷</title><url>https://www.tiege.dev/post/aave/aave-flashloan/</url><categories><category>Defi</category><category>AAVE</category></categories><tags><tag>AAVE</tag><tag>Compound</tag><tag>Defi</tag><tag>Solidity</tag><tag>flashloan</tag><tag>闪电贷</tag></tags><content type="html"> flashloan flashloan, 闪电贷, 是指在无需任何抵押, 一个交易内完成借款，还款的借贷行为。 核心是在一个交易内完成, 正因为在一个交易内完成, 所以才无需抵押, 也正是由于在一个交易内完成，闪电贷使用区块链交易事务的特性，可以检查还款的额度是否>借款+利息, 如果不够, 则交易回滚, 任何数据都被还原, 也就是说, 借给你的资金也同样回滚，因此，没有任何风险。
 此外，闪电贷的利息收入非常可观。一个块，也就几秒钟、十几秒钟时间，收取万分之9的利率，而且，一般使用闪电贷的，都是极大的借款量，动辄几千万，上亿美金。
 闪电贷是去中心化的一大创新, 不知道是不是 AAVE 首先提出的。 现在很多协议都提供了闪电贷功能，例如:
 借贷平台，如 AAVE, Compound 也有外挂提供闪电贷的功能; AAVE 闪电贷的默认利率是万分之9; uniswap. uniswap 在 swap 时，同样提供闪电贷功能. swap 时, pair 合约先把买到的token发给你, 你可以用这个token去盈利，然后再把卖出的token转入pair中。uniswap不收取额外费用，只是兑换的手续费为千三; token. 现在一些token也提供闪电贷的功能, 原理类似。手续费看具体实现。 flashloan 的流程 流程如下：
