@@ -137,7 +137,7 @@ AAVE源代码分析 -- AAVE 部署及初始化
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>1018 字</span>
+<span class=leancloud-world-count>1035 字</span>
 </span>
 <span>
 |
@@ -269,6 +269,7 @@ AAVE源代码分析 -- AAVE 部署及初始化
 <li>配置 WETHGateway 合约</li>
 </ul>
 <h2 id=7-验证合约>7. 验证合约</h2>
+<p>验证合约基本就是调用 hardhat-etherscan 来验证合约。</p>
 <h2 id=atokendebttoken>Atoken/debtToken</h2>
 <p>aToken, debtToken (VariableDebtToken, StableDebtToken) 都是通过代理来运行的, 代理方式有点类似于 openzeppelin 的透明代理模式.</p>
 <p>LendingPoolConfigurator 合约是 aToken debtToken 的代理的创建者和管理者, 同时， 对 aToken debtToken 的初始化，升级;</p>
