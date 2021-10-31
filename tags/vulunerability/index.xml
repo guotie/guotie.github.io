@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>vulunerability on 铁叔</title><link>https://www.tiege.dev/tags/vulunerability/</link><description>Recent content in vulunerability on 铁叔</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 31 Oct 2021 10:43:50 +0000</lastBuildDate><atom:link href="https://www.tiege.dev/tags/vulunerability/index.xml" rel="self" type="application/rss+xml"/><item><title>openzeppelin 版本4.1.0-4.3.1中UUPS proxy 存在致命漏洞</title><link>https://www.tiege.dev/post/contract-proxy/uups-proxy-vulunerability/</link><pubDate>Sun, 31 Oct 2021 10:43:50 +0000</pubDate><guid>https://www.tiege.dev/post/contract-proxy/uups-proxy-vulunerability/</guid><description>&lt;p>openzeppelin 的&lt;code>Proxy&lt;/code> 有两种:&lt;/p>
+&lt;ul>
+&lt;li>透明代理 Transparent proxy&lt;/li>
+&lt;li>UUPS proxy&lt;/li>
+&lt;/ul>
+&lt;p>两者的最主要的区别是， &lt;code>upgradeTo&lt;/code> 函数逻辑的位置。在透明代理中， &lt;code>upgradeTo&lt;/code> 函数逻辑在proxy合约中；而在 UUPS 代理中， &lt;code>upgradeTo&lt;/code> 函数逻辑在实现合约中。&lt;/p></description></item></channel></rss>
