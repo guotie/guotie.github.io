@@ -1,6 +1,6 @@
 <!doctype html><html lang=zh-cn dir=content/zh-cn>
 <head>
-<meta name=generator content="Hugo 0.88.1">
+<meta name=generator content="Hugo 0.92.2">
 <meta charset=utf-8>
 <meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
 <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
@@ -103,6 +103,70 @@
 <div class=content-wrap>
 <div id=content class=content>
 <section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.tiege.dev/post/meta-transaction-and-implement/ itemprop=url>
+元交易及其实现
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-time>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-12">
+2021-10-12
+</time>
+</span>
+<span class=post-category>
+&nbsp; | &nbsp;
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Defi</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/solidity itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Solidity</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span>
+|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>1766 字</span>
+</span>
+<span>
+|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>4分钟</span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h1 id=什么是元交易>什么是元交易</h1>
+<p>简单来说，元交易(meta transaction)就是由第三方代理用户发送的交易。</p>
+<p>元交易的流程如下：</p>
+<ol>
+<li>用户构建交易参数，对交易参数签名</li>
+<li>第三方将交易签名发送至 Relay/Forwarder 合约</li>
+<li>Relay/Forwarder 合约验证用户的签名是否相符</li>
+<li>Relay/Forwarder 调用最终的合约</li>
+</ol>
+</div>
+<div class="post-more-link text-center">
+<a class=btn href=https://www.tiege.dev/post/meta-transaction-and-implement/ rel=contents>
+阅读全文 &#187;
+</a>
+</div>
+<footer class=post-footer><div class=post-eof></div></footer>
+</article>
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
@@ -339,60 +403,6 @@ AAVE源代码分析 -- AAVE借贷协议简介
 </div>
 <footer class=post-footer><div class=post-eof></div></footer>
 </article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.tiege.dev/post/libuv-and-tcp-keepalive/ itemprop=url>
-libuv与TCP Keepalive
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2017-07-02">
-2017-07-02
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/c/c++ itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>c/c++</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>1184 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>3分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h1 id=libuv-与-tcp-keepalive>libuv 与 TCP Keepalive</h1>
-<h2 id=关于-keepalive>关于 keepalive</h2>
-<p>这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。</p>
-<p>HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。</p>
-<p>Linux内核关于TCP keepalive的说明在这里： <a href=http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html>http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html</a></p>
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.tiege.dev/post/libuv-and-tcp-keepalive/ rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
 </section>
 <nav class=pagination>
 <a class="extend prev" rel=prev href=https://www.tiege.dev/p/2/><i class="fa fa-angle-left"></i></a>
@@ -400,6 +410,7 @@ libuv与TCP Keepalive
 <a class=page-number href=https://www.tiege.dev/p/2/>2</a>
 <span class="page-number current">3</span>
 <a class=page-number href=https://www.tiege.dev/p/4/>4</a>
+<a class=page-number href=https://www.tiege.dev/p/5/>5</a>
 <a class="extend next" rel=next href=https://www.tiege.dev/p/4/><i class="fa fa-angle-right"></i></a>
 </nav>
 </div>
@@ -424,19 +435,19 @@ libuv与TCP Keepalive
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>18</span>
+<span class=site-state-item-count>21</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
 <div class="site-state-item site-state-categories">
 <a href=https://www.tiege.dev/categories/>
-<span class=site-state-item-count>8</span>
+<span class=site-state-item-count>9</span>
 <span class=site-state-item-name>分类</span>
 </a>
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>45</span>
+<span class=site-state-item-count>46</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>
@@ -529,14 +540,14 @@ medium
 <div class=footer-inner>
 <div class=copyright>
 <span class=copyright-year>
-&copy; 2010 - 2021
+&copy; 2010 - 2022
 </span>
 <span class=with-love><i class="fa fa-heart"></i></span>
 <span class=copyright-author>铁叔</span>
 </div>
 <div class=powered-info>
 <span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.88.1</a>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.2</a>
 </span>
 <span class=separator-line>/</span>
 <span class=theme-info>

@@ -1,4 +1,42 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>使用 lua script 来执行 redis 事务</title><url>https://www.tiege.dev/post/2021-11/redis-lua-script-transaction/</url><categories><category>redis</category></categories><tags><tag>redis</tag><tag>lua script</tag><tag>transcation</tag><tag>一致性</tag></tags><content type="html"> redis 事务有两种实现方式，一种是通过 MULTI 命令 ， 另一种是使用 lua script. lua script 更简单, 而且 lua script 由于交互更少，且 redis 可以缓存 lua script，因此，效率更高，非常适合用于追求效率的地方。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>AAVE v3 主要功能</title><url>https://www.tiege.dev/post/aave/aave-v3-features/</url><categories><category>defi</category><category>aave</category><category>lending</category></categories><tags><tag>aave</tag><tag>defi</tag><tag>lending</tag></tags><content type="html"> AAVE v3的代码已经经过审计，且已经开源，合约地址是：
+https://github.com/aave/aave-v3-core
+功能 相对于AAVE V2，V3的主要功能如下:
+Portal 高效模式 eMode 隔离模式 改进风险管理 L2 特色功能 社区贡献 基于社区反馈的技术进步 尽管 Aave 协议在过去两年中运行有效并取得了巨大的增长，社区的贡献为AAVE的技术进步提供了非常关键的作用：
+资本效率：V2 不允许用户在收益产生（协议内和/或跨协议部署在各种网络上）或借贷能力方面优化他们提供给 Aave 协议的资产。V3 解决了这个问题。
+风险控制调整：虽然 Aave 协议目前具有可以通过 Aave 治理由社区激活的风险控制功能，例如调整借贷能力和维持保证金，但附加功能可以提高 Aave 协议智能合约固有的众所周知的安全性。V3 解决了这个问题。
+去中心化： Aave治理稳健且蓬勃发展——通过社区成员提交提案和创建子 DAO（GrantsDAO 和 RiskDAO）。但为了最大限度地去中心化，某些技术特性将允许 Aave 治理通过委托给团队或其他个人来进一步去中心化其功能。
+跨链：通过社区的努力，Aave 协议已部署在许多网络中，每个网络都有对应的流动性。但是用户无法将自己的个人流动性从一个网络上无缝转移到另一个网络。V3 解决了这个问题。
+V3 的设计旨在创建下一代第 0 层 DeFi 协议，该协议可以显着改善用户体验，同时提供更高的资本效率、更高程度的去中心化和进一步增强的安全性。
+Portal Portal示意图：
+portal模式可以让用户在多个网络之间无缝转移资产。例如，用户可以在ETH上burn aToken，然后在polygon上mint出来。类似于其他的跨链，不清楚技术原理
+高效模式 eMode eMode 示意图:
+简单举个例子就是，在eMode下，你质押wBTC，只能借出renBTC，这时，你的质押率可以达到97%，清算线为98%, 然后清算罚金率为2%。也就是在同类资产借贷时，提高了资金利用率，同时降低了风险。
+原理是把资产归类(category)，最多可以有255个类别。
+例如第一类为稳定币，这个category有USDT，USDC，DAI, 用户甲在这个模式下借贷时，例如存USDC，借DAI，可以有97%的LTV，而普通模式只有75%，这样用户甲的资金利用率就提高了22%
+当然，用户依然可以使用非category 1的资产作为抵押，但非category 1的资产的LTV就只能适用普通模式的LTV
+新的风险管理参数 隔离模式 隔离模式的目标是允许 Aave 治理协议上新币时，降低风险
+当社区成员提交治理提案以在 Aave市场上创建新资产时，该提案将该资产列为“隔离抵押品”，存入这些“隔离”资产的用户只能借出 Aave 治理指定的稳定币，且借款额不能高于指定的债务上限。
+当用户提供“隔离资产”作为抵押品时，该用户只能将该资产用作抵押品；即使用户向协议提供其他资产，用户也只能从这些资产上赚取利息，而不能将这些资产用作抵押品。
+bug悬赏及riskDao riskDao: https://governance.aave.com/t/proposal-aave-risk-dao/4729
+其他特性 涉及代币转移（例如，供应、偿还）的功能支持 EIP 2612 许可（对于 L2 部署很重要）；
+支持 EIP 712 签名；
+用户可以使用aTokens代替原来借入的标的资产来偿还借入的头寸；
+Aave Governance 可以“允许”实体访问即时流动性；???（Aave Governance can “permitlist” entities to access instant liquidity;）
+Aave 治理可以重新配置向 Aave DAO 财政部提供的清算或即时流动性交易的任何费用；
+新的 flashloanSimple 可减少高达 20% 的gas消耗（标准的全功能函数仍然可用）；
+价格预言机逻辑可以提供对基础资产的通用计算（即不再仅限于 ETH）；
+新的利率策略优化了稳定的利率计算（并且无需贷款利率预言机）；
+代码重组以更加模块化；与 V2 单一存储库相比，V3 代码将分为三个不同的存储库——V3 core, V3 periphery, V3 deployments。这有助于社区贡献和在不同网络上的部署；
+智能合约重构以减少代码大小（为未来的其他更改提供更多余量）→ 最多 100K 优化器运行！
+有了所有这些新功能，所有功能的 gas 成本仍然全面下降了 10-15% 左右！
+代码方面 注: 这部分是我粗略浏览一遍v3后的感受。
+gas 费优化 solidity的版本升级为0.8.10，核心几个的Math都已经重写，大部分使用了assembly来节省手续费
+功能增加
+emode isolation 命名改变 例如： deposit命名为supply LendingPool.sol 命名为 Pool.sol, 等 核心业务逻辑全部移到 libraries/logic 目录中 (之前只有利率计算, validation的逻辑在 libraries/logic 目录中，包括新增的 emode，isolation，bridge) 外围功能单独 repo 类似于uniswap，有一个单独的 periphery 仓库。此外，deployment 好像也是一个单独的仓库，在安装aave-v3-core依赖时，会安装一个@aave/deploy-v3的包，但这个包目前找不到，issue在此：https://github.com/aave/aave-v3-core/issues/625
+协议变更 如果要fork AAVE v3的同学注意了，这个协议好像类似于 uniswap v3的协议，具体可以去研究一下: https://github.com/aave/aave-v3-core/blob/master/LICENSE.md
+(注: 不过好像大家fork的都是compound，很少有项目fork AAVE ^_^)
+核心架构上变动不多 参考资料 https://governance.aave.com/t/introducing-aave-v3/6035
+https://github.com/aave/aave-v3-core</content></entry><entry><title>使用 lua script 来执行 redis 事务</title><url>https://www.tiege.dev/post/2021-11/redis-lua-script-transaction/</url><categories><category>redis</category></categories><tags><tag>redis</tag><tag>lua script</tag><tag>transcation</tag><tag>一致性</tag></tags><content type="html"> redis 事务有两种实现方式，一种是通过 MULTI 命令 ， 另一种是使用 lua script. lua script 更简单, 而且 lua script 由于交互更少，且 redis 可以缓存 lua script，因此，效率更高，非常适合用于追求效率的地方。
 lua script 官方文档: https://redis.io/commands/eval
 redis的lua脚本执行有两个命令，一个是eval, 另一个是 evalsha.
 eval 命令的语法：
@@ -7,7 +45,14 @@ eval 命令的语法：
 从redis 3.2.0开始，redis 中集成了 lua 调试工具，参考这里: https://redis.io/topics/ldb
 使用示例 import "github.com/gomodule/redigo/redis" // redis lua 脚本, 确保预留分配多个时的原子操作 func ReserveUserToken(conn redis.Conn, accountID uint64, howmany uint32) (latest uint64, err error) { ss := `local sid=redis.call('HGET',KEYS[1],'latest') or 0; ` for i := 0; i &lt; int(howmany); i++ { ss += `redis.call('HSET', KEYS[1], sid, ARGV[1]); sid=sid+1; ` } // 更新 latest 值 ss += `redis.call('HSET', KEYS[1], 'latest', sid); return sid` script := redis.NewScript(1, ss) key := fmt.Sprintf("userTokens:%d", accountID) ts := time.Now().Unix() resp, err := script.Do(conn, key, ts) if err != nil { return } latest = uint64(resp.(int64)) return } 上述代码作用如下:
 在 redis 上为每个用户生成 hashmap userToken:{accountId} , 如果没有，创建该hashmap，且将 hashmap 的 key latest 设置为 0; 如果 howmany 不为0，则为用户预留 token, 预留的方式为： 从 latest 增加1 作为key， 写入 hashmap 中 latest 自增 循环操作 将最新的 latest 写入 hashmap，并返回 值得注意的是，local sid=redis.call('HGET',KEYS[1],'latest') or 0; 这里一定要有最后的 or 0, 否则 sid 会是一个bool 类型，无法进行数值运算，会提示如下错误:
-(error) ERR Error running script (call to f_2bd1a2e80fc04313100937b7b533da6bea026773): @user_script:1: user_script:1: attempt to perform arithmetic on local 'sid' (a boolean value)</content></entry><entry><title>hardhat solidity 常见错误</title><url>https://www.tiege.dev/post/hardhat/hardhat-solidity-common-cases/</url><categories><category>Defi</category><category>Solidity</category></categories><tags><tag>hardhat</tag><tag>Solidity</tag><tag>hardhat-deploy</tag></tags><content type="html"> 常见 hardhat 相关问题整理 整理 hardhat， solidity 常见的错误，不定期更新。
+(error) ERR Error running script (call to f_2bd1a2e80fc04313100937b7b533da6bea026773): @user_script:1: user_script:1: attempt to perform arithmetic on local 'sid' (a boolean value) 几点补充 lua 判断 lua脚本判断的语法为：
+if cond then clause else clause end 如果没有else，可以简化为：
+if cond then clause end 当然，还有 elif 的语法。
+整数与字符串 由于 redis 中的 key 是字符串类型，而 value 可以是整数。当你的key也是整数时，使用key与value相比时，将无法得到预期的结果，这是因为key为字符串类型，如果需要比较，可以用两种方法：
+使用tonumber来转换 使用 +0 来强制转换 json 处理 redis中的lua脚本内置了cjson库，可以在lua脚本中直接使用cjson encode和decode来操作json数据。
+encode 例子如下：
+local user={name=ARGV[1],year=ARGV[2],address=ARGV[3]}; local userJson=cjson.encode(user); if redis.call('HSET', 'users', ARGV[1], userJson) == 0 then return -1 else return userJson end decode 类似:
+local userJson = redis.call('HSET', 'users', ARGV[1]); local user = cjson.decode(userJson)</content></entry><entry><title>hardhat solidity 常见错误</title><url>https://www.tiege.dev/post/hardhat/hardhat-solidity-common-cases/</url><categories><category>Defi</category><category>Solidity</category></categories><tags><tag>hardhat</tag><tag>Solidity</tag><tag>hardhat-deploy</tag></tags><content type="html"> 常见 hardhat 相关问题整理 整理 hardhat， solidity 常见的错误，不定期更新。
 hardhat-deploy: cannot find artifact &ldquo;xxxx&rdquo; 可能有两种情况:
 确实没有该合约; 有重复的合约定义; 情况1的问题非常容易发现，由于错误提示的误导，情况2的却不容易被发现，因此，如果出现此类提示，请注意查看是否有多个重复的合约定义。
 Error: Cannot find module &lsquo;typechain/dist/TypeChain&rsquo; 原因：使用旧版本的 hardhat-typechain 导致该问题，这个版本已经不在维护。
@@ -274,6 +319,14 @@ enable keepalive 设置 tcp_keepalive_time libuv提供的接口为 uv_tcp_keepal
 int uv_tcp_keepalive(uv_tcp_t* handle, int enable, unsigned int delay) Enable / disable TCP keep-alive. delay is the initial delay in seconds, ignored when enable is zero. 该函数的实现代码如下：
 int uv__tcp_keepalive(int fd, int on, unsigned int delay) { if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &amp;on, sizeof(on))) return -errno; #ifdef TCP_KEEPIDLE if (on &amp;&amp; setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;delay, sizeof(delay))) return -errno; #endif /* Solaris/SmartOS, if you don't support keep-alive, * then don't advertise it in your system headers... */ /* FIXME(bnoordhuis) That's possibly because sizeof(delay) should be 1. */ #if defined(TCP_KEEPALIVE) &amp;&amp; !defined(__sun) if (on &amp;&amp; setsockopt(fd, IPPROTO_TCP, TCP_KEEPALIVE, &amp;delay, sizeof(delay))) return -errno; #endif return 0; } int uv_tcp_keepalive(uv_tcp_t* handle, int on, unsigned int delay) { int err; if (uv__stream_fd(handle) != -1) { err =uv__tcp_keepalive(uv__stream_fd(handle), on, delay); if (err) return err; } if (on) handle->flags |= UV_TCP_KEEPALIVE; else handle->flags &amp;= ~UV_TCP_KEEPALIVE; /* TODO Store delay if uv__stream_fd(handle) == -1 but don't want to enlarge * uv_tcp_t with an int that's almost never used... */ return 0; } 从上面的代码可以看出，当 uv__stream_fd(handle) 不成功时，仅仅设置该连接的flags位，实际上并没有用到delay这个参数。也就是说，只有当连接已经成功建立时，才能设置 tcp_keepalive_time，如果连接还没有建立成功，则这个值根本没有设置。
 如果要设置后面两个数值的话，需要自己实现, 示例代码如下：
-// // 设置 keepalive 相关的2个参数 // probes: 对应内核 tcp_keepalive_probes, 发送多少次keepalive报文还未收到回应时, close该连接 // intvl: 对应内核 tcp_keepalive_intvl, 发送keepalive报文的间隔时间 // idle: 对应内核 tcp_keepalive_time int set_keep_alive(const uv_handle_t* handle, int probes, int intvl, int idle) { int ret; uv_os_fd_t fd; ret = uv_fileno(handle, &amp;fd); if (ret &lt; 0) { return ret; } if (idle > 0) { if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;idle, sizeof(idle))) return -1; } // 设置 tcp_keepalive_intvl if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, (const void *) &amp;intvl, sizeof(int)) &lt; 0 ) { return -1; } // 设置 tcp_keepalive_probes if ( setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, (const void *) &amp;probes, sizeof(int)) &lt; 0) { return -1; } return 0; } 这个函数只能在连接建立成功后调用，因为只有连接建立成功才有fd，即uv_fileno才会返回成功。</content></entry><entry><title/><url>https://www.tiege.dev/post/futures-perps/a-great-sheet-of-perp-protocols/</url><categories/><tags/><content type="html"/></entry><entry><title/><url>https://www.tiege.dev/post/matching-engine/02-matching-engine-details/</url><categories/><tags/><content type="html"> redis 高可用 redis 事务 orderbook 在 redis 中的存储 数据库结构及订单存储 撮合引起启动时初始数据，及同步验证 启动
+// // 设置 keepalive 相关的2个参数 // probes: 对应内核 tcp_keepalive_probes, 发送多少次keepalive报文还未收到回应时, close该连接 // intvl: 对应内核 tcp_keepalive_intvl, 发送keepalive报文的间隔时间 // idle: 对应内核 tcp_keepalive_time int set_keep_alive(const uv_handle_t* handle, int probes, int intvl, int idle) { int ret; uv_os_fd_t fd; ret = uv_fileno(handle, &amp;fd); if (ret &lt; 0) { return ret; } if (idle > 0) { if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;idle, sizeof(idle))) return -1; } // 设置 tcp_keepalive_intvl if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL, (const void *) &amp;intvl, sizeof(int)) &lt; 0 ) { return -1; } // 设置 tcp_keepalive_probes if ( setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT, (const void *) &amp;probes, sizeof(int)) &lt; 0) { return -1; } return 0; } 这个函数只能在连接建立成功后调用，因为只有连接建立成功才有fd，即uv_fileno才会返回成功。</content></entry><entry><title/><url>https://www.tiege.dev/post/2021-11/nestjs-prisma/</url><categories/><tags/><content type="html"> nest new project-name
+cd project-name
+npm i prisma graphql @nestjs/graphql class-validator apollo-server-express dotenv graphql-fields graphql-modules reflect-metadata type-graphql typegraphql-nestjs graphql-type-json
+npx prisma init
+编辑.env， 配置DATABASE_URL
+npx prisma introspect
+npx prisma generate</content></entry><entry><title/><url>https://www.tiege.dev/post/futures-perps/a-great-sheet-of-perp-protocols/</url><categories/><tags/><content type="html"/></entry><entry><title/><url>https://www.tiege.dev/post/matching-engine/02-matching-engine-details/</url><categories/><tags/><content type="html"> redis 高可用 redis 事务 orderbook 在 redis 中的存储 数据库结构及订单存储 撮合引起启动时初始数据，及同步验证 启动
 异步 哪些可以异步，哪些必须顺序执行?
-故障定位，故障解决 性能</content></entry><entry><title/><url>https://www.tiege.dev/post/solidity/solidity-decompile/</url><categories/><tags/><content type="html"> https://www.trustlook.com/services/smart.html https://eveem.org/</content></entry></search>
+故障定位，故障解决 性能</content></entry><entry><title/><url>https://www.tiege.dev/post/postgres/postgres/</url><categories/><tags/><content type="html"> Postgresql 13.x 安装(Linux) https://www.postgresql.org/download/linux/redhat/
+CentOS 7安装步骤：
+# Install the repository RPM: sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm # Install PostgreSQL: sudo yum install -y postgresql13-server # Optionally initialize the database and enable automatic start: sudo /usr/pgsql-13/bin/postgresql-13-setup initdb sudo systemctl enable postgresql-13 sudo systemctl start postgresql-13 初始化 修改密码 sudo su - postgres psql -U postgres ALTER USER postgres with encrypted password 'GIFT.$$$2021.$$$Stock.$$$.go'; exit sudo systemctl restart postgresql-13.service 连接配置</content></entry><entry><title/><url>https://www.tiege.dev/post/solidity/solidity-decompile/</url><categories/><tags/><content type="html"> https://www.trustlook.com/services/smart.html https://eveem.org/</content></entry></search>

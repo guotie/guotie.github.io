@@ -131,7 +131,7 @@
 |
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>603 字</span>
+<span class=leancloud-world-count>878 字</span>
 </span>
 <span>
 |
@@ -206,6 +206,38 @@ func ReserveUserToken(conn redis.Conn, accountID uint64, howmany uint32) (latest
 </ol>
 <p>值得注意的是，<code>local sid=redis.call('HGET',KEYS[1],'latest') or 0;</code> 这里一定要有最后的 <code>or 0</code>, 否则 sid 会是一个<code>bool</code> 类型，无法进行数值运算，会提示如下错误:</p>
 <div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>(error) ERR Error running script (call to f_2bd1a2e80fc04313100937b7b533da6bea026773): @user_script:1: user_script:1: attempt to perform arithmetic on local &#39;sid&#39; (a boolean value)
+</code></pre></div><h2 id=几点补充>几点补充</h2>
+<h3 id=lua-判断>lua 判断</h3>
+<p>lua脚本判断的语法为：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>if cond then
+	clause
+else
+	clause
+end
+</code></pre></div><p>如果没有else，可以简化为：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>if cond then
+	clause
+end
+</code></pre></div><p>当然，还有 elif 的语法。</p>
+<h3 id=整数与字符串>整数与字符串</h3>
+<p>由于 redis 中的 key 是字符串类型，而 value 可以是整数。当你的key也是整数时，使用key与value相比时，将无法得到预期的结果，这是因为key为字符串类型，如果需要比较，可以用两种方法：</p>
+<ol>
+<li>使用<code>tonumber</code>来转换</li>
+<li>使用 +0 来强制转换</li>
+</ol>
+<h3 id=json-处理>json 处理</h3>
+<p>redis中的lua脚本内置了cjson库，可以在lua脚本中直接使用cjson encode和decode来操作json数据。</p>
+<p>encode 例子如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>local user={name=ARGV[1],year=ARGV[2],address=ARGV[3]};
+local userJson=cjson.encode(user);
+if redis.call(&#39;HSET&#39;, &#39;users&#39;, ARGV[1], userJson) == 0 then
+	return -1
+else
+	return userJson
+end
+</code></pre></div><p>decode 类似:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>local userJson = redis.call(&#39;HSET&#39;, &#39;users&#39;, ARGV[1]);
+local user = cjson.decode(userJson)
 </code></pre></div>
 </div>
 <footer class=post-footer>
@@ -252,6 +284,9 @@ func ReserveUserToken(conn redis.Conn, accountID uint64, howmany uint32) (latest
 </div>
 <div class=post-nav>
 <div class="post-nav-next post-nav-item">
+<a href=https://www.tiege.dev/post/aave/aave-v3-features/ rel=next title="AAVE v3 主要功能">
+<i class="fa fa-chevron-left"></i> AAVE v3 主要功能
+</a>
 </div>
 <div class="post-nav-prev post-nav-item">
 <a href=https://www.tiege.dev/post/hardhat/hardhat-solidity-common-cases/ rel=prev title="hardhat solidity 常见错误">
@@ -286,19 +321,19 @@ hardhat solidity 常见错误
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>18</span>
+<span class=site-state-item-count>21</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
 <div class="site-state-item site-state-categories">
 <a href=https://www.tiege.dev/categories/>
-<span class=site-state-item-count>8</span>
+<span class=site-state-item-count>9</span>
 <span class=site-state-item-name>分类</span>
 </a>
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>45</span>
+<span class=site-state-item-count>46</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>
@@ -385,14 +420,14 @@ medium
 <div class=footer-inner>
 <div class=copyright>
 <span class=copyright-year>
-&copy; 2010 - 2021
+&copy; 2010 - 2022
 </span>
 <span class=with-love><i class="fa fa-heart"></i></span>
 <span class=copyright-author>铁叔</span>
 </div>
 <div class=powered-info>
 <span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.88.1</a>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.2</a>
 </span>
 <span class=separator-line>/</span>
 <span class=theme-info>
