@@ -1,4 +1,21 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>BUSL开源许可协议</title><url>https://www.tiege.dev/post/busl-opensource-license/</url><categories><category>Defi</category><category>License</category></categories><tags><tag>BUSL</tag><tag>opensource</tag><tag>license</tag><tag>uniswap</tag><tag>aave</tag></tags><content type="html"> 去年，uniswap v3 也更改了开源协议，使用了BUSL协议。无独有偶，最近发布的AAVE v3页更改了开源协议，新的开源协议也是BUSL协议。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>关于稳定币的一个小小的想法(1)</title><url>https://www.tiege.dev/post/thinking/permissionless-lending/</url><categories><category>Defi</category><category>Solidity</category><category>lending</category><category>algo-stablecoin</category></categories><tags><tag>defi</tag><tag>lending</tag><tag>stablecoin</tag></tags><content type="html"> 自从2019年covid-19疫情以来，出现了各种去全球化思潮和管制; 在乌克兰战争之后, 金融领域的去全球化反思开始出现，美元还能信任吗？中立国家的金融机构还能信任吗？而这些信任危机的背后，正说明去中心化的BTC, ETH将是未来人类发展的正确方向。
+我们正处于一场伟大变革的十字路口。
+关于权力 谈论稳定币之前，我们需要先讨论一下权力。
+目前对crypto的各种监管都是假象，本质是权力之争。权力的特点，决定了权力永远在自我强化，自我膨胀。现在的权力绝大部分掌握在政客和富豪手中；因此，我们可以看到，各个政府的权力都在不断的扩大，同时，财富也越来越集中，各个国家的富豪的财富占比都在不断上升。
+随着区块链对金融、经济的渗透，一部分权力将不可避免的转移到链上，转移到代码上，这是目前的权力所有者无法忍受的，他们必然会想尽一切办法，尽可能阻止这种权力的转移。
+让我们来看看这次乌克兰战争的实例。自从乌克兰战争以来，各种机构都被美国要求制裁俄罗斯的实体，个人。各大crypto交易所也不例外，最明显的是binance。多名美国政客点名cex，binance，要求他们更加主动的对俄罗斯的实体、个人实行制裁。binance CEO cz说，与欧洲几百家银行相比，binance上管理的俄罗斯用户的资产不足银行的0.3%，但美国的政客却一直盯着binance，要求binance制裁俄罗斯用户。难道binance的影响力超过那几百家银行吗？显然不是。
+有两点原因。 第一，cex是对金融领域的颠覆。一直以来，金融领域都是持牌照经营，从而保证了从业者的垄断地位和收益，而cex从某种程度上打破了这一垄断，自然一直是监管者的眼中钉；binance作为规模最大的cex，自然首当其冲。
+第二，cex的资产可以方便的转移到链上，导致无法被制裁；而银行的资产，只能在各个银行之间转移，无论转到那家银行，都无法避免被制裁；
+区块链挑战的是国家的金融体系、铸币权，因此，无论是中国，还是美国，还是其他政府，都不愿意看到区块链的发展壮大。中国经过几轮打击，基本消灭了境内的交易所和挖矿产业；同期, 尽管facebook做了很多解释，做了很多准备，并且拉上了很多传统金融机构，但美国还是毫不犹豫的阻止了facebook发行稳定币的想法；俄罗斯在乌克兰战争前一直限制BTC的使用，只允许挖BTC赚外汇。
+如果各国政府是铁板一块，估计早已通过法律禁止了BTC，ETH的使用。然而，这个世界的各个国家都有利益冲突，不同的国家有不同的诉求，这就给了区块链行业的发展机会。
+美国，作为全球霸主，可以通过货币发行收割全世界；其他大国，政府可以通过发行法币，收割本国；最惨的是一些小国，基本没有货币自主权，只能被收割，所以，我们看到，萨尔加多最先使用BTC作为国家储备货币，然后南美各国也纷纷跟进，研究这一政策。现在俄罗斯在被各种制裁，踢出swift体系的情况下，对BTC的态度已经有了180度的转变，甚至已经愿意接受BTC支付购买原油，天然气。
+混乱的世界促进了crypto的发展。乌克兰一开始就接受crypto捐赠，并且还发行了NFT，现在俄罗斯在讨论接受BTC支付购买原油、天然气，这些政府行为，都极大的增强了crypto的共识。这对于目前的全球以美元为基础的货币体系提出了挑战，由于crypto无需信任，无法被任何人，任何组织，任何国家控制，超越国家主权，因此必然会取得最终的胜利。
+政府在发行法币的过程中，得到的隐形收益被称为铸币税。在区块链对政府的各种挑战中，铸币权的挑战是最大的。BTC，ETH更多的是资产属性，而稳定币，影响力将涉及到支付，流通，清算，深入到经济、金融的各个环节中。给政府带来了巨大的收益，任何政府都不会轻易放弃这一权力，这是权力的本质决定的。因此，我们可以看到，近两年美国尤其加强了对稳定币的监管。
+下图是1990年到2020年美国政府的负债走势图。在全球200多个国家中，美国是比较克制的政府，但是尽管如此，美国政府的负债还是在加速上升，可想而知，其他国家的人民被通货膨胀掠夺了多少财富。 ![]
+paypal是一家伟大的公司。自1998年以来，paypal从一个几个人的团队，打败了无数竞争对手，成为现在的巨无霸，并且深刻的改变了支付行业; 尽管如此，paypal并没能完全实现自己最初的愿景 ———— 让世界上大多数国家的人民免受通胀之苦。如今，在货币不断超发的情况下，连美国人都已经开始饱受通胀之苦。
+100年前，我们吃的食物，住的房子都比现在便宜很多，当然我们的收入也比现在少很多。在政府不断发行法币的过程中，由于货币流动的时效性，每个人获得的收益不同，政府获得了铸币税的额外收益；同时，有少部分先知先觉通过种种手段，获得更多的收益，而大部分人都是通货膨胀的受害者，在货币超发的过程中，变得越来越贫穷。
+这并不是paypal不够优秀，不够伟大；而是从本质上说，paypal无法做到这一点；同时，任何个人，任何组织，任何政府都无法做到。铸币税是通胀的根源。权力的腐化，人性的贪婪是无法改变的，面临铸币税的巨大诱惑，权力无法永远克制自己，货币一定会不断的超发，因此，世界上任何信用货币的最终结局都是崩溃，从古至今，无一例外。
+OK，我们即将进入稳定币的正题。如果要阻止通货膨胀对普罗大众的剥削，就必须使用去中心化的算法稳定币。</content></entry><entry><title>BUSL开源许可协议</title><url>https://www.tiege.dev/post/busl-opensource-license/</url><categories><category>Defi</category><category>License</category></categories><tags><tag>BUSL</tag><tag>opensource</tag><tag>license</tag><tag>uniswap</tag><tag>aave</tag></tags><content type="html"> 去年，uniswap v3 也更改了开源协议，使用了BUSL协议。无独有偶，最近发布的AAVE v3页更改了开源协议，新的开源协议也是BUSL协议。
 让我们来看看什么是BUSL协议。
 BUSL BUSL是 MariaDB 提出的一个许可协议. uniswap v3 的许可参数如下：
 ----------------------------------------------------------------------------- Parameters Licensor: Uniswap Labs Licensed Work: Uniswap V3 Core The Licensed Work is (c) 2021 Uniswap Labs Additional Use Grant: Any uses listed and defined at v3-core-license-grants.uniswap.eth Change Date: The earlier of 2023-04-01 or a date specified at v3-core-license-date.uniswap.eth Change License: GNU General Public License v2.0 or later ----------------------------------------------------------------------------- 可以看出，最重要的是 Change Date 和 Change License. 就本例而言，它指定了在 2023-04-01 之后, 将该协议变更为GPL协议.

@@ -106,6 +106,73 @@
 <article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
 <header class=post-header>
 <h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.tiege.dev/post/contract-proxy/uups-proxy-vulunerability/ itemprop=url>
+openzeppelin 版本4.1.0-4.3.1中UUPS proxy 存在致命漏洞
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-time>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-31">
+2021-10-31
+</time>
+</span>
+<span class=post-category>
+&nbsp; | &nbsp;
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Defi</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/solidity itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>Solidity</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a href=https://www.tiege.dev/categories/%E5%AE%89%E5%85%A8 itemprop=url rel=index style=text-decoration:underline>
+<span itemprop=name>安全</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span>
+|
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>899 字</span>
+</span>
+<span>
+|
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>2分钟</span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<p>openzeppelin 的<code>Proxy</code> 有两种:</p>
+<ul>
+<li>透明代理 Transparent proxy</li>
+<li>UUPS proxy</li>
+</ul>
+<p>两者的最主要的区别是， <code>upgradeTo</code> 函数逻辑的位置。在透明代理中， <code>upgradeTo</code> 函数逻辑在proxy合约中；而在 UUPS 代理中， <code>upgradeTo</code> 函数逻辑在实现合约中。</p>
+</div>
+<div class="post-more-link text-center">
+<a class=btn href=https://www.tiege.dev/post/contract-proxy/uups-proxy-vulunerability/ rel=contents>
+阅读全文 &#187;
+</a>
+</div>
+<footer class=post-footer><div class=post-eof></div></footer>
+</article>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
 <a class=post-title-link href=https://www.tiege.dev/post/aave/how-aave-deploy-and-initialize-contracts/ itemprop=url>
 AAVE源代码分析 -- AAVE 部署及初始化
 </a>
@@ -339,64 +406,6 @@ AAVE源代码分析 -- AAVE 利率代码分析
 </div>
 <footer class=post-footer><div class=post-eof></div></footer>
 </article>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.tiege.dev/post/aave/how-aave-proxy/ itemprop=url>
-AAVE源代码分析 -- AAVE Proxy 体系
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
-<span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-18">
-2021-10-18
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
-<i class="fa fa-folder-o fa-fw"></i>
-<span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Defi</span>
-</a>
-&nbsp;
-</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/aave itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>AAVE</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
-<i class="fa fa-file-word-o fa-fw"></i>
-<span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>753 字</span>
-</span>
-<span>
-|
-<i class="fa fa-eye fa-fw"></i>
-<span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>2分钟</span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h1 id=智能合约代理>智能合约代理</h1>
-<p>智能合约为了能够升级的需求，重要的合约基本都是代理模式。<code>AAVE</code> 的代理非常复杂，要想深入理解 <code>AAVE</code> 的代理体系，就需要剥茧抽丝，一层一层的去仔细研究，才能理解其精髓。</p>
-<p>AAVE 代理全局图：</p>
-</div>
-<div class="post-more-link text-center">
-<a class=btn href=https://www.tiege.dev/post/aave/how-aave-proxy/ rel=contents>
-阅读全文 &#187;
-</a>
-</div>
-<footer class=post-footer><div class=post-eof></div></footer>
-</article>
 </section>
 <nav class=pagination>
 <a class="extend prev" rel=prev href=https://www.tiege.dev/><i class="fa fa-angle-left"></i></a>
@@ -429,19 +438,19 @@ AAVE源代码分析 -- AAVE Proxy 体系
 <nav class="site-state motion-element">
 <div class="site-state-item site-state-posts">
 <a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>22</span>
+<span class=site-state-item-count>23</span>
 <span class=site-state-item-name>日志</span>
 </a>
 </div>
 <div class="site-state-item site-state-categories">
 <a href=https://www.tiege.dev/categories/>
-<span class=site-state-item-count>10</span>
+<span class=site-state-item-count>11</span>
 <span class=site-state-item-name>分类</span>
 </a>
 </div>
 <div class="site-state-item site-state-tags">
 <a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>49</span>
+<span class=site-state-item-count>50</span>
 <span class=site-state-item-name>标签</span>
 </a>
 </div>
@@ -494,10 +503,10 @@ medium
 <a href=https://www.tiege.dev/tags/solidity>Solidity</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/aave>Aave</a>
+<a href=https://www.tiege.dev/tags/defi>Defi</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/defi>Defi</a>
+<a href=https://www.tiege.dev/tags/aave>Aave</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
 <a href=https://www.tiege.dev/tags/compound>Compound</a>
@@ -518,7 +527,7 @@ medium
 <a href=https://www.tiege.dev/tags/lend-protocol>Lend protocol</a>
 </li>
 <li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/selector>Selector</a>
+<a href=https://www.tiege.dev/tags/lending>Lending</a>
 </li>
 </ul>
 </div>
