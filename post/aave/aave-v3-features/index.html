@@ -1,515 +1,67 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> AAVE v3 主要功能 - 铁叔 </title>
-<meta name=keywords content="博客,程序员,架构师,思考,读书,笔记,技术,智能合约,去中心化,区块链,Defi,NFT">
-<meta name=author content="铁叔">
-<meta property="og:title" content="AAVE v3 主要功能">
-<meta property="og:site_name" content="铁叔">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="AAVE v3 主要功能 - 铁叔">
-<meta name=description content="aave v3的主要功能">
-<link rel="shortcut icon" href=https://www.tiege.dev/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.tiege.dev/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.tiege.dev/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=https://www.tiege.dev/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.tiege.dev/css/syntax.css rel=stylesheet type=text/css>
-<script type=text/javascript>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?cbd45c2023eacf671acbf5faf4b5343d",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-103849967-1"></script>
-<script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','UA-103849967-1 ')</script>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>AAVE v3 主要功能 - 铁叔</title><meta name=keywords content="博客,程序员,架构师,思考,读书,笔记,技术,智能合约,去中心化,区块链,Defi,NFT"><meta name=author content="铁叔"><meta property="og:title" content="AAVE v3 主要功能"><meta property="og:site_name" content="铁叔"><meta property="og:image" content="/img/author.jpg"><meta name=title content="AAVE v3 主要功能 - 铁叔"><meta name=description content="aave v3的主要功能"><link rel="shortcut icon" href=https://www.tiege.dev/img/favicon.ico><link rel=apple-touch-icon href=https://www.tiege.dev/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.tiege.dev/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=https://www.tiege.dev/css/main.css rel=stylesheet type=text/css><link href=https://www.tiege.dev/css/syntax.css rel=stylesheet type=text/css><script type=text/javascript>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?cbd45c2023eacf671acbf5faf4b5343d",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script><script async src="https://www.googletagmanager.com/gtag/js?id=UA-103849967-1"></script>
+<script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","UA-103849967-1 ")</script></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class="site-meta custom-logo">
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=https://www.tiege.dev/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class="site-meta custom-logo"><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=https://www.tiege.dev/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>铁叔</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>天地不仁 以万物为刍狗</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=https://www.tiege.dev/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/about/index.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.tiege.dev/post/aave/aave-v3-features/ itemprop=url>
-AAVE v3 主要功能
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>天地不仁 以万物为刍狗</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=https://www.tiege.dev/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=https://www.tiege.dev/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=https://www.tiege.dev/about/index.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=https://www.tiege.dev/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.tiege.dev/post/aave/aave-v3-features/ itemprop=url>AAVE v3 主要功能</a></h1><div class=post-meta><span class=post-time><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-02-19">
-2022-02-19
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2022-02-19">2022-02-19</time></span>
+<span class=post-category>&nbsp; | &nbsp;
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>defi</span>
-</a>
-&nbsp;
-</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/aave itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>aave</span>
-</a>
-&nbsp;
-</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/lending itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>lending</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline><span itemprop=name>defi</span></a>
+&nbsp;</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a href=https://www.tiege.dev/categories/aave itemprop=url rel=index style=text-decoration:underline><span itemprop=name>aave</span></a>
+&nbsp;</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a href=https://www.tiege.dev/categories/lending itemprop=url rel=index style=text-decoration:underline><span itemprop=name>lending</span></a>
+&nbsp;</span></span>
+<span>|
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2069 字</span>
-</span>
-<span>
-|
+<span class=leancloud-world-count>2069 字</span></span>
+<span>|
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>5分钟</span>
-</span>
-<span id=/post/aave/aave-v3-features/ class=leancloud_visitors data-flag-title="AAVE v3 主要功能">
-|
+<span class=leancloud-view-count>5分钟</span></span>
+<span id=/post/aave/aave-v3-features/ class=leancloud_visitors data-flag-title="AAVE v3 主要功能">|
 <i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<p>AAVE v3的代码已经经过审计，即将发布。这个版本主要集中于几个方面：</p>
-<ul>
-<li>资金效率</li>
-<li>风险控制策略</li>
-<li>去中心化</li>
-<li>跨链</li>
-</ul>
-<p>AAVE v3合约已经开源，合约地址是：</p>
-<p><a href=https://github.com/aave/aave-v3-core>https://github.com/aave/aave-v3-core</a></p>
-<p>下面我们来看看这个版本带来了哪些具体改进。</p>
-<h2 id=功能>功能</h2>
-<p>相对于AAVE V2，V3的主要功能如下:</p>
-<ul>
-<li>Portal</li>
-<li>高效模式 eMode</li>
-<li>隔离模式</li>
-<li>改进风险管理</li>
-<li>L2 特色功能</li>
-<li>社区贡献</li>
-</ul>
-<h2 id=基于社区反馈的技术进步>基于社区反馈的技术进步</h2>
-<p>尽管 Aave 协议在过去两年中运行有效并取得了巨大的增长，社区的贡献为AAVE的技术进步提供了非常关键的作用：</p>
-<ul>
-<li>
-<p>资本效率：V2 不允许用户在收益产生（协议内和/或跨协议部署在各种网络上）或借贷能力方面优化他们提供给 Aave 协议的资产。V3 解决了这个问题。</p>
-</li>
-<li>
-<p>风险控制调整：虽然 Aave 协议目前具有可以通过 Aave 治理由社区激活的风险控制功能，例如调整借贷能力和维持保证金，但附加功能可以提高 Aave 协议智能合约固有的众所周知的安全性。V3 解决了这个问题。</p>
-</li>
-<li>
-<p>去中心化： Aave治理稳健且蓬勃发展——通过社区成员提交提案和创建子 DAO（GrantsDAO 和 RiskDAO）。但为了最大限度地去中心化，某些技术特性将允许 Aave 治理通过委托给团队或其他个人来进一步去中心化其功能。</p>
-</li>
-<li>
-<p>跨链：通过社区的努力，Aave 协议已部署在许多网络中，每个网络都有对应的流动性。但是用户无法将自己的个人流动性从一个网络上无缝转移到另一个网络。V3 解决了这个问题。</p>
-</li>
-</ul>
-<p>V3 的设计旨在创建下一代第 0 层 DeFi 协议，该协议可以显着改善用户体验，同时提供更高的资本效率、更高程度的去中心化和进一步增强的安全性。</p>
-<h2 id=portal>Portal</h2>
-<p>Portal示意图：</p>
-<p><img src=https://aws1.discourse-cdn.com/standard21/uploads/aave/original/2X/5/57f9135e675f1ed5637491be6facec13f0c26883.jpeg alt=portal></p>
-<p>portal模式可以让用户在多个网络之间无缝转移资产。例如，用户可以在ETH上burn aToken，然后在polygon上mint出来。类似于其他的跨链，不清楚技术原理</p>
-<h2 id=高效模式-emode>高效模式 eMode</h2>
-<p>eMode 示意图:</p>
-<p><img src=https://aws1.discourse-cdn.com/standard21/uploads/aave/original/2X/9/922d53c2b37505e9a368fca3960044d620225725.jpeg alt=emode></p>
-<p>简单举个例子就是，在eMode下，你质押wBTC，只能借出renBTC，这时，你的质押率可以达到97%，清算线为98%, 然后清算罚金率为2%。也就是在同类资产借贷时，提高了资金利用率，同时降低了风险。</p>
-<p>原理是把资产归类(category)，最多可以有255个类别。</p>
-<p>例如第一类为稳定币，这个category有USDT，USDC，DAI, 用户甲在这个模式下借贷时，例如存USDC，借DAI，可以有97%的LTV，而普通模式只有75%，这样用户甲的资金利用率就提高了22%</p>
-<p>当然，用户依然可以使用非category 1的资产作为抵押，但非category 1的资产的LTV就只能适用普通模式的LTV</p>
-<h2 id=新的风险管理参数>新的风险管理参数</h2>
-<p><strong>隔离模式</strong>
-<img src=https://aws1.discourse-cdn.com/standard21/uploads/aave/original/2X/e/e9ee63faffa5fa6252898e31c0ef8d8e103180d5.jpeg alt="Isolation Mode"></p>
-<p>隔离模式的目标是允许 Aave 治理协议上新币时，降低风险</p>
-<p>当社区成员提交治理提案以在 Aave市场上创建新资产时，该提案将该资产列为“隔离抵押品”，存入这些“隔离”资产的用户只能借出 Aave 治理指定的稳定币，且借款额不能高于指定的债务上限。</p>
-<p>当用户提供“隔离资产”作为抵押品时，该用户只能将该资产用作抵押品；即使用户向协议提供其他资产，用户也只能从这些资产上赚取利息，而不能将这些资产用作抵押品。</p>
-<h2 id=bug悬赏及riskdao>bug悬赏及riskDao</h2>
-<p>riskDao:
-<a href=https://governance.aave.com/t/proposal-aave-risk-dao/4729>https://governance.aave.com/t/proposal-aave-risk-dao/4729</a></p>
-<h2 id=其他特性>其他特性</h2>
-<ul>
-<li>
-<p>涉及代币转移（例如，供应、偿还）的功能支持 EIP 2612 许可（对于 L2 部署很重要）；</p>
-</li>
-<li>
-<p>支持 EIP 712 签名；</p>
-</li>
-<li>
-<p>用户可以使用aTokens代替原来借入的标的资产来偿还借入的头寸；</p>
-</li>
-<li>
-<p>Aave Governance 可以“允许”实体访问即时流动性；???（Aave Governance can “permitlist” entities to access instant liquidity;）</p>
-</li>
-<li>
-<p>Aave 治理可以重新配置向 Aave DAO 财政部提供的清算或即时流动性交易的任何费用；</p>
-</li>
-<li>
-<p>新的 flashloanSimple 可减少高达 20% 的gas消耗（标准的全功能函数仍然可用）；</p>
-</li>
-<li>
-<p>价格预言机逻辑可以提供对基础资产的通用计算（即不再仅限于 ETH）；</p>
-</li>
-<li>
-<p>新的利率策略优化了稳定的利率计算（并且无需贷款利率预言机）；</p>
-</li>
-<li>
-<p>代码重组以更加模块化；与 V2 单一存储库相比，V3 代码将分为三个不同的存储库——V3 core, V3 periphery, V3 deployments。这有助于社区贡献和在不同网络上的部署；</p>
-</li>
-<li>
-<p>智能合约重构以减少代码大小（为未来的其他更改提供更多余量）→ 最多 100K 优化器运行！</p>
-</li>
-</ul>
-<p>有了所有这些新功能，所有功能的 gas 成本仍然全面下降了 10-15% 左右！</p>
-<h2 id=代码方面>代码方面</h2>
-<p>注: 这部分是我粗略浏览一遍v3后的感受。</p>
-<ol start=0>
-<li>
-<p>gas 费优化
-solidity的版本升级为0.8.10，核心几个的Math都已经重写，大部分使用了assembly来节省手续费</p>
-</li>
-<li>
-<p>功能增加</p>
-</li>
-</ol>
-<ul>
-<li>emode</li>
-<li>isolation</li>
-</ul>
-<ol start=2>
-<li>命名改变
-例如：</li>
-</ol>
-<ul>
-<li>deposit命名为supply</li>
-<li>LendingPool.sol 命名为 Pool.sol, 等</li>
-<li>核心业务逻辑全部移到 libraries/logic 目录中 (之前只有利率计算, validation的逻辑在 libraries/logic 目录中，包括新增的 emode，isolation，bridge)</li>
-</ul>
-<ol start=3>
-<li>
-<p>外围功能单独 repo
-类似于uniswap，有一个单独的 periphery 仓库。此外，deployment 好像也是一个单独的仓库，在安装<code>aave-v3-core</code>依赖时，会安装一个<code>@aave/deploy-v3</code>的包，但这个包目前找不到，issue在此：https://github.com/aave/aave-v3-core/issues/625</p>
-</li>
-<li>
-<p>协议变更
-如果要fork AAVE v3的同学注意了，这个协议好像类似于 <code>uniswap v3</code>的协议，具体可以去研究一下: <a href=https://github.com/aave/aave-v3-core/blob/master/LICENSE.md>https://github.com/aave/aave-v3-core/blob/master/LICENSE.md</a></p>
-</li>
-</ol>
-<p>(注: 不过好像大家fork的都是compound，很少有项目fork AAVE ^_^)</p>
-<ol start=5>
-<li>核心架构上变动不多</li>
-</ol>
-<h2 id=参考资料>参考资料</h2>
-<p><a href=https://governance.aave.com/t/introducing-aave-v3/6035>https://governance.aave.com/t/introducing-aave-v3/6035</a></p>
-<p><a href=https://github.com/aave/aave-v3-core>https://github.com/aave/aave-v3-core</a></p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://www.tiege.dev/tags/aave rel=tag title=aave>#aave#</a>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p>AAVE v3的代码已经经过审计，即将发布。这个版本主要集中于几个方面：</p><ul><li>资金效率</li><li>风险控制策略</li><li>去中心化</li><li>跨链</li></ul><p>AAVE v3合约已经开源，合约地址是：</p><p><a href=https://github.com/aave/aave-v3-core>https://github.com/aave/aave-v3-core</a></p><p>下面我们来看看这个版本带来了哪些具体改进。</p><h2 id=功能>功能</h2><p>相对于AAVE V2，V3的主要功能如下:</p><ul><li>Portal</li><li>高效模式 eMode</li><li>隔离模式</li><li>改进风险管理</li><li>L2 特色功能</li><li>社区贡献</li></ul><h2 id=基于社区反馈的技术进步>基于社区反馈的技术进步</h2><p>尽管 Aave 协议在过去两年中运行有效并取得了巨大的增长，社区的贡献为AAVE的技术进步提供了非常关键的作用：</p><ul><li><p>资本效率：V2 不允许用户在收益产生（协议内和/或跨协议部署在各种网络上）或借贷能力方面优化他们提供给 Aave 协议的资产。V3 解决了这个问题。</p></li><li><p>风险控制调整：虽然 Aave 协议目前具有可以通过 Aave 治理由社区激活的风险控制功能，例如调整借贷能力和维持保证金，但附加功能可以提高 Aave 协议智能合约固有的众所周知的安全性。V3 解决了这个问题。</p></li><li><p>去中心化： Aave治理稳健且蓬勃发展——通过社区成员提交提案和创建子 DAO（GrantsDAO 和 RiskDAO）。但为了最大限度地去中心化，某些技术特性将允许 Aave 治理通过委托给团队或其他个人来进一步去中心化其功能。</p></li><li><p>跨链：通过社区的努力，Aave 协议已部署在许多网络中，每个网络都有对应的流动性。但是用户无法将自己的个人流动性从一个网络上无缝转移到另一个网络。V3 解决了这个问题。</p></li></ul><p>V3 的设计旨在创建下一代第 0 层 DeFi 协议，该协议可以显着改善用户体验，同时提供更高的资本效率、更高程度的去中心化和进一步增强的安全性。</p><h2 id=portal>Portal</h2><p>Portal示意图：</p><p><img src=https://aws1.discourse-cdn.com/standard21/uploads/aave/original/2X/5/57f9135e675f1ed5637491be6facec13f0c26883.jpeg alt=portal></p><p>portal模式可以让用户在多个网络之间无缝转移资产。例如，用户可以在ETH上burn aToken，然后在polygon上mint出来。类似于其他的跨链，不清楚技术原理</p><h2 id=高效模式-emode>高效模式 eMode</h2><p>eMode 示意图:</p><p><img src=https://aws1.discourse-cdn.com/standard21/uploads/aave/original/2X/9/922d53c2b37505e9a368fca3960044d620225725.jpeg alt=emode></p><p>简单举个例子就是，在eMode下，你质押wBTC，只能借出renBTC，这时，你的质押率可以达到97%，清算线为98%, 然后清算罚金率为2%。也就是在同类资产借贷时，提高了资金利用率，同时降低了风险。</p><p>原理是把资产归类(category)，最多可以有255个类别。</p><p>例如第一类为稳定币，这个category有USDT，USDC，DAI, 用户甲在这个模式下借贷时，例如存USDC，借DAI，可以有97%的LTV，而普通模式只有75%，这样用户甲的资金利用率就提高了22%</p><p>当然，用户依然可以使用非category 1的资产作为抵押，但非category 1的资产的LTV就只能适用普通模式的LTV</p><h2 id=新的风险管理参数>新的风险管理参数</h2><p><strong>隔离模式</strong>
+<img src=https://aws1.discourse-cdn.com/standard21/uploads/aave/original/2X/e/e9ee63faffa5fa6252898e31c0ef8d8e103180d5.jpeg alt="Isolation Mode"></p><p>隔离模式的目标是允许 Aave 治理协议上新币时，降低风险</p><p>当社区成员提交治理提案以在 Aave市场上创建新资产时，该提案将该资产列为“隔离抵押品”，存入这些“隔离”资产的用户只能借出 Aave 治理指定的稳定币，且借款额不能高于指定的债务上限。</p><p>当用户提供“隔离资产”作为抵押品时，该用户只能将该资产用作抵押品；即使用户向协议提供其他资产，用户也只能从这些资产上赚取利息，而不能将这些资产用作抵押品。</p><h2 id=bug悬赏及riskdao>bug悬赏及riskDao</h2><p>riskDao:
+<a href=https://governance.aave.com/t/proposal-aave-risk-dao/4729>https://governance.aave.com/t/proposal-aave-risk-dao/4729</a></p><h2 id=其他特性>其他特性</h2><ul><li><p>涉及代币转移（例如，供应、偿还）的功能支持 EIP 2612 许可（对于 L2 部署很重要）；</p></li><li><p>支持 EIP 712 签名；</p></li><li><p>用户可以使用aTokens代替原来借入的标的资产来偿还借入的头寸；</p></li><li><p>Aave Governance 可以“允许”实体访问即时流动性；???（Aave Governance can “permitlist” entities to access instant liquidity;）</p></li><li><p>Aave 治理可以重新配置向 Aave DAO 财政部提供的清算或即时流动性交易的任何费用；</p></li><li><p>新的 flashloanSimple 可减少高达 20% 的gas消耗（标准的全功能函数仍然可用）；</p></li><li><p>价格预言机逻辑可以提供对基础资产的通用计算（即不再仅限于 ETH）；</p></li><li><p>新的利率策略优化了稳定的利率计算（并且无需贷款利率预言机）；</p></li><li><p>代码重组以更加模块化；与 V2 单一存储库相比，V3 代码将分为三个不同的存储库——V3 core, V3 periphery, V3 deployments。这有助于社区贡献和在不同网络上的部署；</p></li><li><p>智能合约重构以减少代码大小（为未来的其他更改提供更多余量）→ 最多 100K 优化器运行！</p></li></ul><p>有了所有这些新功能，所有功能的 gas 成本仍然全面下降了 10-15% 左右！</p><h2 id=代码方面>代码方面</h2><p>注: 这部分是我粗略浏览一遍v3后的感受。</p><ol start=0><li><p>gas 费优化
+solidity的版本升级为0.8.10，核心几个的Math都已经重写，大部分使用了assembly来节省手续费</p></li><li><p>功能增加</p></li></ol><ul><li>emode</li><li>isolation</li></ul><ol start=2><li>命名改变
+例如：</li></ol><ul><li>deposit命名为supply</li><li>LendingPool.sol 命名为 Pool.sol, 等</li><li>核心业务逻辑全部移到 libraries/logic 目录中 (之前只有利率计算, validation的逻辑在 libraries/logic 目录中，包括新增的 emode，isolation，bridge)</li></ul><ol start=3><li><p>外围功能单独 repo
+类似于uniswap，有一个单独的 periphery 仓库。此外，deployment 好像也是一个单独的仓库，在安装<code>aave-v3-core</code>依赖时，会安装一个<code>@aave/deploy-v3</code>的包，但这个包目前找不到，issue在此：https://github.com/aave/aave-v3-core/issues/625</p></li><li><p>协议变更
+如果要fork AAVE v3的同学注意了，这个协议好像类似于 <code>uniswap v3</code>的协议，具体可以去研究一下: <a href=https://github.com/aave/aave-v3-core/blob/master/LICENSE.md>https://github.com/aave/aave-v3-core/blob/master/LICENSE.md</a></p></li></ol><p>(注: 不过好像大家fork的都是compound，很少有项目fork AAVE ^_^)</p><ol start=5><li>核心架构上变动不多</li></ol><h2 id=参考资料>参考资料</h2><p><a href=https://governance.aave.com/t/introducing-aave-v3/6035>https://governance.aave.com/t/introducing-aave-v3/6035</a></p><p><a href=https://github.com/aave/aave-v3-core>https://github.com/aave/aave-v3-core</a></p></div><footer class=post-footer><div class=post-tags><a href=https://www.tiege.dev/tags/aave rel=tag title=aave>#aave#</a>
 <a href=https://www.tiege.dev/tags/defi rel=tag title=defi>#defi#</a>
-<a href=https://www.tiege.dev/tags/lending rel=tag title=lending>#lending#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-info>
-<p>
-<span>声明：</span>AAVE v3 主要功能
-</p>
-<p>
-<span>链接：</span>https://www.tiege.dev/post/aave/aave-v3-features/
-</p>
-<p>
-<span>作者：</span>铁叔
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=https://www.tiege.dev/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=https://www.tiege.dev/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.tiege.dev/post/busl-opensource-license/ rel=next title=BUSL开源许可协议>
-<i class="fa fa-chevron-left"></i> BUSL开源许可协议
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.tiege.dev/post/2021-11/redis-lua-script-transaction/ rel=prev title="使用 lua script 来执行 redis 事务">
-使用 lua script 来执行 redis 事务
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<a href=https://www.tiege.dev/tags/lending rel=tag title=lending>#lending#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-info><p><span>声明：</span>AAVE v3 主要功能</p><p><span>链接：</span>https://www.tiege.dev/post/aave/aave-v3-features/</p><p><span>作者：</span>铁叔</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick='var qr=document.getElementById("QR");qr.style.display==="none"?qr.style.display="block":qr.style.display="none"'>
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=https://www.tiege.dev/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=https://www.tiege.dev/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.tiege.dev/post/busl-opensource-license/ rel=next title=BUSL开源许可协议><i class="fa fa-chevron-left"></i> BUSL开源许可协议</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.tiege.dev/post/2021-11/redis-lua-script-transaction/ rel=prev title="使用 lua script 来执行 redis 事务">使用 lua script 来执行 redis 事务
+<i class="fa fa-chevron-right"></i></a></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<section class="site-overview sidebar-panel sidebar-panel-active">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=https://www.tiege.dev/img/avatar.png alt=铁叔>
-<p class=site-author-name itemprop=name>铁叔</p>
-<p class="site-description motion-element" itemprop=description>
-千里之行 始于足下
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>23</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=https://www.tiege.dev/categories/>
-<span class=site-state-item-count>11</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>50</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/guotie/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://twitter.com/guotie target=_blank title=twitter>
-<i class="fa fa-fw fa-twitter"></i>
-twitter
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://t.me/anydefi target=_blank title=telegram>
-<i class="fa fa-fw fa-telegram"></i>
-telegram
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:guotie.9@gmail.com target=_blank title=email>
-<i class="fa fa-fw fa-envelope"></i>
-email
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://medium.com/@guotie target=_blank title=medium>
-<i class="fa fa-fw fa-medium"></i>
-medium
-</a>
-</span>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/solidity>Solidity</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/defi>Defi</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/aave>Aave</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/compound>Compound</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/abi>Abi</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/dapp>Dapp</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/ethereum>Ethereum</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/evm>Evm</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/lend-protocol>Lend protocol</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/lending>Lending</a>
-</li>
-</ul>
-</div>
-<div class="links-of-blogroll motion-element inline">
-<script type=text/javascript src="//rf.revolvermaps.com/0/0/6.js?i=53tnks7nxby&m=7&c=e63100&cr1=ffffff&f=arial&l=0&bv=90&lx=-420&ly=420&hi=20&he=7&hc=a8ddff&rs=80" async></script>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=https://www.tiege.dev/img/avatar.png alt=铁叔><p class=site-author-name itemprop=name>铁叔</p><p class="site-description motion-element" itemprop=description>千里之行 始于足下</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=https://www.tiege.dev/post/><span class=site-state-item-count>24</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=https://www.tiege.dev/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=https://www.tiege.dev/tags/><span class=site-state-item-count>52</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/guotie/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://twitter.com/guotie target=_blank title=twitter><i class="fa fa-fw fa-twitter"></i>
+twitter</a></span>
+<span class=links-of-author-item><a href=https://t.me/anydefi target=_blank title=telegram><i class="fa fa-fw fa-telegram"></i>
+telegram</a></span>
+<span class=links-of-author-item><a href=mailto:guotie.9@gmail.com target=_blank title=email><i class="fa fa-fw fa-envelope"></i>
+email</a></span>
+<span class=links-of-author-item><a href=https://medium.com/@guotie target=_blank title=medium><i class="fa fa-fw fa-medium"></i>
+medium</a></span></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/solidity>Solidity</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/defi>Defi</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/aave>Aave</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/compound>Compound</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/abi>Abi</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/dapp>Dapp</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/ethereum>Ethereum</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/evm>Evm</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/lend-protocol>Lend protocol</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/lending>Lending</a></li></ul></div><div class="links-of-blogroll motion-element inline"><script type=text/javascript src="//rf.revolvermaps.com/0/0/6.js?i=53tnks7nxby&amp;m=7&amp;c=e63100&amp;cr1=ffffff&amp;f=arial&amp;l=0&amp;bv=90&amp;lx=-420&amp;ly=420&amp;hi=20&amp;he=7&amp;hc=a8ddff&amp;rs=80" async></script></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2023</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>铁叔</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.2</a>
-</span>
+<span class=copyright-author>铁叔</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.119.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=separator-line>/</span>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/search.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/affix.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var a=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':a}).show(),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"https://waline-blog-api.vercel.app",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":e}).show(),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"https://waline-blog-api.vercel.app",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

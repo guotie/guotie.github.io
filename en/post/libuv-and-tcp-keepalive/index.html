@@ -1,494 +1,160 @@
-<!doctype html><html lang=en dir=content/en>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> libuv与TCP Keepalive - Uncle Tony </title>
-<meta name=keywords content="Blog,Software,Product,Architecture,defi,solidity,rust,golang,blockchain">
-<meta name=author content="guotie">
-<meta property="og:title" content="libuv与TCP Keepalive">
-<meta property="og:site_name" content="Uncle Tony">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="libuv与TCP Keepalive - Uncle Tony">
-<meta name=description content="TCP协议栈的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。 HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。">
-<link rel="shortcut icon" href=https://www.tiege.dev/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.tiege.dev/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.tiege.dev/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=https://www.tiege.dev/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.tiege.dev/css/syntax.css rel=stylesheet type=text/css>
-<script type=text/javascript>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?cbd45c2023eacf671acbf5faf4b5343d",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-103849967-1"></script>
-<script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','UA-103849967-1 ')</script>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=en dir=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>libuv与TCP Keepalive - Uncle Tony</title><meta name=keywords content="Blog,Software,Product,Architecture,defi,solidity,rust,golang,blockchain"><meta name=author content="guotie"><meta property="og:title" content="libuv与TCP Keepalive"><meta property="og:site_name" content="Uncle Tony"><meta property="og:image" content="/img/author.jpg"><meta name=title content="libuv与TCP Keepalive - Uncle Tony"><meta name=description content="TCP协议栈的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。 HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。"><link rel="shortcut icon" href=https://www.tiege.dev/img/favicon.ico><link rel=apple-touch-icon href=https://www.tiege.dev/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.tiege.dev/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=https://www.tiege.dev/css/main.css rel=stylesheet type=text/css><link href=https://www.tiege.dev/css/syntax.css rel=stylesheet type=text/css><script type=text/javascript>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?cbd45c2023eacf671acbf5faf4b5343d",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script><script async src="https://www.googletagmanager.com/gtag/js?id=UA-103849967-1"></script>
+<script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","UA-103849967-1 ")</script></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class="site-meta custom-logo">
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<span class=toggle-line></span></div></div><div class="site-meta custom-logo"><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
 <a class=lang-link id=zh-cn href=https://www.tiege.dev/post/libuv-and-tcp-keepalive/>中文</a>
-<span class=lang-line> / </span>
-<a class=lang-link id=en href=#>English</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=https://www.tiege.dev/en/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=lang-line>/</span>
+<a class=lang-link id=en href=#>English</a></div><div class=custom-logo-site-title><a href=https://www.tiege.dev/en/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>Uncle Tony</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>A journey of a thousand miles begins with a single step</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=https://www.tiege.dev/en/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/en/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archive
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/en/about/index.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>About
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/en/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>Page404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> Search</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder="Enter key words..." spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.tiege.dev/en/post/libuv-and-tcp-keepalive/ itemprop=url>
-libuv与TCP Keepalive
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>A journey of a thousand miles begins with a single step</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=https://www.tiege.dev/en/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>Home</a></li><li class=menu-item><a href=https://www.tiege.dev/en/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>Archive</a></li><li class=menu-item><a href=https://www.tiege.dev/en/about/index.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>About</a></li><li class=menu-item><a href=https://www.tiege.dev/en/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>Page404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>Search</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder="Enter key words..." spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.tiege.dev/en/post/libuv-and-tcp-keepalive/ itemprop=url>libuv与TCP Keepalive</a></h1><div class=post-meta><span class=post-time><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>Published at:</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2017/07/02">
-2017/07/02
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2017/07/02">2017/07/02</time></span>
+<span class=post-category>&nbsp; | &nbsp;
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>Categories:</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/en/categories/c/c++ itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>c/c++</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a href=https://www.tiege.dev/en/categories/c/c++ itemprop=url rel=index style=text-decoration:underline><span itemprop=name>c/c++</span></a>
+&nbsp;</span></span>
+<span>|
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>Words:</span>
-<span class=leancloud-world-count>1184 words</span>
-</span>
-<span>
-|
+<span class=leancloud-world-count>1184 words</span></span>
+<span>|
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>Reading:</span>
-<span class=leancloud-view-count>3 minutes</span>
-</span>
-<span id=/en/post/libuv-and-tcp-keepalive/ class=leancloud_visitors data-flag-title="libuv与TCP Keepalive">
-|
+<span class=leancloud-view-count>3 minutes</span></span>
+<span id=/en/post/libuv-and-tcp-keepalive/ class=leancloud_visitors data-flag-title="libuv与TCP Keepalive">|
 <i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>Visited:</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h1 id=libuv-与-tcp-keepalive>libuv 与 TCP Keepalive</h1>
-<h2 id=关于-keepalive>关于 keepalive</h2>
-<p>这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。</p>
-<p>HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。</p>
-<p>Linux内核关于TCP keepalive的说明在这里： <a href=http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html>http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html</a></p>
-<p>其中：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>tcp_keepalive_time
- the interval between the last data packet sent (simple ACKs are not considered data) and the first keepalive probe; after the connection is marked to need keepalive, this counter is not used any further
-tcp_keepalive_intvl
- the interval between subsequential keepalive probes, regardless of what the connection has exchanged in the meantime
-tcp_keepalive_probes
- the number of unacknowledged probes to send before considering the connection dead and notifying the application layer
-</code></pre></div><p>大致翻译一下就是</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>tcp_keepalive_time
-当一台机器在 N 秒内，还没有收到对方的任何数据时，开始 keepalive 探测对方是否正常
-tcp_keepalive_intvl
-keepalive报文发送的间隔，单位秒
-tcp_keepalive_probes
-keepalive报文探测次数
-</code></pre></div><p>也就是说，在 tcp_keepalive_time 秒内仍未收到对端数据时，开始发起 keepalive 探测，每隔 tcp_keepalive_intvl 发送一个探测报文，当 发送 tcp_keepalive_probes 探测报文，对方仍未响应时，关闭连接。</p>
-<p>在Linux下，可以通过以下方式查看系统的keepalive配置：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@localhost ~]# cat /proc/sys/net/ipv4/ 
-1800
-[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_keepalive_probes 
-9
-[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_keepalive_intvl  
-75
-</code></pre></div><h2 id=keepalive-接口>keepalive 接口</h2>
-<p>设置一个套接字的keepalive的方法如下：</p>
-<h3 id=1-enable-keepalive>1. enable keepalive</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>int on = 1;
-if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &amp;on, sizeof(on))) {
-	// log
-    return -1;
-}
-</code></pre></div><h3 id=2-设置-tcp_keepalive_time>2. 设置 tcp_keepalive_time</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>int idle = 10;
-if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;idle, sizeof(int)) &lt; 0) {
-  // log
-  return -1;
-}
-</code></pre></div><h3 id=3-设置-tcp_keepalive_probes>3. 设置 tcp_keepalive_probes</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>int probes = 4;
-if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;probes, sizeof(int)) &lt; 0) {
-  // log
-  return -1;
-}
-</code></pre></div><h3 id=4-设置-tcp_keepalive_intvl>4. 设置 tcp_keepalive_intvl</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>int intvl = 1;
-if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;intvl, sizeof(int)) &lt; 0) {
-  // log
-  return -1;
-}
-</code></pre></div><h2 id=libuv-的-keepalive>libuv 的 keepalive</h2>
-<p>libuv提供的接口只能设置上面的两个：</p>
-<ol>
-<li>enable keepalive</li>
-<li>设置 tcp_keepalive_time</li>
-</ol>
-<p>libuv提供的接口为 uv_tcp_keepalive, 函数原型如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>int uv_tcp_keepalive(uv_tcp_t* handle, int enable, unsigned int delay)
-   Enable / disable TCP keep-alive. delay is the initial delay in seconds, ignored when enable is zero.
-</code></pre></div><p>该函数的实现代码如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>int uv__tcp_keepalive(int fd, int on, unsigned int delay) {
-  if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &amp;on, sizeof(on)))
-    return -errno;
-#ifdef TCP_KEEPIDLE
-  if (on &amp;&amp; setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;delay, sizeof(delay)))
-    return -errno;
-#endif
-  /* Solaris/SmartOS, if you don&#39;t support keep-alive,
-   * then don&#39;t advertise it in your system headers...
-   */
-  /* FIXME(bnoordhuis) That&#39;s possibly because sizeof(delay) should be 1. */
-#if defined(TCP_KEEPALIVE) &amp;&amp; !defined(__sun)
-  if (on &amp;&amp; setsockopt(fd, IPPROTO_TCP, TCP_KEEPALIVE, &amp;delay, sizeof(delay)))
-    return -errno;
-#endif
-  return 0;
-}
-int uv_tcp_keepalive(uv_tcp_t* handle, int on, unsigned int delay) {
-  int err;
-  if (uv__stream_fd(handle) != -1) {
-    err =uv__tcp_keepalive(uv__stream_fd(handle), on, delay);
-    if (err)
-      return err;
-  }
-  if (on)
-    handle-&gt;flags |= UV_TCP_KEEPALIVE;
-  else
-    handle-&gt;flags &amp;= ~UV_TCP_KEEPALIVE;
-  /* TODO Store delay if uv__stream_fd(handle) == -1 but don&#39;t want to enlarge
-   *      uv_tcp_t with an int that&#39;s almost never used...
-   */
-  return 0;
-}
-</code></pre></div><p>从上面的代码可以看出，当 uv__stream_fd(handle) 不成功时，仅仅设置该连接的flags位，实际上并没有用到delay这个参数。也就是说，只有当连接已经成功建立时，才能设置 tcp_keepalive_time，如果连接还没有建立成功，则这个值根本没有设置。</p>
-<p>如果要设置后面两个数值的话，需要自己实现, 示例代码如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>//
-// 设置 keepalive 相关的2个参数
-// probes: 对应内核 tcp_keepalive_probes, 发送多少次keepalive报文还未收到回应时, close该连接
-// intvl:  对应内核 tcp_keepalive_intvl, 发送keepalive报文的间隔时间
-// idle:   对应内核 tcp_keepalive_time
-int set_keep_alive(const uv_handle_t* handle, int probes, int intvl, int idle) {
-    int ret;
-    uv_os_fd_t fd;
-    ret = uv_fileno(handle, &amp;fd);
-    if (ret &lt; 0) {
-        return ret;
-    }
-    if (idle &gt; 0) {
-        if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;idle, sizeof(idle)))
-            return -1;
-    }
-    // 设置 tcp_keepalive_intvl
-    if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL,
-                (const void *) &amp;intvl, sizeof(int)) &lt; 0 ) {
-        return -1;
-    }
-    // 设置 tcp_keepalive_probes
-    if ( setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT,
-                (const void *) &amp;probes, sizeof(int)) &lt; 0) {
-        return -1;
-    }
-    return 0;
-}
-</code></pre></div><p>这个函数只能在连接建立成功后调用，因为只有连接建立成功才有fd，即uv_fileno才会返回成功。</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://www.tiege.dev/en/tags/libuv rel=tag title=libuv>#libuv#</a>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h1 id=libuv-与-tcp-keepalive>libuv 与 TCP Keepalive</h1><h2 id=关于-keepalive>关于 keepalive</h2><p>这里的keepalive与HTTP的keepalive不同，这里的keepalive是TCP层的keepalive，用处是当两台机器之间通信时，中间网络出现故障，这时，两端并无法感知网络故障这个事件，无法及时发现网络故障。</p><p>HTTP的keepalive是指，一个请求在请求头部增加一个keep alive的行，这时，服务端传输完成后，不会关闭这个TCP连接，还可以继续下次HTTP请求，提高了效率。</p><p>Linux内核关于TCP keepalive的说明在这里： <a href=http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html>http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html</a></p><p>其中：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>tcp_keepalive_time
+</span></span><span style=display:flex><span> the interval between the last data packet sent (simple ACKs are not considered data) and the first keepalive probe; after the connection is marked to need keepalive, this counter is not used any further
+</span></span><span style=display:flex><span>tcp_keepalive_intvl
+</span></span><span style=display:flex><span> the interval between subsequential keepalive probes, regardless of what the connection has exchanged in the meantime
+</span></span><span style=display:flex><span>tcp_keepalive_probes
+</span></span><span style=display:flex><span> the number of unacknowledged probes to send before considering the connection dead and notifying the application layer
+</span></span></code></pre></div><p>大致翻译一下就是</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>tcp_keepalive_time
+</span></span><span style=display:flex><span>当一台机器在 N 秒内，还没有收到对方的任何数据时，开始 keepalive 探测对方是否正常
+</span></span><span style=display:flex><span>tcp_keepalive_intvl
+</span></span><span style=display:flex><span>keepalive报文发送的间隔，单位秒
+</span></span><span style=display:flex><span>tcp_keepalive_probes
+</span></span><span style=display:flex><span>keepalive报文探测次数
+</span></span></code></pre></div><p>也就是说，在 tcp_keepalive_time 秒内仍未收到对端数据时，开始发起 keepalive 探测，每隔 tcp_keepalive_intvl 发送一个探测报文，当 发送 tcp_keepalive_probes 探测报文，对方仍未响应时，关闭连接。</p><p>在Linux下，可以通过以下方式查看系统的keepalive配置：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>[root@localhost ~]# cat /proc/sys/net/ipv4/ 
+</span></span><span style=display:flex><span>1800
+</span></span><span style=display:flex><span>[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_keepalive_probes 
+</span></span><span style=display:flex><span>9
+</span></span><span style=display:flex><span>[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_keepalive_intvl  
+</span></span><span style=display:flex><span>75
+</span></span></code></pre></div><h2 id=keepalive-接口>keepalive 接口</h2><p>设置一个套接字的keepalive的方法如下：</p><h3 id=1-enable-keepalive>1. enable keepalive</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>int on = 1;
+</span></span><span style=display:flex><span>if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &amp;on, sizeof(on))) {
+</span></span><span style=display:flex><span>	// log
+</span></span><span style=display:flex><span>    return -1;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=2-设置-tcp_keepalive_time>2. 设置 tcp_keepalive_time</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>int idle = 10;
+</span></span><span style=display:flex><span>if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;idle, sizeof(int)) &lt; 0) {
+</span></span><span style=display:flex><span>  // log
+</span></span><span style=display:flex><span>  return -1;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=3-设置-tcp_keepalive_probes>3. 设置 tcp_keepalive_probes</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>int probes = 4;
+</span></span><span style=display:flex><span>if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;probes, sizeof(int)) &lt; 0) {
+</span></span><span style=display:flex><span>  // log
+</span></span><span style=display:flex><span>  return -1;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=4-设置-tcp_keepalive_intvl>4. 设置 tcp_keepalive_intvl</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>int intvl = 1;
+</span></span><span style=display:flex><span>if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;intvl, sizeof(int)) &lt; 0) {
+</span></span><span style=display:flex><span>  // log
+</span></span><span style=display:flex><span>  return -1;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=libuv-的-keepalive>libuv 的 keepalive</h2><p>libuv提供的接口只能设置上面的两个：</p><ol><li>enable keepalive</li><li>设置 tcp_keepalive_time</li></ol><p>libuv提供的接口为 uv_tcp_keepalive, 函数原型如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>int uv_tcp_keepalive(uv_tcp_t* handle, int enable, unsigned int delay)
+</span></span><span style=display:flex><span>   Enable / disable TCP keep-alive. delay is the initial delay in seconds, ignored when enable is zero.
+</span></span></code></pre></div><p>该函数的实现代码如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#0b0;font-weight:700>int</span> <span style=color:#00a000>uv__tcp_keepalive</span>(<span style=color:#0b0;font-weight:700>int</span> fd, <span style=color:#0b0;font-weight:700>int</span> on, <span style=color:#0b0;font-weight:700>unsigned</span> <span style=color:#0b0;font-weight:700>int</span> delay) {
+</span></span><span style=display:flex><span>  <span style=color:#a2f;font-weight:700>if</span> (<span style=color:#00a000>setsockopt</span>(fd, SOL_SOCKET, SO_KEEPALIVE, <span style=color:#666>&amp;</span>on, <span style=color:#a2f;font-weight:700>sizeof</span>(on)))
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>-</span>errno;
+</span></span><span style=display:flex><span><span style=color:#080>#ifdef TCP_KEEPIDLE
+</span></span></span><span style=display:flex><span><span style=color:#080></span>  <span style=color:#a2f;font-weight:700>if</span> (on <span style=color:#666>&amp;&amp;</span> <span style=color:#00a000>setsockopt</span>(fd, IPPROTO_TCP, TCP_KEEPIDLE, <span style=color:#666>&amp;</span>delay, <span style=color:#a2f;font-weight:700>sizeof</span>(delay)))
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>-</span>errno;
+</span></span><span style=display:flex><span><span style=color:#080>#endif
+</span></span></span><span style=display:flex><span><span style=color:#080></span>  <span style=color:#080;font-style:italic>/* Solaris/SmartOS, if you don&#39;t support keep-alive,
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>   * then don&#39;t advertise it in your system headers...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>   */</span>
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic>/* FIXME(bnoordhuis) That&#39;s possibly because sizeof(delay) should be 1. */</span>
+</span></span><span style=display:flex><span><span style=color:#080>#if defined(TCP_KEEPALIVE) &amp;&amp; !defined(__sun)
+</span></span></span><span style=display:flex><span><span style=color:#080></span>  <span style=color:#a2f;font-weight:700>if</span> (on <span style=color:#666>&amp;&amp;</span> <span style=color:#00a000>setsockopt</span>(fd, IPPROTO_TCP, TCP_KEEPALIVE, <span style=color:#666>&amp;</span>delay, <span style=color:#a2f;font-weight:700>sizeof</span>(delay)))
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>-</span>errno;
+</span></span><span style=display:flex><span><span style=color:#080>#endif
+</span></span></span><span style=display:flex><span><span style=color:#080></span>  <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>0</span>;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#0b0;font-weight:700>int</span> <span style=color:#00a000>uv_tcp_keepalive</span>(<span style=color:#0b0;font-weight:700>uv_tcp_t</span><span style=color:#666>*</span> handle, <span style=color:#0b0;font-weight:700>int</span> on, <span style=color:#0b0;font-weight:700>unsigned</span> <span style=color:#0b0;font-weight:700>int</span> delay) {
+</span></span><span style=display:flex><span>  <span style=color:#0b0;font-weight:700>int</span> err;
+</span></span><span style=display:flex><span>  <span style=color:#a2f;font-weight:700>if</span> (<span style=color:#00a000>uv__stream_fd</span>(handle) <span style=color:#666>!=</span> <span style=color:#666>-</span><span style=color:#666>1</span>) {
+</span></span><span style=display:flex><span>    err <span style=color:#666>=</span><span style=color:#00a000>uv__tcp_keepalive</span>(<span style=color:#00a000>uv__stream_fd</span>(handle), on, delay);
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> (err)
+</span></span><span style=display:flex><span>      <span style=color:#a2f;font-weight:700>return</span> err;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#a2f;font-weight:700>if</span> (on)
+</span></span><span style=display:flex><span>    handle<span style=color:#666>-&gt;</span>flags <span style=color:#666>|=</span> UV_TCP_KEEPALIVE;
+</span></span><span style=display:flex><span>  <span style=color:#a2f;font-weight:700>else</span>
+</span></span><span style=display:flex><span>    handle<span style=color:#666>-&gt;</span>flags <span style=color:#666>&amp;=</span> <span style=color:#666>~</span>UV_TCP_KEEPALIVE;
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic>/* TODO Store delay if uv__stream_fd(handle) == -1 but don&#39;t want to enlarge
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>   *      uv_tcp_t with an int that&#39;s almost never used...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>   */</span>
+</span></span><span style=display:flex><span>  <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>0</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>从上面的代码可以看出，当 uv__stream_fd(handle) 不成功时，仅仅设置该连接的flags位，实际上并没有用到delay这个参数。也就是说，只有当连接已经成功建立时，才能设置 tcp_keepalive_time，如果连接还没有建立成功，则这个值根本没有设置。</p><p>如果要设置后面两个数值的话，需要自己实现, 示例代码如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>//
+</span></span><span style=display:flex><span>// 设置 keepalive 相关的2个参数
+</span></span><span style=display:flex><span>// probes: 对应内核 tcp_keepalive_probes, 发送多少次keepalive报文还未收到回应时, close该连接
+</span></span><span style=display:flex><span>// intvl:  对应内核 tcp_keepalive_intvl, 发送keepalive报文的间隔时间
+</span></span><span style=display:flex><span>// idle:   对应内核 tcp_keepalive_time
+</span></span><span style=display:flex><span>int set_keep_alive(const uv_handle_t* handle, int probes, int intvl, int idle) {
+</span></span><span style=display:flex><span>    int ret;
+</span></span><span style=display:flex><span>    uv_os_fd_t fd;
+</span></span><span style=display:flex><span>    ret = uv_fileno(handle, &amp;fd);
+</span></span><span style=display:flex><span>    if (ret &lt; 0) {
+</span></span><span style=display:flex><span>        return ret;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    if (idle &gt; 0) {
+</span></span><span style=display:flex><span>        if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPIDLE, &amp;idle, sizeof(idle)))
+</span></span><span style=display:flex><span>            return -1;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    // 设置 tcp_keepalive_intvl
+</span></span><span style=display:flex><span>    if (setsockopt(fd, IPPROTO_TCP, TCP_KEEPINTVL,
+</span></span><span style=display:flex><span>                (const void *) &amp;intvl, sizeof(int)) &lt; 0 ) {
+</span></span><span style=display:flex><span>        return -1;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    // 设置 tcp_keepalive_probes
+</span></span><span style=display:flex><span>    if ( setsockopt(fd, IPPROTO_TCP, TCP_KEEPCNT,
+</span></span><span style=display:flex><span>                (const void *) &amp;probes, sizeof(int)) &lt; 0) {
+</span></span><span style=display:flex><span>        return -1;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    return 0;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这个函数只能在连接建立成功后调用，因为只有连接建立成功才有fd，即uv_fileno才会返回成功。</p></div><footer class=post-footer><div class=post-tags><a href=https://www.tiege.dev/en/tags/libuv rel=tag title=libuv>#libuv#</a>
 <a href=https://www.tiege.dev/en/tags/tcp rel=tag title=tcp>#tcp#</a>
 <a href=https://www.tiege.dev/en/tags/tcp-keepalive rel=tag title="TCP Keepalive">#TCP Keepalive#</a>
-<a href=https://www.tiege.dev/en/tags/linux rel=tag title=linux>#linux#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-info>
-<p>
-<span>Declaration：</span>libuv与TCP Keepalive
-</p>
-<p>
-<span>Link：</span>https://www.tiege.dev/en/post/libuv-and-tcp-keepalive/
-</p>
-<p>
-<span>Author：</span>guotie
-</p>
-<p>
-<span>Declaration： </span>This blog post article is under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a> license,Please indicate the source!
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>If it can help you, you can give tips for blogger that how much you want. ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>Reward</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=https://www.tiege.dev/img/wechat-pay.png alt="WeChat Pay">
-<p>Wechat Pay</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=https://www.tiege.dev/img/ali-pay.png alt=Alipay>
-<p>Ali Pay</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.tiege.dev/en/post/uniswap/uniswap-loopback-swap-fee/ rel=next title="rate fee of loopback swap in uniswap">
-<i class="fa fa-chevron-left"></i> rate fee of loopback swap in uniswap
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-</div>
-</div>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<a href=https://www.tiege.dev/en/tags/linux rel=tag title=linux>#linux#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-info><p><span>Declaration：</span>libuv与TCP Keepalive</p><p><span>Link：</span>https://www.tiege.dev/en/post/libuv-and-tcp-keepalive/</p><p><span>Author：</span>guotie</p><p><span>Declaration： </span>This blog post article is under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a> license,Please indicate the source!</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>If it can help you, you can give tips for blogger that how much you want. ^_^</div><button id=rewardButton disable=enable onclick='var qr=document.getElementById("QR");qr.style.display==="none"?qr.style.display="block":qr.style.display="none"'>
+<span>Reward</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=https://www.tiege.dev/img/wechat-pay.png alt="WeChat Pay"><p>Wechat Pay</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=https://www.tiege.dev/img/ali-pay.png alt=Alipay><p>Ali Pay</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.tiege.dev/en/post/uniswap/uniswap-loopback-swap-fee/ rel=next title="rate fee of loopback swap in uniswap"><i class="fa fa-chevron-left"></i> rate fee of loopback swap in uniswap</a></div><div class="post-nav-prev post-nav-item"></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<section class="site-overview sidebar-panel sidebar-panel-active">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=https://www.tiege.dev/img/avatar.png alt=guotie>
-<p class=site-author-name itemprop=name>guotie</p>
-<p class="site-description motion-element" itemprop=description>
-better code, better life
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=https://www.tiege.dev/en/post/>
-<span class=site-state-item-count>2</span>
-<span class=site-state-item-name>Blogs</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=https://www.tiege.dev/en/categories/>
-<span class=site-state-item-count>3</span>
-<span class=site-state-item-name>Categories</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=https://www.tiege.dev/en/tags/>
-<span class=site-state-item-count>9</span>
-<span class=site-state-item-name>Tags</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/guotie/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://twitter.com/guotie target=_blank title=twitter>
-<i class="fa fa-fw fa-twitter"></i>
-twitter
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://t.me/anydefi target=_blank title=telegram>
-<i class="fa fa-fw fa-telegram"></i>
-telegram
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:guotie.9@gmail.com target=_blank title=email>
-<i class="fa fa-fw fa-envelope"></i>
-email
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://medium.com/@guotie target=_blank title=medium>
-<i class="fa fa-fw fa-medium"></i>
-medium
-</a>
-</span>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-TagCloud
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/arbitrage>Arbitrage</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/defi>Defi</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/libuv>Libuv</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/linux>Linux</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/solidity>Solidity</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/tcp>Tcp</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/tcp-keepalive>Tcp keepalive</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/uniswap>Uniswap</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/en/tags/uniswap-v2>Uniswap v2</a>
-</li>
-</ul>
-</div>
-<div class="links-of-blogroll motion-element inline">
-<script type=text/javascript src="//rf.revolvermaps.com/0/0/6.js?i=53tnks7nxby&m=7&c=e63100&cr1=ffffff&f=arial&l=0&bv=90&lx=-420&ly=420&hi=20&he=7&hc=a8ddff&rs=80" async></script>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=https://www.tiege.dev/img/avatar.png alt=guotie><p class=site-author-name itemprop=name>guotie</p><p class="site-description motion-element" itemprop=description>better code, better life</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=https://www.tiege.dev/en/post/><span class=site-state-item-count>3</span>
+<span class=site-state-item-name>Blogs</span></a></div><div class="site-state-item site-state-categories"><a href=https://www.tiege.dev/en/categories/><span class=site-state-item-count>4</span>
+<span class=site-state-item-name>Categories</span></a></div><div class="site-state-item site-state-tags"><a href=https://www.tiege.dev/en/tags/><span class=site-state-item-count>11</span>
+<span class=site-state-item-name>Tags</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/guotie/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://twitter.com/guotie target=_blank title=twitter><i class="fa fa-fw fa-twitter"></i>
+twitter</a></span>
+<span class=links-of-author-item><a href=https://t.me/anydefi target=_blank title=telegram><i class="fa fa-fw fa-telegram"></i>
+telegram</a></span>
+<span class=links-of-author-item><a href=mailto:guotie.9@gmail.com target=_blank title=email><i class="fa fa-fw fa-envelope"></i>
+email</a></span>
+<span class=links-of-author-item><a href=https://medium.com/@guotie target=_blank title=medium><i class="fa fa-fw fa-medium"></i>
+medium</a></span></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+TagCloud</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/arbitrage>Arbitrage</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/defi>Defi</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/jwt>JWT</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/libuv>Libuv</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/linux>Linux</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/safety>Safety</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/solidity>Solidity</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/tcp>Tcp</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/tcp-keepalive>Tcp keepalive</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/en/tags/uniswap>Uniswap</a></li></ul></div><div class="links-of-blogroll motion-element inline"><script type=text/javascript src="//rf.revolvermaps.com/0/0/6.js?i=53tnks7nxby&amp;m=7&amp;c=e63100&amp;cr1=ffffff&amp;f=arial&amp;l=0&amp;bv=90&amp;lx=-420&amp;ly=420&amp;hi=20&amp;he=7&amp;hc=a8ddff&amp;rs=80" async></script></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2023</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>Uncle Tony</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.2</a>
-</span>
+<span class=copyright-author>Uncle Tony</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.119.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=separator-line>/</span>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/search.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/affix.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var a=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':a}).show(),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' Just do what you want leave here, and don\u0027t forget give your email to make exchange. ^_^ ',requiredFields:['nick','mail'],serverURL:"https://waline-blog-api.vercel.app",lang:"en"})}):$('#wcomments').html('Sorry, Waline plugin doesn\u0027t support IE or Edge, Please swithc to Chrome browser.')})</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":e}).show(),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" Just do what you want leave here, and don't forget give your email to make exchange. ^_^ ",requiredFields:["nick","mail"],serverURL:"https://waline-blog-api.vercel.app",lang:"en"})}):$("#wcomments").html("Sorry, Waline plugin doesn't support IE or Edge, Please swithc to Chrome browser.")})</script><script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

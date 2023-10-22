@@ -1,748 +1,341 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> AAVE源代码分析 -- AAVE 利率代码分析 - 铁叔 </title>
-<meta name=keywords content="博客,程序员,架构师,思考,读书,笔记,技术,智能合约,去中心化,区块链,Defi,NFT">
-<meta name=author content="铁叔">
-<meta property="og:title" content="AAVE源代码分析 -- AAVE 利率代码分析">
-<meta property="og:site_name" content="铁叔">
-<meta property="og:image" content="/img/author.jpg">
-<meta name=title content="AAVE源代码分析 -- AAVE 利率代码分析 - 铁叔">
-<meta name=description content="AAVE 利率模型中，几个参数之间互相影响，关系错综复杂，其中，尤其是固定利率比较复杂.">
-<link rel="shortcut icon" href=https://www.tiege.dev/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.tiege.dev/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.tiege.dev/img/apple-touch-icon.png>
-<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
-<link href=https://www.tiege.dev/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.tiege.dev/css/syntax.css rel=stylesheet type=text/css>
-<script type=text/javascript>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?cbd45c2023eacf671acbf5faf4b5343d",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-103849967-1"></script>
-<script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','UA-103849967-1 ')</script>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>AAVE源代码分析 -- AAVE 利率代码分析 - 铁叔</title><meta name=keywords content="博客,程序员,架构师,思考,读书,笔记,技术,智能合约,去中心化,区块链,Defi,NFT"><meta name=author content="铁叔"><meta property="og:title" content="AAVE源代码分析 -- AAVE 利率代码分析"><meta property="og:site_name" content="铁叔"><meta property="og:image" content="/img/author.jpg"><meta name=title content="AAVE源代码分析 -- AAVE 利率代码分析 - 铁叔"><meta name=description content="AAVE 利率模型中，几个参数之间互相影响，关系错综复杂，其中，尤其是固定利率比较复杂."><link rel="shortcut icon" href=https://www.tiege.dev/img/favicon.ico><link rel=apple-touch-icon href=https://www.tiege.dev/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.tiege.dev/img/apple-touch-icon.png><link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet><link href=https://www.tiege.dev/css/main.css rel=stylesheet type=text/css><link href=https://www.tiege.dev/css/syntax.css rel=stylesheet type=text/css><script type=text/javascript>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?cbd45c2023eacf671acbf5faf4b5343d",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script><script async src="https://www.googletagmanager.com/gtag/js?id=UA-103849967-1"></script>
+<script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","UA-103849967-1 ")</script></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-Hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class="site-meta custom-logo">
-<div class=multi-lang-switch>
-<i class="fa fa-fw fa-language" style=margin-right:5px></i>
-<a class=lang-link id=zh-cn href=#>中文</a>
-</div>
-<div class=custom-logo-site-title>
-<a href=https://www.tiege.dev/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class="site-meta custom-logo"><div class=multi-lang-switch><i class="fa fa-fw fa-language" style=margin-right:5px></i>
+<a class=lang-link id=zh-cn href=#>中文</a></div><div class=custom-logo-site-title><a href=https://www.tiege.dev/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>铁叔</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>天地不仁 以万物为刍狗</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=https://www.tiege.dev/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/post rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/about/index.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=https://www.tiege.dev/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav>
-</div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.tiege.dev/post/aave/aave-interest-update-code/ itemprop=url>
-AAVE源代码分析 -- AAVE 利率代码分析
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-time>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>天地不仁 以万物为刍狗</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=https://www.tiege.dev/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class=menu-item><a href=https://www.tiege.dev/post rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=https://www.tiege.dev/about/index.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=https://www.tiege.dev/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.tiege.dev/post/aave/aave-interest-update-code/ itemprop=url>AAVE源代码分析 -- AAVE 利率代码分析</a></h1><div class=post-meta><span class=post-time><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-20">
-2021-10-20
-</time>
-</span>
-<span class=post-category>
-&nbsp; | &nbsp;
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-10-20">2021-10-20</time></span>
+<span class=post-category>&nbsp; | &nbsp;
 <i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>Defi</span>
-</a>
-&nbsp;
-</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a href=https://www.tiege.dev/categories/aave itemprop=url rel=index style=text-decoration:underline>
-<span itemprop=name>AAVE</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span>
-|
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a href=https://www.tiege.dev/categories/defi itemprop=url rel=index style=text-decoration:underline><span itemprop=name>Defi</span></a>
+&nbsp;</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a href=https://www.tiege.dev/categories/aave itemprop=url rel=index style=text-decoration:underline><span itemprop=name>AAVE</span></a>
+&nbsp;</span></span>
+<span>|
 <i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3078 字</span>
-</span>
-<span>
-|
+<span class=leancloud-world-count>3078 字</span></span>
+<span>|
 <i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>7分钟</span>
-</span>
-<span id=/post/aave/aave-interest-update-code/ class=leancloud_visitors data-flag-title="AAVE源代码分析 -- AAVE 利率代码分析">
-|
+<span class=leancloud-view-count>7分钟</span></span>
+<span id=/post/aave/aave-interest-update-code/ class=leancloud_visitors data-flag-title="AAVE源代码分析 -- AAVE 利率代码分析">|
 <i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<p><code>AAVE</code> 利率模型中，几个参数之间互相影响，关系错综复杂，其中，固定利率比较绕，尤其是计算平均固定利率的公式，尤其难懂。不过，在实际的借贷中，有很多token不支持固定利率借贷，而且，在支持固定利率借贷token中，使用固定利率的借贷比例也很小，几乎不到1%，因此，对于固定利率部分，对于初学者来说可以先跳过。</p>
-<p>在 <code>AAVE</code> 的利率计算中, 有几个地方值得说明:</p>
-<ol>
-<li><code>AAVE</code> 的利率更新是基于时间戳来计算利息的增加, <code>Compound</code> 是根据块数来计算利息的增加；两者触发利率更新的方式相同，都是由存款，取款，借款，还款等几个动作触发，每个块只计算一次；</li>
-<li>存款利率的增加是线性的，贷款利率的增加是复利，指数级；</li>
-<li>贷款收益的 reserve factor% (默认10%) 纳入平台金库;</li>
-<li>aToken, debtToken 中的 <code>balanceOf</code> 方法，返回的 amount 都是存款/贷款对应的 token 数量;</li>
-</ol>
-<p>如果你只需要知道结论，<code>AAVE</code>的几个核心流程可以简单的总结如下(代码在 <code>LendingPool</code> 合约中):</p>
-<p><strong>存款 Deposit</strong></p>
-<ol>
-<li>校验数据(ValidationLogic.validateDeposit)</li>
-<li>更新状态: updateState</li>
-<li>更新利率: updateInterestRates</li>
-<li>将 token 从用户转入 <code>LendingPool</code> 合约</li>
-<li>mint aToken给用户: aToken amount = token amount / liquidityIndex</li>
-<li>emit Deposit事件</li>
-</ol>
-<p><strong>取款 Withdraw</strong></p>
-<ol>
-<li>查询用户token资产数量，注意: 是token资产数量, 而不是 aToken 数量. 虽然这里调用的是 aToken.balanceOf(), 看上去好像是 aToken 的余额，但事件上，这个函数会计算当前块 aToken 对应的 token 的数量；</li>
-<li>校验数据(ValidationLogic.validateWithdraw)</li>
-<li>更新状态: updateState</li>
-<li>更新利率: updateInterestRates</li>
-<li>销毁用户的aToken，将对应的token转给用户</li>
-<li>emit Withdraw 事件</li>
-</ol>
-<p><strong>借款 Borrow</strong></p>
-<ol>
-<li>通过价格预言机, 计算出借款对应的 ETH 价值 <code>amountInETH</code> (AAVE中所有的token都要换算为对应的ETH价值)</li>
-<li>校验数据(ValidationLogic.validateBorrow)</li>
-<li>更新状态: updateState</li>
-<li>至关重要的一步：mint 对应的 debtToken, AAVE 的债务是通过 debtToken 来记录的，每个token 都会有对应的 stableDebtToken, variableDebtToken, 分别对应于定息借款和活息借款</li>
-<li>更新利率: updateInterestRates</li>
-<li>将用户借出的token转给用户</li>
-<li>emit Borrow 事件</li>
-</ol>
-<p><strong>还款 Repay</strong></p>
-<ol>
-<li>查询定息借款和活息借款额度, 都是贷款 debtToken 对应的 token 的数量;</li>
-<li>校验数据 (ValidationLogic.validateRepay)</li>
-<li>更新状态: updateState</li>
-<li>销毁 debtToken. 这里有一个很关键、很重要的细节，就是还款额度的计算: paybackAmount, 必须要非常仔细, 一旦出错, 就会造成重大损失</li>
-<li>更新利率: updateInterestRates</li>
-<li>将用户的 token 转入合约，完成还款</li>
-<li>emit Repay 事件</li>
-</ol>
-<p>最基本的操作就是以上这几个，其他的还有清算(专门讨论), 转换借款方式(定息转活息，活息转定息)</p>
-<p>从上面的流程可以看出:</p>
-<ul>
-<li>updateState 和 updateInterestRates 是两个非常关键的函数，所有的操作都要调用这两个方法；</li>
-<li>对这两个方法的调用稍有不同，例如 存款，取款时，两个方法是一起调用的； 而借款中，在两个方法的调用之间，还有其他操作；为什么会这样呢?</li>
-</ul>
-<p>所有利率的变化，都是由 updateState 和 updateInterestRates 计算并更新的，下面我们来看看这两个函数的实现细节。</p>
-<h2 id=updatestate-updateinterestrates>updateState updateInterestRates</h2>
-<p>两个函数定义如下:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>function updateState(DataTypes.ReserveData storage reserve) internal;
-
-function updateInterestRates(
-    DataTypes.ReserveData storage reserve,
-    address reserveAddress,
-    address aTokenAddress,
-    uint256 liquidityAdded,
-    uint256 liquidityTaken
-  ) internal;
-</code></pre></div><p>这两个函数在 library <code>ReserveLogic.sol</code> 中, 传入的参数中都有 <code>DataTypes.ReserveData storage reserve</code> , ReserveData 我们前面介绍过，是储存利率相关字段的结构体; 这个参数的存储类型是 <code>storage</code>, 说明这两个函数可以直接修改合约中的状态。</p>
-<h2 id=updatestate>updateState</h2>
-<p>updateState 主要作用:
-0. 获取最新的活息贷款数量, 即 variableDebtToken 的总数量;</p>
-<ol>
-<li>更新存款利率指数(ReserveData.liquidityIndex)和活息贷款利率指数(ReserveData.variableBorrowIndex), 通过 <code>_updateIndexes</code> 方法</li>
-<li>将产生的增量贷款利息的一部分(reserve factor) 存入小金库, 具体实现的方式是 mint Atoken 给 treasy 地址</li>
-</ol>
-<h2 id=updateinterestrates>updateInterestRates</h2>
-<p>updateInterestRates 主要作用:
-0. 更新 currentLiquidityRate;</p>
-<ol>
-<li>更新 currentStableBorrowRate</li>
-<li>更新 currentVariableBorrowRate</li>
-</ol>
-<h2 id=关键函数>关键函数</h2>
-<h3 id=_updateindexes>_updateIndexes</h3>
-<p>一个细节是，虽然资金变化都每次都调用，但由于在一个块内，只有第一次调用时 liquidityIndex 和 variableBorrowIndex 发生变化，后续调用都不会变化，因为 timestamp 相同， calculateCompoundedInterest 和 calculateLinearInterest 都是返回 Ray(1e27).</p>
-<p>不知道是否可以优化, 我提了一个issue: <a href=https://github.com/aave/protocol-v2/issues/237>https://github.com/aave/protocol-v2/issues/237</a></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>  function _updateIndexes(
-    DataTypes.ReserveData storage reserve,
-    uint256 scaledVariableDebt,
-    uint256 liquidityIndex,
-    uint256 variableBorrowIndex,
-    uint40 timestamp  // 上次更新的时间戳
-  ) internal returns (uint256, uint256) {
-    // currentLiquidityRate 是在 updateInterestRates 中更新的
-    uint256 currentLiquidityRate = reserve.currentLiquidityRate;
-
-    uint256 newLiquidityIndex = liquidityIndex;
-    uint256 newVariableBorrowIndex = variableBorrowIndex;
-
-    //only cumulating if there is any income being produced
-    if (currentLiquidityRate &gt; 0) {
-      // 存款利率根据 currentLiquidityRate 线性累加
-      // 公式: cumulatedLiquidityInterest = currentLiquidityRate * (block.timestamp-timestamp)/SECONDS_PER_YEAR
-      uint256 cumulatedLiquidityInterest =
-        MathUtils.calculateLinearInterest(currentLiquidityRate, timestamp);
-      newLiquidityIndex = cumulatedLiquidityInterest.rayMul(liquidityIndex);
-      require(newLiquidityIndex &lt;= type(uint128).max, Errors.RL_LIQUIDITY_INDEX_OVERFLOW);
-
-      // 更新存款利息指数
-      reserve.liquidityIndex = uint128(newLiquidityIndex);
-
-      //as the liquidity rate might come only from stable rate loans, we need to ensure
-      //that there is actual variable debt before accumulating
-      if (scaledVariableDebt != 0) {
-        // 计算这段时间累加的活息贷款利息, 复利方式计算
-        // 计算的实现是 泰勒级数展开
-        uint256 cumulatedVariableBorrowInterest =
-          MathUtils.calculateCompoundedInterest(reserve.currentVariableBorrowRate, timestamp);
-        newVariableBorrowIndex = cumulatedVariableBorrowInterest.rayMul(variableBorrowIndex);
-        require(
-          newVariableBorrowIndex &lt;= type(uint128).max,
-          Errors.RL_VARIABLE_BORROW_INDEX_OVERFLOW
-        );
-      // 更新活息贷款利息指数
-        reserve.variableBorrowIndex = uint128(newVariableBorrowIndex);
-      }
-    }
-
-    // 设置更新时间戳
-    //solium-disable-next-line
-    reserve.lastUpdateTimestamp = uint40(block.timestamp);
-    return (newLiquidityIndex, newVariableBorrowIndex);
-  }
-</code></pre></div><h3 id=updateinterestrates-1>updateInterestRates</h3>
-<p>更新年化利率</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>  function updateInterestRates(
-    DataTypes.ReserveData storage reserve,
-    address reserveAddress,
-    address aTokenAddress,
-    uint256 liquidityAdded,
-    uint256 liquidityTaken
-  ) internal {
-    UpdateInterestRatesLocalVars memory vars;
-
-    vars.stableDebtTokenAddress = reserve.stableDebtTokenAddress;
-
-    // 定息借款
-    (vars.totalStableDebt, vars.avgStableRate) = IStableDebtToken(vars.stableDebtTokenAddress)
-      .getTotalSupplyAndAvgRate();
-
-    // 活息贷款, 折算为 token 
-    //calculates the total variable debt locally using the scaled total supply instead
-    //of totalSupply(), as it&#39;s noticeably cheaper. Also, the index has been
-    //updated by the previous updateState() call
-    vars.totalVariableDebt = IVariableDebtToken(reserve.variableDebtTokenAddress)
-      .scaledTotalSupply()
-      .rayMul(reserve.variableBorrowIndex);
-
-    // 根据利率策略，计算新的存款年化利率 活息贷款年化利率 定息贷款年化利率. calculateInterestRates 见下文分析
-    (
-      vars.newLiquidityRate,
-      vars.newStableRate,
-      vars.newVariableRate
-    ) = IReserveInterestRateStrategy(reserve.interestRateStrategyAddress).calculateInterestRates(
-      reserveAddress,
-      aTokenAddress,
-      liquidityAdded,
-      liquidityTaken,
-      vars.totalStableDebt,
-      vars.totalVariableDebt,
-      vars.avgStableRate,
-      reserve.configuration.getReserveFactor()
-    );
-    require(vars.newLiquidityRate &lt;= type(uint128).max, Errors.RL_LIQUIDITY_RATE_OVERFLOW);
-    require(vars.newStableRate &lt;= type(uint128).max, Errors.RL_STABLE_BORROW_RATE_OVERFLOW);
-    require(vars.newVariableRate &lt;= type(uint128).max, Errors.RL_VARIABLE_BORROW_RATE_OVERFLOW);
-
-    // 新的利率
-    reserve.currentLiquidityRate = uint128(vars.newLiquidityRate);
-    reserve.currentStableBorrowRate = uint128(vars.newStableRate);
-    reserve.currentVariableBorrowRate = uint128(vars.newVariableRate);
-
-    emit ReserveDataUpdated(
-      reserveAddress,
-      vars.newLiquidityRate,
-      vars.newStableRate,
-      vars.newVariableRate,
-      reserve.liquidityIndex,
-      reserve.variableBorrowIndex
-    );
-  }
-</code></pre></div><h3 id=calculateinterestrates>calculateInterestRates</h3>
-<p>代码如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>  struct CalcInterestRatesLocalVars {
-    uint256 totalDebt;
-    uint256 currentVariableBorrowRate;
-    uint256 currentStableBorrowRate;
-    uint256 currentLiquidityRate;
-    uint256 utilizationRate;
-  }
-
-  /**
-   * @dev Calculates the interest rates depending on the reserve&#39;s state and configurations.
-   * NOTE This function is kept for compatibility with the previous DefaultInterestRateStrategy interface.
-   * New protocol implementation uses the new calculateInterestRates() interface
-   * @param reserve The address of the reserve
-   * @param availableLiquidity The liquidity available in the corresponding aToken
-   * @param totalStableDebt The total borrowed from the reserve a stable rate
-   * @param totalVariableDebt The total borrowed from the reserve at a variable rate
-   * @param averageStableBorrowRate The weighted average of all the stable rate loans
-   * @param reserveFactor The reserve portion of the interest that goes to the treasury of the market
-   * @return The liquidity rate, the stable borrow rate and the variable borrow rate
-   **/
-  function calculateInterestRates(
-    address reserve,
-    uint256 availableLiquidity,
-    uint256 totalStableDebt,
-    uint256 totalVariableDebt,
-    uint256 averageStableBorrowRate,
-    uint256 reserveFactor
-  )
-    public
-    view
-    override
-    returns (
-      uint256,
-      uint256,
-      uint256
-    )
-  {
-    CalcInterestRatesLocalVars memory vars;
-
-    // 总借款 = 活息借款 + 定息借款
-    vars.totalDebt = totalStableDebt.add(totalVariableDebt);
-    vars.currentVariableBorrowRate = 0;
-    vars.currentStableBorrowRate = 0;
-    vars.currentLiquidityRate = 0;
-
-    // 资金利用率 = 总借款 / (总存款+总借款)
-    // 忽略 rayDiv rayMul, 可以简单的认为是 div mul 即可
-    vars.utilizationRate = vars.totalDebt == 0
-      ? 0
-      : vars.totalDebt.rayDiv(availableLiquidity.add(vars.totalDebt));
-
-    vars.currentStableBorrowRate = ILendingRateOracle(addressesProvider.getLendingRateOracle())
-      .getMarketBorrowRate(reserve);
-
-    // 利率曲线: 两段式
-    // 资金利用率高于最佳利用率时，利率的计算
-    if (vars.utilizationRate &gt; OPTIMAL_UTILIZATION_RATE) {
-      uint256 excessUtilizationRateRatio =
-        vars.utilizationRate.sub(OPTIMAL_UTILIZATION_RATE).rayDiv(EXCESS_UTILIZATION_RATE);
-
-      vars.currentStableBorrowRate = vars.currentStableBorrowRate.add(_stableRateSlope1).add(
-        _stableRateSlope2.rayMul(excessUtilizationRateRatio)
-      );
-
-      vars.currentVariableBorrowRate = _baseVariableBorrowRate.add(_variableRateSlope1).add(
-        _variableRateSlope2.rayMul(excessUtilizationRateRatio)
-      );
-    } else {
-      vars.currentStableBorrowRate = vars.currentStableBorrowRate.add(
-        _stableRateSlope1.rayMul(vars.utilizationRate.rayDiv(OPTIMAL_UTILIZATION_RATE))
-      );
-      vars.currentVariableBorrowRate = _baseVariableBorrowRate.add(
-        vars.utilizationRate.rayMul(_variableRateSlope1).rayDiv(OPTIMAL_UTILIZATION_RATE)
-      );
-    }
-
-    // currentLiquidityRate的计算 = (加权平均借款利率/总借款) * 资金利用率 * (1-储备率)
-    // 加权平均借款利率 = (活息借款*活息利率 + 定息借款*平均定息利率) / 总借款
-    vars.currentLiquidityRate = _getOverallBorrowRate(
-      totalStableDebt,
-      totalVariableDebt,
-      vars
-        .currentVariableBorrowRate,
-      averageStableBorrowRate
-    )
-      .rayMul(vars.utilizationRate)
-      .percentMul(PercentageMath.PERCENTAGE_FACTOR.sub(reserveFactor));
-
-    return (
-      vars.currentLiquidityRate,
-      vars.currentStableBorrowRate,
-      vars.currentVariableBorrowRate
-    );
-  }
-
-  /**
-   * @dev Calculates the overall borrow rate as the weighted average between the total variable debt and total stable debt
-   * @param totalStableDebt The total borrowed from the reserve a stable rate
-   * @param totalVariableDebt The total borrowed from the reserve at a variable rate
-   * @param currentVariableBorrowRate The current variable borrow rate of the reserve
-   * @param currentAverageStableBorrowRate The current weighted average of all the stable rate loans
-   * @return The weighted averaged borrow rate
-    加权平均借款利率: (活息借款*活息利率 + 定息借款*平均定息利率) / 总借款
-   **/
-  function _getOverallBorrowRate(
-    uint256 totalStableDebt,
-    uint256 totalVariableDebt,
-    uint256 currentVariableBorrowRate,
-    uint256 currentAverageStableBorrowRate
-  ) internal pure returns (uint256) {
-    uint256 totalDebt = totalStableDebt.add(totalVariableDebt);
-
-    if (totalDebt == 0) return 0;
-
-    uint256 weightedVariableRate = totalVariableDebt.wadToRay().rayMul(currentVariableBorrowRate);
-
-    uint256 weightedStableRate = totalStableDebt.wadToRay().rayMul(currentAverageStableBorrowRate);
-
-    uint256 overallBorrowRate =
-      weightedVariableRate.add(weightedStableRate).rayDiv(totalDebt.wadToRay());
-
-    return overallBorrowRate;
-  }
-}
-
-</code></pre></div><h2 id=为什么要先调用-updatestate-然后再调用-updateinterestrates>为什么要先调用 <code>updateState</code>, 然后再调用 <code>updateInterestRates</code></h2>
-<p>简单的说，是因为 liquidityIndex 和 variableBorrowIndex 是由 currentLiquidityRate 和 currentVariableBorrowRate 计算出来的，而先调用 <code>updateState</code>, 然后再调用 <code>updateInterestRates</code>，就是说，在时刻 t1, 当存款或贷款无论变化多少次，liquidityIndex 和 variableBorrowIndex只变化一次； 而 currentLiquidityRate， currentVariableBorrowRate 和 currentStableBorrowRate 会随着金额的变化而变化。</p>
-<p>在一个块中，liquidityIndex 和 variableBorrowIndex只变化一次, 这里 AAVE 的代码不如 Compound, 如果是同一个块，多了很多无用的运算；</p>
-<p>就是说，你存款后，下一个块才开始有利息；同理，贷款也是如此。</p>
-<h2 id=定息贷款的-averagestableborrowrate>定息贷款的 averageStableBorrowRate</h2>
-<p>averageStableBorrowRate 对于定息贷款很重要， 影响到 资金使用率，进而影响到 存款利率。</p>
-<p><code>averageStableBorrowRate</code> 在 <code>StableDebtToken.sol</code> 合约中定义，在 <code>mint</code> 和 <code>burn</code> 是改变该值。</p>
-<p><strong>mint:</strong></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>    // _calculateBalanceIncrease 返回值: 贷款本金，本息合计，利息
-    (, uint256 currentBalance, uint256 balanceIncrease) = _calculateBalanceIncrease(onBehalfOf);
-
-    // 用户新的平均贷款利率 = 某种加权平均???
-    vars.newStableRate = _usersStableRate[onBehalfOf]
-      .rayMul(currentBalance.wadToRay())
-      .add(vars.amountInRay.rayMul(rate))  // rate 是入参， 值为 reserve.currentStableBorrowRate
-      .rayDiv(currentBalance.add(amount).wadToRay());
-
-    require(vars.newStableRate &lt;= type(uint128).max, Errors.SDT_STABLE_DEBT_OVERFLOW);
-    // 每个用户都有一个_usersStableRate， 保存用户贷款时的利率
-    _usersStableRate[onBehalfOf] = vars.newStableRate;
-
-    //solium-disable-next-line
-    _totalSupplyTimestamp = _timestamps[onBehalfOf] = uint40(block.timestamp);
-
-    // 该 token 总的定息贷款平均利率, 与上面的更新逻辑一致
-    // Calculates the updated average stable rate
-    vars.currentAvgStableRate = _avgStableRate = vars
-      .currentAvgStableRate
-      .rayMul(vars.previousSupply.wadToRay())
-      .add(rate.rayMul(vars.amountInRay))
-      .rayDiv(vars.nextSupply.wadToRay());
-
-</code></pre></div><p><strong>burn:</strong></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>    if (previousSupply &lt;= amount) {
-      // 当定息贷款被还完时，清零
-      // 由于可能存在计算误差, 这里不能使用 previousSupply - amount
-      _avgStableRate = 0;
-      _totalSupply = 0;
-    } else {
-      nextSupply = _totalSupply = previousSupply.sub(amount);
-      uint256 firstTerm = _avgStableRate.rayMul(previousSupply.wadToRay());
-      uint256 secondTerm = userStableRate.rayMul(amount.wadToRay());
-
-      // For the same reason described above, when the last user is repaying it might
-      // happen that user rate * user balance &gt; avg rate * total supply. In that case,
-      // we simply set the avg rate to 0
-      if (secondTerm &gt;= firstTerm) {
-        newAvgStableRate = _avgStableRate = _totalSupply = 0;
-      } else {
-        newAvgStableRate = _avgStableRate = firstTerm.sub(secondTerm).rayDiv(nextSupply.wadToRay());
-      }
-    }
-</code></pre></div><p>由于定息贷款用户的利息和平台的利息是独立计算的，感觉这里两个数据会存在不一致。</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://www.tiege.dev/tags/aave rel=tag title=AAVE>#AAVE#</a>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><p><code>AAVE</code> 利率模型中，几个参数之间互相影响，关系错综复杂，其中，固定利率比较绕，尤其是计算平均固定利率的公式，尤其难懂。不过，在实际的借贷中，有很多token不支持固定利率借贷，而且，在支持固定利率借贷token中，使用固定利率的借贷比例也很小，几乎不到1%，因此，对于固定利率部分，对于初学者来说可以先跳过。</p><p>在 <code>AAVE</code> 的利率计算中, 有几个地方值得说明:</p><ol><li><code>AAVE</code> 的利率更新是基于时间戳来计算利息的增加, <code>Compound</code> 是根据块数来计算利息的增加；两者触发利率更新的方式相同，都是由存款，取款，借款，还款等几个动作触发，每个块只计算一次；</li><li>存款利率的增加是线性的，贷款利率的增加是复利，指数级；</li><li>贷款收益的 reserve factor% (默认10%) 纳入平台金库;</li><li>aToken, debtToken 中的 <code>balanceOf</code> 方法，返回的 amount 都是存款/贷款对应的 token 数量;</li></ol><p>如果你只需要知道结论，<code>AAVE</code>的几个核心流程可以简单的总结如下(代码在 <code>LendingPool</code> 合约中):</p><p><strong>存款 Deposit</strong></p><ol><li>校验数据(ValidationLogic.validateDeposit)</li><li>更新状态: updateState</li><li>更新利率: updateInterestRates</li><li>将 token 从用户转入 <code>LendingPool</code> 合约</li><li>mint aToken给用户: aToken amount = token amount / liquidityIndex</li><li>emit Deposit事件</li></ol><p><strong>取款 Withdraw</strong></p><ol><li>查询用户token资产数量，注意: 是token资产数量, 而不是 aToken 数量. 虽然这里调用的是 aToken.balanceOf(), 看上去好像是 aToken 的余额，但事件上，这个函数会计算当前块 aToken 对应的 token 的数量；</li><li>校验数据(ValidationLogic.validateWithdraw)</li><li>更新状态: updateState</li><li>更新利率: updateInterestRates</li><li>销毁用户的aToken，将对应的token转给用户</li><li>emit Withdraw 事件</li></ol><p><strong>借款 Borrow</strong></p><ol><li>通过价格预言机, 计算出借款对应的 ETH 价值 <code>amountInETH</code> (AAVE中所有的token都要换算为对应的ETH价值)</li><li>校验数据(ValidationLogic.validateBorrow)</li><li>更新状态: updateState</li><li>至关重要的一步：mint 对应的 debtToken, AAVE 的债务是通过 debtToken 来记录的，每个token 都会有对应的 stableDebtToken, variableDebtToken, 分别对应于定息借款和活息借款</li><li>更新利率: updateInterestRates</li><li>将用户借出的token转给用户</li><li>emit Borrow 事件</li></ol><p><strong>还款 Repay</strong></p><ol><li>查询定息借款和活息借款额度, 都是贷款 debtToken 对应的 token 的数量;</li><li>校验数据 (ValidationLogic.validateRepay)</li><li>更新状态: updateState</li><li>销毁 debtToken. 这里有一个很关键、很重要的细节，就是还款额度的计算: paybackAmount, 必须要非常仔细, 一旦出错, 就会造成重大损失</li><li>更新利率: updateInterestRates</li><li>将用户的 token 转入合约，完成还款</li><li>emit Repay 事件</li></ol><p>最基本的操作就是以上这几个，其他的还有清算(专门讨论), 转换借款方式(定息转活息，活息转定息)</p><p>从上面的流程可以看出:</p><ul><li>updateState 和 updateInterestRates 是两个非常关键的函数，所有的操作都要调用这两个方法；</li><li>对这两个方法的调用稍有不同，例如 存款，取款时，两个方法是一起调用的； 而借款中，在两个方法的调用之间，还有其他操作；为什么会这样呢?</li></ul><p>所有利率的变化，都是由 updateState 和 updateInterestRates 计算并更新的，下面我们来看看这两个函数的实现细节。</p><h2 id=updatestate-updateinterestrates>updateState updateInterestRates</h2><p>两个函数定义如下:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>function updateState(DataTypes.ReserveData storage reserve) internal;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>function updateInterestRates(
+</span></span><span style=display:flex><span>    DataTypes.ReserveData storage reserve,
+</span></span><span style=display:flex><span>    address reserveAddress,
+</span></span><span style=display:flex><span>    address aTokenAddress,
+</span></span><span style=display:flex><span>    uint256 liquidityAdded,
+</span></span><span style=display:flex><span>    uint256 liquidityTaken
+</span></span><span style=display:flex><span>  ) internal;
+</span></span></code></pre></div><p>这两个函数在 library <code>ReserveLogic.sol</code> 中, 传入的参数中都有 <code>DataTypes.ReserveData storage reserve</code> , ReserveData 我们前面介绍过，是储存利率相关字段的结构体; 这个参数的存储类型是 <code>storage</code>, 说明这两个函数可以直接修改合约中的状态。</p><h2 id=updatestate>updateState</h2><p>updateState 主要作用:
+0. 获取最新的活息贷款数量, 即 variableDebtToken 的总数量;</p><ol><li>更新存款利率指数(ReserveData.liquidityIndex)和活息贷款利率指数(ReserveData.variableBorrowIndex), 通过 <code>_updateIndexes</code> 方法</li><li>将产生的增量贷款利息的一部分(reserve factor) 存入小金库, 具体实现的方式是 mint Atoken 给 treasy 地址</li></ol><h2 id=updateinterestrates>updateInterestRates</h2><p>updateInterestRates 主要作用:
+0. 更新 currentLiquidityRate;</p><ol><li>更新 currentStableBorrowRate</li><li>更新 currentVariableBorrowRate</li></ol><h2 id=关键函数>关键函数</h2><h3 id=_updateindexes>_updateIndexes</h3><p>一个细节是，虽然资金变化都每次都调用，但由于在一个块内，只有第一次调用时 liquidityIndex 和 variableBorrowIndex 发生变化，后续调用都不会变化，因为 timestamp 相同， calculateCompoundedInterest 和 calculateLinearInterest 都是返回 Ray(1e27).</p><p>不知道是否可以优化, 我提了一个issue: <a href=https://github.com/aave/protocol-v2/issues/237>https://github.com/aave/protocol-v2/issues/237</a></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>  function _updateIndexes(
+</span></span><span style=display:flex><span>    DataTypes.ReserveData storage reserve,
+</span></span><span style=display:flex><span>    uint256 scaledVariableDebt,
+</span></span><span style=display:flex><span>    uint256 liquidityIndex,
+</span></span><span style=display:flex><span>    uint256 variableBorrowIndex,
+</span></span><span style=display:flex><span>    uint40 timestamp  // 上次更新的时间戳
+</span></span><span style=display:flex><span>  ) internal returns (uint256, uint256) {
+</span></span><span style=display:flex><span>    // currentLiquidityRate 是在 updateInterestRates 中更新的
+</span></span><span style=display:flex><span>    uint256 currentLiquidityRate = reserve.currentLiquidityRate;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    uint256 newLiquidityIndex = liquidityIndex;
+</span></span><span style=display:flex><span>    uint256 newVariableBorrowIndex = variableBorrowIndex;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    //only cumulating if there is any income being produced
+</span></span><span style=display:flex><span>    if (currentLiquidityRate &gt; 0) {
+</span></span><span style=display:flex><span>      // 存款利率根据 currentLiquidityRate 线性累加
+</span></span><span style=display:flex><span>      // 公式: cumulatedLiquidityInterest = currentLiquidityRate * (block.timestamp-timestamp)/SECONDS_PER_YEAR
+</span></span><span style=display:flex><span>      uint256 cumulatedLiquidityInterest =
+</span></span><span style=display:flex><span>        MathUtils.calculateLinearInterest(currentLiquidityRate, timestamp);
+</span></span><span style=display:flex><span>      newLiquidityIndex = cumulatedLiquidityInterest.rayMul(liquidityIndex);
+</span></span><span style=display:flex><span>      require(newLiquidityIndex &lt;= type(uint128).max, Errors.RL_LIQUIDITY_INDEX_OVERFLOW);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      // 更新存款利息指数
+</span></span><span style=display:flex><span>      reserve.liquidityIndex = uint128(newLiquidityIndex);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      //as the liquidity rate might come only from stable rate loans, we need to ensure
+</span></span><span style=display:flex><span>      //that there is actual variable debt before accumulating
+</span></span><span style=display:flex><span>      if (scaledVariableDebt != 0) {
+</span></span><span style=display:flex><span>        // 计算这段时间累加的活息贷款利息, 复利方式计算
+</span></span><span style=display:flex><span>        // 计算的实现是 泰勒级数展开
+</span></span><span style=display:flex><span>        uint256 cumulatedVariableBorrowInterest =
+</span></span><span style=display:flex><span>          MathUtils.calculateCompoundedInterest(reserve.currentVariableBorrowRate, timestamp);
+</span></span><span style=display:flex><span>        newVariableBorrowIndex = cumulatedVariableBorrowInterest.rayMul(variableBorrowIndex);
+</span></span><span style=display:flex><span>        require(
+</span></span><span style=display:flex><span>          newVariableBorrowIndex &lt;= type(uint128).max,
+</span></span><span style=display:flex><span>          Errors.RL_VARIABLE_BORROW_INDEX_OVERFLOW
+</span></span><span style=display:flex><span>        );
+</span></span><span style=display:flex><span>      // 更新活息贷款利息指数
+</span></span><span style=display:flex><span>        reserve.variableBorrowIndex = uint128(newVariableBorrowIndex);
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 设置更新时间戳
+</span></span><span style=display:flex><span>    //solium-disable-next-line
+</span></span><span style=display:flex><span>    reserve.lastUpdateTimestamp = uint40(block.timestamp);
+</span></span><span style=display:flex><span>    return (newLiquidityIndex, newVariableBorrowIndex);
+</span></span><span style=display:flex><span>  }
+</span></span></code></pre></div><h3 id=updateinterestrates-1>updateInterestRates</h3><p>更新年化利率</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>  function updateInterestRates(
+</span></span><span style=display:flex><span>    DataTypes.ReserveData storage reserve,
+</span></span><span style=display:flex><span>    address reserveAddress,
+</span></span><span style=display:flex><span>    address aTokenAddress,
+</span></span><span style=display:flex><span>    uint256 liquidityAdded,
+</span></span><span style=display:flex><span>    uint256 liquidityTaken
+</span></span><span style=display:flex><span>  ) internal {
+</span></span><span style=display:flex><span>    UpdateInterestRatesLocalVars memory vars;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    vars.stableDebtTokenAddress = reserve.stableDebtTokenAddress;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 定息借款
+</span></span><span style=display:flex><span>    (vars.totalStableDebt, vars.avgStableRate) = IStableDebtToken(vars.stableDebtTokenAddress)
+</span></span><span style=display:flex><span>      .getTotalSupplyAndAvgRate();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 活息贷款, 折算为 token 
+</span></span><span style=display:flex><span>    //calculates the total variable debt locally using the scaled total supply instead
+</span></span><span style=display:flex><span>    //of totalSupply(), as it&#39;s noticeably cheaper. Also, the index has been
+</span></span><span style=display:flex><span>    //updated by the previous updateState() call
+</span></span><span style=display:flex><span>    vars.totalVariableDebt = IVariableDebtToken(reserve.variableDebtTokenAddress)
+</span></span><span style=display:flex><span>      .scaledTotalSupply()
+</span></span><span style=display:flex><span>      .rayMul(reserve.variableBorrowIndex);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 根据利率策略，计算新的存款年化利率 活息贷款年化利率 定息贷款年化利率. calculateInterestRates 见下文分析
+</span></span><span style=display:flex><span>    (
+</span></span><span style=display:flex><span>      vars.newLiquidityRate,
+</span></span><span style=display:flex><span>      vars.newStableRate,
+</span></span><span style=display:flex><span>      vars.newVariableRate
+</span></span><span style=display:flex><span>    ) = IReserveInterestRateStrategy(reserve.interestRateStrategyAddress).calculateInterestRates(
+</span></span><span style=display:flex><span>      reserveAddress,
+</span></span><span style=display:flex><span>      aTokenAddress,
+</span></span><span style=display:flex><span>      liquidityAdded,
+</span></span><span style=display:flex><span>      liquidityTaken,
+</span></span><span style=display:flex><span>      vars.totalStableDebt,
+</span></span><span style=display:flex><span>      vars.totalVariableDebt,
+</span></span><span style=display:flex><span>      vars.avgStableRate,
+</span></span><span style=display:flex><span>      reserve.configuration.getReserveFactor()
+</span></span><span style=display:flex><span>    );
+</span></span><span style=display:flex><span>    require(vars.newLiquidityRate &lt;= type(uint128).max, Errors.RL_LIQUIDITY_RATE_OVERFLOW);
+</span></span><span style=display:flex><span>    require(vars.newStableRate &lt;= type(uint128).max, Errors.RL_STABLE_BORROW_RATE_OVERFLOW);
+</span></span><span style=display:flex><span>    require(vars.newVariableRate &lt;= type(uint128).max, Errors.RL_VARIABLE_BORROW_RATE_OVERFLOW);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 新的利率
+</span></span><span style=display:flex><span>    reserve.currentLiquidityRate = uint128(vars.newLiquidityRate);
+</span></span><span style=display:flex><span>    reserve.currentStableBorrowRate = uint128(vars.newStableRate);
+</span></span><span style=display:flex><span>    reserve.currentVariableBorrowRate = uint128(vars.newVariableRate);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    emit ReserveDataUpdated(
+</span></span><span style=display:flex><span>      reserveAddress,
+</span></span><span style=display:flex><span>      vars.newLiquidityRate,
+</span></span><span style=display:flex><span>      vars.newStableRate,
+</span></span><span style=display:flex><span>      vars.newVariableRate,
+</span></span><span style=display:flex><span>      reserve.liquidityIndex,
+</span></span><span style=display:flex><span>      reserve.variableBorrowIndex
+</span></span><span style=display:flex><span>    );
+</span></span><span style=display:flex><span>  }
+</span></span></code></pre></div><h3 id=calculateinterestrates>calculateInterestRates</h3><p>代码如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>  struct CalcInterestRatesLocalVars {
+</span></span><span style=display:flex><span>    uint256 totalDebt;
+</span></span><span style=display:flex><span>    uint256 currentVariableBorrowRate;
+</span></span><span style=display:flex><span>    uint256 currentStableBorrowRate;
+</span></span><span style=display:flex><span>    uint256 currentLiquidityRate;
+</span></span><span style=display:flex><span>    uint256 utilizationRate;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  /**
+</span></span><span style=display:flex><span>   * @dev Calculates the interest rates depending on the reserve&#39;s state and configurations.
+</span></span><span style=display:flex><span>   * NOTE This function is kept for compatibility with the previous DefaultInterestRateStrategy interface.
+</span></span><span style=display:flex><span>   * New protocol implementation uses the new calculateInterestRates() interface
+</span></span><span style=display:flex><span>   * @param reserve The address of the reserve
+</span></span><span style=display:flex><span>   * @param availableLiquidity The liquidity available in the corresponding aToken
+</span></span><span style=display:flex><span>   * @param totalStableDebt The total borrowed from the reserve a stable rate
+</span></span><span style=display:flex><span>   * @param totalVariableDebt The total borrowed from the reserve at a variable rate
+</span></span><span style=display:flex><span>   * @param averageStableBorrowRate The weighted average of all the stable rate loans
+</span></span><span style=display:flex><span>   * @param reserveFactor The reserve portion of the interest that goes to the treasury of the market
+</span></span><span style=display:flex><span>   * @return The liquidity rate, the stable borrow rate and the variable borrow rate
+</span></span><span style=display:flex><span>   **/
+</span></span><span style=display:flex><span>  function calculateInterestRates(
+</span></span><span style=display:flex><span>    address reserve,
+</span></span><span style=display:flex><span>    uint256 availableLiquidity,
+</span></span><span style=display:flex><span>    uint256 totalStableDebt,
+</span></span><span style=display:flex><span>    uint256 totalVariableDebt,
+</span></span><span style=display:flex><span>    uint256 averageStableBorrowRate,
+</span></span><span style=display:flex><span>    uint256 reserveFactor
+</span></span><span style=display:flex><span>  )
+</span></span><span style=display:flex><span>    public
+</span></span><span style=display:flex><span>    view
+</span></span><span style=display:flex><span>    override
+</span></span><span style=display:flex><span>    returns (
+</span></span><span style=display:flex><span>      uint256,
+</span></span><span style=display:flex><span>      uint256,
+</span></span><span style=display:flex><span>      uint256
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>  {
+</span></span><span style=display:flex><span>    CalcInterestRatesLocalVars memory vars;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 总借款 = 活息借款 + 定息借款
+</span></span><span style=display:flex><span>    vars.totalDebt = totalStableDebt.add(totalVariableDebt);
+</span></span><span style=display:flex><span>    vars.currentVariableBorrowRate = 0;
+</span></span><span style=display:flex><span>    vars.currentStableBorrowRate = 0;
+</span></span><span style=display:flex><span>    vars.currentLiquidityRate = 0;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 资金利用率 = 总借款 / (总存款+总借款)
+</span></span><span style=display:flex><span>    // 忽略 rayDiv rayMul, 可以简单的认为是 div mul 即可
+</span></span><span style=display:flex><span>    vars.utilizationRate = vars.totalDebt == 0
+</span></span><span style=display:flex><span>      ? 0
+</span></span><span style=display:flex><span>      : vars.totalDebt.rayDiv(availableLiquidity.add(vars.totalDebt));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    vars.currentStableBorrowRate = ILendingRateOracle(addressesProvider.getLendingRateOracle())
+</span></span><span style=display:flex><span>      .getMarketBorrowRate(reserve);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 利率曲线: 两段式
+</span></span><span style=display:flex><span>    // 资金利用率高于最佳利用率时，利率的计算
+</span></span><span style=display:flex><span>    if (vars.utilizationRate &gt; OPTIMAL_UTILIZATION_RATE) {
+</span></span><span style=display:flex><span>      uint256 excessUtilizationRateRatio =
+</span></span><span style=display:flex><span>        vars.utilizationRate.sub(OPTIMAL_UTILIZATION_RATE).rayDiv(EXCESS_UTILIZATION_RATE);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      vars.currentStableBorrowRate = vars.currentStableBorrowRate.add(_stableRateSlope1).add(
+</span></span><span style=display:flex><span>        _stableRateSlope2.rayMul(excessUtilizationRateRatio)
+</span></span><span style=display:flex><span>      );
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      vars.currentVariableBorrowRate = _baseVariableBorrowRate.add(_variableRateSlope1).add(
+</span></span><span style=display:flex><span>        _variableRateSlope2.rayMul(excessUtilizationRateRatio)
+</span></span><span style=display:flex><span>      );
+</span></span><span style=display:flex><span>    } else {
+</span></span><span style=display:flex><span>      vars.currentStableBorrowRate = vars.currentStableBorrowRate.add(
+</span></span><span style=display:flex><span>        _stableRateSlope1.rayMul(vars.utilizationRate.rayDiv(OPTIMAL_UTILIZATION_RATE))
+</span></span><span style=display:flex><span>      );
+</span></span><span style=display:flex><span>      vars.currentVariableBorrowRate = _baseVariableBorrowRate.add(
+</span></span><span style=display:flex><span>        vars.utilizationRate.rayMul(_variableRateSlope1).rayDiv(OPTIMAL_UTILIZATION_RATE)
+</span></span><span style=display:flex><span>      );
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // currentLiquidityRate的计算 = (加权平均借款利率/总借款) * 资金利用率 * (1-储备率)
+</span></span><span style=display:flex><span>    // 加权平均借款利率 = (活息借款*活息利率 + 定息借款*平均定息利率) / 总借款
+</span></span><span style=display:flex><span>    vars.currentLiquidityRate = _getOverallBorrowRate(
+</span></span><span style=display:flex><span>      totalStableDebt,
+</span></span><span style=display:flex><span>      totalVariableDebt,
+</span></span><span style=display:flex><span>      vars
+</span></span><span style=display:flex><span>        .currentVariableBorrowRate,
+</span></span><span style=display:flex><span>      averageStableBorrowRate
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>      .rayMul(vars.utilizationRate)
+</span></span><span style=display:flex><span>      .percentMul(PercentageMath.PERCENTAGE_FACTOR.sub(reserveFactor));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    return (
+</span></span><span style=display:flex><span>      vars.currentLiquidityRate,
+</span></span><span style=display:flex><span>      vars.currentStableBorrowRate,
+</span></span><span style=display:flex><span>      vars.currentVariableBorrowRate
+</span></span><span style=display:flex><span>    );
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  /**
+</span></span><span style=display:flex><span>   * @dev Calculates the overall borrow rate as the weighted average between the total variable debt and total stable debt
+</span></span><span style=display:flex><span>   * @param totalStableDebt The total borrowed from the reserve a stable rate
+</span></span><span style=display:flex><span>   * @param totalVariableDebt The total borrowed from the reserve at a variable rate
+</span></span><span style=display:flex><span>   * @param currentVariableBorrowRate The current variable borrow rate of the reserve
+</span></span><span style=display:flex><span>   * @param currentAverageStableBorrowRate The current weighted average of all the stable rate loans
+</span></span><span style=display:flex><span>   * @return The weighted averaged borrow rate
+</span></span><span style=display:flex><span>    加权平均借款利率: (活息借款*活息利率 + 定息借款*平均定息利率) / 总借款
+</span></span><span style=display:flex><span>   **/
+</span></span><span style=display:flex><span>  function _getOverallBorrowRate(
+</span></span><span style=display:flex><span>    uint256 totalStableDebt,
+</span></span><span style=display:flex><span>    uint256 totalVariableDebt,
+</span></span><span style=display:flex><span>    uint256 currentVariableBorrowRate,
+</span></span><span style=display:flex><span>    uint256 currentAverageStableBorrowRate
+</span></span><span style=display:flex><span>  ) internal pure returns (uint256) {
+</span></span><span style=display:flex><span>    uint256 totalDebt = totalStableDebt.add(totalVariableDebt);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    if (totalDebt == 0) return 0;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    uint256 weightedVariableRate = totalVariableDebt.wadToRay().rayMul(currentVariableBorrowRate);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    uint256 weightedStableRate = totalStableDebt.wadToRay().rayMul(currentAverageStableBorrowRate);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    uint256 overallBorrowRate =
+</span></span><span style=display:flex><span>      weightedVariableRate.add(weightedStableRate).rayDiv(totalDebt.wadToRay());
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    return overallBorrowRate;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=为什么要先调用-updatestate-然后再调用-updateinterestrates>为什么要先调用 <code>updateState</code>, 然后再调用 <code>updateInterestRates</code></h2><p>简单的说，是因为 liquidityIndex 和 variableBorrowIndex 是由 currentLiquidityRate 和 currentVariableBorrowRate 计算出来的，而先调用 <code>updateState</code>, 然后再调用 <code>updateInterestRates</code>，就是说，在时刻 t1, 当存款或贷款无论变化多少次，liquidityIndex 和 variableBorrowIndex只变化一次； 而 currentLiquidityRate， currentVariableBorrowRate 和 currentStableBorrowRate 会随着金额的变化而变化。</p><p>在一个块中，liquidityIndex 和 variableBorrowIndex只变化一次, 这里 AAVE 的代码不如 Compound, 如果是同一个块，多了很多无用的运算；</p><p>就是说，你存款后，下一个块才开始有利息；同理，贷款也是如此。</p><h2 id=定息贷款的-averagestableborrowrate>定息贷款的 averageStableBorrowRate</h2><p>averageStableBorrowRate 对于定息贷款很重要， 影响到 资金使用率，进而影响到 存款利率。</p><p><code>averageStableBorrowRate</code> 在 <code>StableDebtToken.sol</code> 合约中定义，在 <code>mint</code> 和 <code>burn</code> 是改变该值。</p><p><strong>mint:</strong></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>    // _calculateBalanceIncrease 返回值: 贷款本金，本息合计，利息
+</span></span><span style=display:flex><span>    (, uint256 currentBalance, uint256 balanceIncrease) = _calculateBalanceIncrease(onBehalfOf);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 用户新的平均贷款利率 = 某种加权平均???
+</span></span><span style=display:flex><span>    vars.newStableRate = _usersStableRate[onBehalfOf]
+</span></span><span style=display:flex><span>      .rayMul(currentBalance.wadToRay())
+</span></span><span style=display:flex><span>      .add(vars.amountInRay.rayMul(rate))  // rate 是入参， 值为 reserve.currentStableBorrowRate
+</span></span><span style=display:flex><span>      .rayDiv(currentBalance.add(amount).wadToRay());
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    require(vars.newStableRate &lt;= type(uint128).max, Errors.SDT_STABLE_DEBT_OVERFLOW);
+</span></span><span style=display:flex><span>    // 每个用户都有一个_usersStableRate， 保存用户贷款时的利率
+</span></span><span style=display:flex><span>    _usersStableRate[onBehalfOf] = vars.newStableRate;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    //solium-disable-next-line
+</span></span><span style=display:flex><span>    _totalSupplyTimestamp = _timestamps[onBehalfOf] = uint40(block.timestamp);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    // 该 token 总的定息贷款平均利率, 与上面的更新逻辑一致
+</span></span><span style=display:flex><span>    // Calculates the updated average stable rate
+</span></span><span style=display:flex><span>    vars.currentAvgStableRate = _avgStableRate = vars
+</span></span><span style=display:flex><span>      .currentAvgStableRate
+</span></span><span style=display:flex><span>      .rayMul(vars.previousSupply.wadToRay())
+</span></span><span style=display:flex><span>      .add(rate.rayMul(vars.amountInRay))
+</span></span><span style=display:flex><span>      .rayDiv(vars.nextSupply.wadToRay());
+</span></span></code></pre></div><p><strong>burn:</strong></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>    if (previousSupply &lt;= amount) {
+</span></span><span style=display:flex><span>      // 当定息贷款被还完时，清零
+</span></span><span style=display:flex><span>      // 由于可能存在计算误差, 这里不能使用 previousSupply - amount
+</span></span><span style=display:flex><span>      _avgStableRate = 0;
+</span></span><span style=display:flex><span>      _totalSupply = 0;
+</span></span><span style=display:flex><span>    } else {
+</span></span><span style=display:flex><span>      nextSupply = _totalSupply = previousSupply.sub(amount);
+</span></span><span style=display:flex><span>      uint256 firstTerm = _avgStableRate.rayMul(previousSupply.wadToRay());
+</span></span><span style=display:flex><span>      uint256 secondTerm = userStableRate.rayMul(amount.wadToRay());
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      // For the same reason described above, when the last user is repaying it might
+</span></span><span style=display:flex><span>      // happen that user rate * user balance &gt; avg rate * total supply. In that case,
+</span></span><span style=display:flex><span>      // we simply set the avg rate to 0
+</span></span><span style=display:flex><span>      if (secondTerm &gt;= firstTerm) {
+</span></span><span style=display:flex><span>        newAvgStableRate = _avgStableRate = _totalSupply = 0;
+</span></span><span style=display:flex><span>      } else {
+</span></span><span style=display:flex><span>        newAvgStableRate = _avgStableRate = firstTerm.sub(secondTerm).rayDiv(nextSupply.wadToRay());
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    }
+</span></span></code></pre></div><p>由于定息贷款用户的利息和平台的利息是独立计算的，感觉这里两个数据会存在不一致。</p></div><footer class=post-footer><div class=post-tags><a href=https://www.tiege.dev/tags/aave rel=tag title=AAVE>#AAVE#</a>
 <a href=https://www.tiege.dev/tags/compound rel=tag title=Compound>#Compound#</a>
 <a href=https://www.tiege.dev/tags/defi rel=tag title=Defi>#Defi#</a>
 <a href=https://www.tiege.dev/tags/solidity rel=tag title=Solidity>#Solidity#</a>
-<a href=https://www.tiege.dev/tags/%e5%88%a9%e7%8e%87%e6%a8%a1%e5%9e%8b rel=tag title=利率模型>#利率模型#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-info>
-<p>
-<span>声明：</span>AAVE源代码分析 -- AAVE 利率代码分析
-</p>
-<p>
-<span>链接：</span>https://www.tiege.dev/post/aave/aave-interest-update-code/
-</p>
-<p>
-<span>作者：</span>铁叔
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=https://www.tiege.dev/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=https://www.tiege.dev/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.tiege.dev/post/aave/aave-flashloan/ rel=next title="AAVE源代码分析 -- AAVE 闪电贷">
-<i class="fa fa-chevron-left"></i> AAVE源代码分析 -- AAVE 闪电贷
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.tiege.dev/post/matching-engine/next-generation-matching-engine-parallel-matching-engine-base-on-message/ rel=prev title="下一代撮合引擎 -- 基于消息驱动的并行撮合引擎">
-下一代撮合引擎 -- 基于消息驱动的并行撮合引擎
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=wcomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<a href=https://www.tiege.dev/tags/%e5%88%a9%e7%8e%87%e6%a8%a1%e5%9e%8b rel=tag title=利率模型>#利率模型#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-info><p><span>声明：</span>AAVE源代码分析 -- AAVE 利率代码分析</p><p><span>链接：</span>https://www.tiege.dev/post/aave/aave-interest-update-code/</p><p><span>作者：</span>铁叔</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick='var qr=document.getElementById("QR");qr.style.display==="none"?qr.style.display="block":qr.style.display="none"'>
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=https://www.tiege.dev/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=https://www.tiege.dev/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.tiege.dev/post/aave/aave-flashloan/ rel=next title="AAVE源代码分析 -- AAVE 闪电贷"><i class="fa fa-chevron-left"></i> AAVE源代码分析 -- AAVE 闪电贷</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.tiege.dev/post/matching-engine/next-generation-matching-engine--parallel-matching-engine-base-on-message/ rel=prev title="下一代撮合引擎 -- 基于消息驱动的并行撮合引擎">下一代撮合引擎 -- 基于消息驱动的并行撮合引擎
+<i class="fa fa-chevron-right"></i></a></div></div><div id=wcomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<section class="site-overview sidebar-panel sidebar-panel-active">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=https://www.tiege.dev/img/avatar.png alt=铁叔>
-<p class=site-author-name itemprop=name>铁叔</p>
-<p class="site-description motion-element" itemprop=description>
-千里之行 始于足下
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=https://www.tiege.dev/post/>
-<span class=site-state-item-count>23</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=https://www.tiege.dev/categories/>
-<span class=site-state-item-count>11</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=https://www.tiege.dev/tags/>
-<span class=site-state-item-count>50</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/guotie/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://twitter.com/guotie target=_blank title=twitter>
-<i class="fa fa-fw fa-twitter"></i>
-twitter
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://t.me/anydefi target=_blank title=telegram>
-<i class="fa fa-fw fa-telegram"></i>
-telegram
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:guotie.9@gmail.com target=_blank title=email>
-<i class="fa fa-fw fa-envelope"></i>
-email
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=https://medium.com/@guotie target=_blank title=medium>
-<i class="fa fa-fw fa-medium"></i>
-medium
-</a>
-</span>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/solidity>Solidity</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/defi>Defi</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/aave>Aave</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/compound>Compound</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/abi>Abi</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/dapp>Dapp</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/ethereum>Ethereum</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/evm>Evm</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/lend-protocol>Lend protocol</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=https://www.tiege.dev/tags/lending>Lending</a>
-</li>
-</ul>
-</div>
-<div class="links-of-blogroll motion-element inline">
-<script type=text/javascript src="//rf.revolvermaps.com/0/0/6.js?i=53tnks7nxby&m=7&c=e63100&cr1=ffffff&f=arial&l=0&bv=90&lx=-420&ly=420&hi=20&he=7&hc=a8ddff&rs=80" async></script>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><section class="site-overview sidebar-panel sidebar-panel-active"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=https://www.tiege.dev/img/avatar.png alt=铁叔><p class=site-author-name itemprop=name>铁叔</p><p class="site-description motion-element" itemprop=description>千里之行 始于足下</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=https://www.tiege.dev/post/><span class=site-state-item-count>24</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=https://www.tiege.dev/categories/><span class=site-state-item-count>12</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=https://www.tiege.dev/tags/><span class=site-state-item-count>52</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/guotie/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=https://twitter.com/guotie target=_blank title=twitter><i class="fa fa-fw fa-twitter"></i>
+twitter</a></span>
+<span class=links-of-author-item><a href=https://t.me/anydefi target=_blank title=telegram><i class="fa fa-fw fa-telegram"></i>
+telegram</a></span>
+<span class=links-of-author-item><a href=mailto:guotie.9@gmail.com target=_blank title=email><i class="fa fa-fw fa-envelope"></i>
+email</a></span>
+<span class=links-of-author-item><a href=https://medium.com/@guotie target=_blank title=medium><i class="fa fa-fw fa-medium"></i>
+medium</a></span></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/solidity>Solidity</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/defi>Defi</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/aave>Aave</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/compound>Compound</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/abi>Abi</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/dapp>Dapp</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/ethereum>Ethereum</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/evm>Evm</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/lend-protocol>Lend protocol</a></li><li class=tagcloud-of-blogroll-item><a href=https://www.tiege.dev/tags/lending>Lending</a></li></ul></div><div class="links-of-blogroll motion-element inline"><script type=text/javascript src="//rf.revolvermaps.com/0/0/6.js?i=53tnks7nxby&amp;m=7&amp;c=e63100&amp;cr1=ffffff&amp;f=arial&amp;l=0&amp;bv=90&amp;lx=-420&amp;ly=420&amp;hi=20&amp;he=7&amp;hc=a8ddff&amp;rs=80" async></script></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2023</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>铁叔</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.2</a>
-</span>
+<span class=copyright-author>铁叔</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.119.0</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=separator-line>/</span>
-<span class=license-num>
-<a href target=_blank></a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=separator-line>/</span>
+<span class=license-num><a href target=_blank></a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/search.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/affix.js></script>
 <script type=text/javascript src=https://www.tiege.dev/js/scrollspy.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var a=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':a}).show(),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+'//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js',function(){new Waline({el:'#wcomments',visitor:!0,avatar:'wavatar',avatarCDN:'https://sdn.geekzu.org/avatar/',avatarForce:!1,wordLimit:'200',placeholder:' 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ',requiredFields:['nick','mail'],serverURL:"https://waline-blog-api.vercel.app",lang:"zh-cn"})}):$('#wcomments').html('抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。')})</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf("MSIE "),n=e.indexOf("Trident/"),s=e.indexOf("Edge/");return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$("#content").height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$("<div />").addClass("scrollbar-measure").prependTo("body"),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$(".back-to-top");$(window).on("scroll",function(){e.toggleClass("back-to-top-on",window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$("#scrollpercent>span").html(a)}),e.on("click",function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e=".post-toc",s=$(e),t=".active-current";s.on("activate.bs.scrollspy",function(){var t=$(e+" .active").last();n(),t.addClass("active-current")}).on("clear.bs.scrollspy",n),$("body").scrollspy({target:e});function n(){$(e+" "+t).removeClass(t.substring(1))}}function initAffix(){var e=$(".header-inner").height(),t=parseInt($(".main").css("padding-bottom"),10),n=e+10;$(".sidebar-inner").affix({offset:{top:n,bottom:t}}),$(document).on("affixed.bs.affix",function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){$(window).on("resize",function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$(".post-toc").css("width","calc(100% + "+t+"px)")}function updateTOCHeight(e){e=e||"auto",$(".post-toc").css("max-height",e)}$(function(){var e=$(".header-inner").height()+10;$("#sidebar").css({"margin-top":e}).show(),$(".site-nav-toggle").on("click",function(){var e=$(".site-nav"),o=$(".toggle"),t="site-nav-on",i="toggle-close",n=e.hasClass(t),a=n?"slideUp":"slideDown",s=n?"removeClass":"addClass";e.stop()[a]("normal",function(){e[s](t),o[s](i)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$(".sidebar-nav-toc").click(function(){$(this).addClass("sidebar-nav-active"),$(this).next().removeClass("sidebar-nav-active"),$("."+$(this).next().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)}),$(".sidebar-nav-overview").click(function(){$(this).addClass("sidebar-nav-active"),$(this).prev().removeClass("sidebar-nav-active"),$("."+$(this).prev().attr("data-target")).toggle(500),$("."+$(this).attr("data-target")).toggle(500)})})</script><script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$(".post-body").viewer()})</script><script type=text/javascript>$(function(){detectIE()>0?$.getScript(document.location.protocol+"//cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js",function(){new Waline({el:"#wcomments",visitor:!0,avatar:"wavatar",avatarCDN:"https://sdn.geekzu.org/avatar/",avatarForce:!1,wordLimit:"200",placeholder:" 欢迎留下您的宝贵建议，请填写您的昵称和邮箱便于后续交流. ^_^ ",requiredFields:["nick","mail"],serverURL:"https://waline-blog-api.vercel.app",lang:"zh-cn"})}):$("#wcomments").html("抱歉，Waline插件不支持IE或Edge，建议使用Chrome浏览器。")})</script><script>(function(){var t,e=document.createElement("script"),n=window.location.protocol.split(":")[0];n==="https"?e.src="https://zz.bdstatic.com/linksubmit/push.js":e.src="http://push.zhanzhang.baidu.com/push.js",t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
