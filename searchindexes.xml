@@ -1,4 +1,35 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>Introducing Simple7702Account and Universal7702Account: EIP-7702 Smart Account Implementations</title><url>/post/introducing-simple7702account-and-universal7702account/</url><categories><category>Solidity</category><category>Defi</category><category>EIP-7702</category></categories><tags><tag>Solidity</tag><tag>Defi</tag><tag>EIP-7702</tag><tag>Simple7702Account</tag><tag>Universal7702Account</tag></tags><content type="html">  Introducing Simple7702Account and Universal7702Account: EIP-7702 Smart Account Implementations The Ethereum ecosystem is evolving rapidly, and EIP-7702 represents one of the most significant upgrades to account abstraction. In this post, we&amp;amp;rsquo;ll explore two production-ready implementations: Simple7702Account and Universal7702Account, designed to bring smart contract functionality to Externally Owned Accounts (EOAs).
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>Why So Many European Tech Websites Still Feel Stuck in 2005</title><url>/post/why-so-many-european-tech-websites-still-feel-stuck-in-2005/</url><categories><category>VPS</category></categories><tags><tag>VPS</tag></tags><content type="html">  Why So Many European Tech Websites Still Feel Stuck in 2005 Recently I tried to register for several European VPS providers. What should have been a simple five-minute task somehow turned into a frustrating hour of page reloads, mysterious errors, and endless loading spinners. It made me wonder: why do so many European tech websites still feel like they are built for the internet of 2005?
+This isn&amp;rsquo;t about a single company. After trying multiple providers across different countries, I kept running into the same problems again and again.
+1. Registration Systems That Randomly Reject Users The first thing that surprised me was how many sites simply don’t allow new users to register, or silently reject registrations.
+Sometimes you fill out a form and click “Create Account,” only to get a vague error message like:
+“Registration failed.” “Please try again later.” Or worse — nothing happens at all. In some cases, the page just keeps loading forever.
+No explanation. No error details. No fallback.
+For companies that sell infrastructure services like VPS, blocking potential customers at the registration page is basically self-sabotage.
+2. Endless Loading Spinners Another common experience: clicking a button and watching a spinner rotate endlessly.
+For example:
+You click “Continue Order”, and then…
+The page just keeps loading.
+No progress bar. No timeout message. No confirmation of whether the request even reached the server.
+Modern web applications typically handle this gracefully with clear feedback or automatic retries. But on some sites, it feels like the request just disappears into a black hole.
+3. Extremely Slow Response Times Even when the site technically works, the response time can be painfully slow.
+Simple actions like:
+opening a product page submitting a form loading the dashboard can take several seconds — sometimes more than ten.
+In an era where many modern sites respond within a few hundred milliseconds, waiting that long feels almost surreal.
+For companies whose entire business revolves around servers and infrastructure, slow websites are a strange contradiction.
+4. Outdated User Interfaces Another noticeable issue is the design and user experience.
+Many sites still look like they were built with:
+early 2010s admin templates outdated checkout flows confusing multi-step forms Basic usability features are often missing:
+real-time form validation clear error messages responsive layouts proper loading indicators The result is a checkout process that feels unnecessarily complicated.
+5. The Irony of Infrastructure Companies With Weak Infrastructure The irony here is hard to ignore.
+These companies sell:
+VPS dedicated servers cloud infrastructure Yet their own websites often struggle with:
+slow responses unreliable forms fragile user registration systems If a hosting provider can’t make its own website fast and reliable, it naturally raises questions about the rest of the stack.
+Final Thoughts Europe has many excellent engineers and strong technology companies. But based on my recent experience, some infrastructure providers seem to underestimate how important a modern, reliable website is.
+Your website is the first interaction a customer has with your service.
+If the registration page fails, the checkout never loads, and every action takes ten seconds — most users won’t complain.
+They’ll simply leave.
+And in a global market where alternatives are only one click away, that’s a costly mistake.
+  </content></entry><entry><title>Introducing Simple7702Account and Universal7702Account: EIP-7702 Smart Account Implementations</title><url>/post/introducing-simple7702account-and-universal7702account/</url><categories><category>Solidity</category><category>Defi</category><category>EIP-7702</category></categories><tags><tag>Solidity</tag><tag>Defi</tag><tag>EIP-7702</tag><tag>Simple7702Account</tag><tag>Universal7702Account</tag></tags><content type="html">  Introducing Simple7702Account and Universal7702Account: EIP-7702 Smart Account Implementations The Ethereum ecosystem is evolving rapidly, and EIP-7702 represents one of the most significant upgrades to account abstraction. In this post, we&amp;amp;rsquo;ll explore two production-ready implementations: Simple7702Account and Universal7702Account, designed to bring smart contract functionality to Externally Owned Accounts (EOAs).
 Why This Project? In typical scenarios—such as facilitating simple transfers for custodial wallet users—the existing ERC-4337 paymaster solutions present significant challenges:
 Overly Complex: ERC-4337 requires a full bundler infrastructure, entry point contracts, and complex paymaster logic Third-Party Dependencies: Many solutions rely on external services like Pimlico, Alchemy, or other infrastructure providers High Integration Cost: Setting up and maintaining the entire 4337 stack is resource-intensive For many use cases, you don&amp;amp;rsquo;t need the full power of …  </content></entry><entry><title>Centralized exchanges and wallets should take the lead in using Account abstraction</title><url>/post/centrals-instructions-should-using-account-abstraction/</url><categories><category>web3</category><category>crypto</category></categories><tags><tag>web3</tag><tag>account abstraction</tag><tag>crypto</tag><tag>Etheruem</tag></tags><content type="html">  Centralized exchanges and wallets should take the lead in using Account abstraction
 Currently, when centralized exchanges and wallets process user tokens, the usual practices are as follows:
