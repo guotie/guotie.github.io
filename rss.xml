@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home on Coding Life</title><link>https://guotie.github.io/</link><description>Recent content in Home on Coding Life</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Wed, 11 Mar 2026 14:31:21 +0800</lastBuildDate><atom:link href="https://guotie.github.io/rss.xml" rel="self" type="application/rss+xml"/><item><title>Introducing Simple7702Account and Universal7702Account: EIP-7702 Smart Account Implementations</title><link>https://guotie.github.io/post/introducing-simple7702account-and-universal7702account/</link><pubDate>Wed, 11 Mar 2026 14:31:21 +0800</pubDate><guid>https://guotie.github.io/post/introducing-simple7702account-and-universal7702account/</guid><description>&lt;h1 id="introducing-simple7702account-and-universal7702account-eip-7702-smart-account-implementations"&gt;Introducing Simple7702Account and Universal7702Account: EIP-7702 Smart Account Implementations
+&lt;a class="header-anchor" href="#introducing-simple7702account-and-universal7702account-eip-7702-smart-account-implementations"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;The Ethereum ecosystem is evolving rapidly, and &lt;strong&gt;EIP-7702&lt;/strong&gt; represents one of the most significant upgrades to account abstraction. In this post, we&amp;rsquo;ll explore two production-ready implementations: &lt;strong&gt;Simple7702Account&lt;/strong&gt; and &lt;strong&gt;Universal7702Account&lt;/strong&gt;, designed to bring smart contract functionality to Externally Owned Accounts (EOAs).&lt;/p&gt;
+&lt;h2 id="why-this-project"&gt;Why This Project?
+&lt;a class="header-anchor" href="#why-this-project"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;In typical scenarios—such as facilitating simple transfers for custodial wallet users—the existing ERC-4337 paymaster solutions present significant challenges:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Overly Complex&lt;/strong&gt;: ERC-4337 requires a full bundler infrastructure, entry point contracts, and complex paymaster logic&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Third-Party Dependencies&lt;/strong&gt;: Many solutions rely on external services like Pimlico, Alchemy, or other infrastructure providers&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;High Integration Cost&lt;/strong&gt;: Setting up and maintaining the entire 4337 stack is resource-intensive&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For many use cases, you don&amp;rsquo;t need the full power of ERC-4337. What you need is a &lt;strong&gt;simple, direct way to sponsor transactions&lt;/strong&gt; for your users.&lt;/p&gt;</description></item><item><title>Centralized exchanges and wallets should take the lead in using Account abstraction</title><link>https://guotie.github.io/post/centrals-instructions-should-using-account-abstraction/</link><pubDate>Sun, 12 Nov 2023 15:36:21 +0800</pubDate><guid>https://guotie.github.io/post/centrals-instructions-should-using-account-abstraction/</guid><description>&lt;p&gt;Centralized exchanges and wallets should take the lead in using Account abstraction&lt;/p&gt;
+&lt;p&gt;Currently, when centralized exchanges and wallets process user tokens, the usual practices are as follows:&lt;/p&gt;</description></item><item><title>Make JWT more safe</title><link>https://guotie.github.io/post/make-jwt-more-safe/</link><pubDate>Sat, 21 Oct 2023 15:36:21 +0800</pubDate><guid>https://guotie.github.io/post/make-jwt-more-safe/</guid><description>&lt;h1 id="what-is-jwt"&gt;What is JWT
+&lt;a class="header-anchor" href="#what-is-jwt"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;JSON Web Token (JWT) is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. This information can be verified and trusted because it is digitally signed. JWTs can be signed using a secret (with the HMAC algorithm) or a public/private key pair using RSA or ECDSA.&lt;/p&gt;</description></item><item><title>A Little Thought on Stablecoins (1)</title><link>https://guotie.github.io/post/thinking/permissionless-lending/</link><pubDate>Sun, 27 Mar 2022 13:43:50 +0000</pubDate><guid>https://guotie.github.io/post/thinking/permissionless-lending/</guid><description>&lt;p&gt;Since the COVID-19 outbreak in 2019, we have seen all kinds of de-globalization trends and new restrictions. After the war in Ukraine, people also began to question the ongoing de-globalization of finance. Can the US dollar still be trusted? Can the financial institutions of neutral countries still be trusted? Behind all of these trust crises is a deeper signal: decentralized assets such as BTC and ETH point toward a better long-term direction for humanity.&lt;/p&gt;
+&lt;p&gt;We are standing at the crossroads of a major transformation.&lt;/p&gt;</description></item><item><title>AAVE v3 Key Features</title><link>https://guotie.github.io/post/aave/aave-v3-features/</link><pubDate>Sat, 19 Feb 2022 03:28:00 +0000</pubDate><guid>https://guotie.github.io/post/aave/aave-v3-features/</guid><description>&lt;p&gt;The AAVE v3 codebase had already been audited and was close to release when this post was written. This version focused mainly on several themes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;capital efficiency&lt;/li&gt;
+&lt;li&gt;risk-control strategy&lt;/li&gt;
+&lt;li&gt;decentralization&lt;/li&gt;
+&lt;li&gt;cross-chain support&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The AAVE v3 contracts are open source:&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://github.com/aave/aave-v3-core" title="https://github.com/aave/aave-v3-core" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ https://github.com/aave/aave-v3-core
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s look at the major improvements this release introduced.&lt;/p&gt;</description></item><item><title>Using Lua Scripts for Redis Transactions</title><link>https://guotie.github.io/post/2021-11/redis-lua-script-transaction/</link><pubDate>Mon, 08 Nov 2021 22:30:00 +0000</pubDate><guid>https://guotie.github.io/post/2021-11/redis-lua-script-transaction/</guid><description>&lt;p&gt;Redis transactions can be implemented in two ways: with &lt;code&gt;MULTI&lt;/code&gt;, or with Lua scripts. Lua scripts are simpler, require fewer client-server interactions, and can be cached by Redis, which makes them especially useful in performance-sensitive scenarios.&lt;/p&gt;</description></item><item><title>Common Hardhat and Solidity Errors</title><link>https://guotie.github.io/post/hardhat/hardhat-solidity-common-cases/</link><pubDate>Sun, 31 Oct 2021 14:07:08 +0000</pubDate><guid>https://guotie.github.io/post/hardhat/hardhat-solidity-common-cases/</guid><description>&lt;h1 id="common-hardhat-issues"&gt;Common &lt;code&gt;hardhat&lt;/code&gt; Issues
+&lt;a class="header-anchor" href="#common-hardhat-issues"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;This is a growing list of common Hardhat and Solidity errors I have run into.&lt;/p&gt;</description></item><item><title>Critical UUPS Proxy Vulnerability in OpenZeppelin 4.1.0-4.3.1</title><link>https://guotie.github.io/post/contract-proxy/uups-proxy-vulunerability/</link><pubDate>Sun, 31 Oct 2021 10:43:50 +0000</pubDate><guid>https://guotie.github.io/post/contract-proxy/uups-proxy-vulunerability/</guid><description>&lt;p&gt;OpenZeppelin supports two main proxy patterns:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Transparent proxy&lt;/li&gt;
+&lt;li&gt;UUPS proxy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The most important difference is where the &lt;code&gt;upgradeTo&lt;/code&gt; logic lives. In a transparent proxy, the upgrade logic is implemented in the proxy contract. In a UUPS proxy, the upgrade logic lives in the implementation contract.&lt;/p&gt;</description></item><item><title>AAVE Source Code Analysis: Deployment and Initialization</title><link>https://guotie.github.io/post/aave/how-aave-deploy-and-initialize-contracts/</link><pubDate>Sat, 30 Oct 2021 01:00:00 +0000</pubDate><guid>https://guotie.github.io/post/aave/how-aave-deploy-and-initialize-contracts/</guid><description>&lt;p&gt;Because AAVE contains many contracts, its deployment process is correspondingly complex. AAVE splits deployment into seven tasks, each implemented as a &lt;code&gt;hardhat task&lt;/code&gt;, and then uses a full task to orchestrate deployment and initialization end to end.&lt;/p&gt;
+&lt;h2 id="full-task"&gt;Full task
+&lt;a class="header-anchor" href="#full-task"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;Inside &lt;code&gt;package.json&lt;/code&gt;, the project defines many deployment commands. The following one deploys to mainnet and verifies contracts:&lt;/p&gt;</description></item><item><title>AAVE Source Code Analysis: Flash Loans</title><link>https://guotie.github.io/post/aave/aave-flashloan/</link><pubDate>Wed, 20 Oct 2021 08:00:00 +0000</pubDate><guid>https://guotie.github.io/post/aave/aave-flashloan/</guid><description>&lt;h2 id="flash-loans"&gt;Flash Loans
+&lt;a class="header-anchor" href="#flash-loans"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;A flash loan is a loan that is borrowed and repaid within a single transaction, without collateral. The key is that everything happens inside one transaction. Because repayment happens in the same transaction, no collateral is required. The blockchain can verify whether the repayment amount is greater than or equal to the principal plus interest. If it is not, the whole transaction reverts and all state changes are rolled back. In other words, the borrowed funds are rolled back too, so the lender takes no risk.&lt;/p&gt;
+&lt;p&gt;Flash loans can also generate meaningful fee income. A single block only lasts a few seconds, yet the protocol can charge 9 basis points. In practice, flash loans are often used with very large position sizes, easily tens or even hundreds of millions of dollars.&lt;/p&gt;</description></item><item><title>AAVE Source Code Analysis: Interest Rate Code Walkthrough</title><link>https://guotie.github.io/post/aave/aave-interest-update-code/</link><pubDate>Wed, 20 Oct 2021 00:14:12 +0000</pubDate><guid>https://guotie.github.io/post/aave/aave-interest-update-code/</guid><description>&lt;p&gt;Several parameters inside the &lt;code&gt;AAVE&lt;/code&gt; interest-rate model interact with one another in fairly complex ways. Stable-rate borrowing is especially tricky, and the formula for the average stable rate is particularly hard to read. In real lending markets, however, many assets do not even support stable-rate borrowing, and among the assets that do, the share of stable-rate debt is very small, often well below 1%. So for beginners, it is completely reasonable to skip the stable-rate part on a first pass.&lt;/p&gt;
+&lt;p&gt;There are a few points worth highlighting in &lt;code&gt;AAVE&lt;/code&gt;&amp;rsquo;s interest-rate logic:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;AAVE&lt;/code&gt; accrues interest based on timestamps, while &lt;code&gt;Compound&lt;/code&gt; accrues interest based on block numbers. In both protocols, rate updates are triggered by actions such as deposit, withdraw, borrow, and repay, and they are only meaningfully updated once per block.&lt;/li&gt;
+&lt;li&gt;Deposit interest grows linearly, while borrowing interest grows in compound form, i.e. exponentially over time.&lt;/li&gt;
+&lt;li&gt;A percentage of borrowing income, the reserve factor (10% by default), is routed into the protocol treasury.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;balanceOf&lt;/code&gt; method on aToken and debtToken returns the amount of underlying deposit or debt, not merely the raw token share amount.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If all you need is the high-level picture, the core &lt;code&gt;AAVE&lt;/code&gt; flows can be summarized like this. The relevant code lives mainly in the &lt;code&gt;LendingPool&lt;/code&gt; contract.&lt;/p&gt;</description></item><item><title>Next-Generation Matching Engine: A Message-Driven Parallel Matching Engine</title><link>https://guotie.github.io/post/matching-engine/next-generation-matching-engine--parallel-matching-engine-base-on-message/</link><pubDate>Tue, 19 Oct 2021 10:43:50 +0000</pubDate><guid>https://guotie.github.io/post/matching-engine/next-generation-matching-engine--parallel-matching-engine-base-on-message/</guid><description>&lt;p&gt;Centralized exchanges rely on a CLOB, or central limit order book, for matching. The matching rules are simple: price priority first, time priority second. For an exchange, the matching engine is foundational infrastructure. It must be stable, efficient, scalable, and fault-tolerant, and it must be able to recover or roll back quickly during extreme market conditions or system failures.&lt;/p&gt;</description></item><item><title>AAVE Source Code Analysis: The Proxy System</title><link>https://guotie.github.io/post/aave/how-aave-proxy/</link><pubDate>Mon, 18 Oct 2021 00:14:12 +0000</pubDate><guid>https://guotie.github.io/post/aave/how-aave-proxy/</guid><description>&lt;h1 id="smart-contract-proxies"&gt;Smart Contract Proxies
+&lt;a class="header-anchor" href="#smart-contract-proxies"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;Upgradeable smart contracts rely heavily on proxy patterns, and AAVE&amp;rsquo;s proxy system is quite complex. To really understand it, you need to unpack it layer by layer.&lt;/p&gt;
+&lt;p&gt;Global AAVE proxy diagram:&lt;/p&gt;</description></item><item><title>rate fee of loopback swap in uniswap</title><link>https://guotie.github.io/post/uniswap/uniswap-loopback-swap-fee/</link><pubDate>Fri, 15 Oct 2021 10:14:12 +0000</pubDate><guid>https://guotie.github.io/post/uniswap/uniswap-loopback-swap-fee/</guid><description>&lt;p&gt;The transaction fee of &lt;code&gt;uniswap&lt;/code&gt; is derived from the identity of &lt;code&gt;x * y = K&lt;/code&gt;. In a specific transaction scenario, such as a loopback transaction, our transaction cost can be far lower than the rated fee.&lt;/p&gt;
+&lt;h2 id="what-is-a-loopback-transaction"&gt;What is a loopback transaction
+&lt;a class="header-anchor" href="#what-is-a-loopback-transaction"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;The loopback transaction is a transaction in a transaction pair &lt;code&gt;tokenA/tokenB&lt;/code&gt;, first exchange &lt;code&gt;tokenA&lt;/code&gt; to get &lt;code&gt;tokenB&lt;/code&gt;, and then immediately exchange the obtained &lt;code&gt;tokenB&lt;/code&gt; back to &lt;code&gt;tokenA&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The standard rate of &lt;code&gt;uniswap v2&lt;/code&gt; is &lt;code&gt;0.3%&lt;/code&gt;, then the cost of loopback transaction is &lt;code&gt;0.6%&lt;/code&gt;, this cost is quite high. If we are just to brush the transaction volume, we need an effective way to reduce Handling fees, loopback transactions are a very effective way.&lt;/p&gt;</description></item><item><title>Meta Transactions and Their Implementation</title><link>https://guotie.github.io/post/meta-transaction-and-implement/</link><pubDate>Tue, 12 Oct 2021 10:43:50 +0000</pubDate><guid>https://guotie.github.io/post/meta-transaction-and-implement/</guid><description>&lt;h1 id="what-is-a-meta-transaction"&gt;What Is a Meta Transaction?
+&lt;a class="header-anchor" href="#what-is-a-meta-transaction"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;In simple terms, a meta transaction is a transaction submitted by a third party on behalf of the user.&lt;/p&gt;
+&lt;p&gt;The usual flow is:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The user constructs the transaction parameters and signs them.&lt;/li&gt;
+&lt;li&gt;A third party sends the signed payload to a Relay or Forwarder contract.&lt;/li&gt;
+&lt;li&gt;The Relay or Forwarder contract verifies the user&amp;rsquo;s signature.&lt;/li&gt;
+&lt;li&gt;The Relay or Forwarder contract calls the target contract.&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>AAVE Source Code Analysis: The Interest Rate Model</title><link>https://guotie.github.io/post/aave/aave-interest-model/</link><pubDate>Mon, 11 Oct 2021 10:14:12 +0000</pubDate><guid>https://guotie.github.io/post/aave/aave-interest-model/</guid><description>&lt;p&gt;The interest-rate model and risk control are the core of any lending protocol. In AAVE, interest updates can be divided into three parts:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;deposit interest&lt;/li&gt;
+&lt;li&gt;variable borrow interest&lt;/li&gt;
+&lt;li&gt;stable borrow interest&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;As for risk control, I discuss that separately in a later article.&lt;/p&gt;</description></item><item><title>AAVE Source Code Analysis: Overall Code Architecture</title><link>https://guotie.github.io/post/aave/how-aave-interest-update/</link><pubDate>Sun, 10 Oct 2021 14:28:11 +0000</pubDate><guid>https://guotie.github.io/post/aave/how-aave-interest-update/</guid><description>&lt;h1 id="aave-architecture-overview"&gt;AAVE Architecture Overview
+&lt;a class="header-anchor" href="#aave-architecture-overview"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;AAVE is a lending protocol, so its core revolves around four major actions: deposit, borrow, repay, and liquidation. In my view, one major reason AAVE looks complex is the existence of stable-rate borrowing, which significantly increases the complexity of the interest-rate model. Without that feature, the overall design would be much easier to understand.&lt;/p&gt;
+&lt;p&gt;The high-level AAVE architecture looks like this:&lt;/p&gt;</description></item><item><title>About</title><link>https://guotie.github.io/about/</link><pubDate>Sun, 10 Oct 2021 15:46:40 +0800</pubDate><guid>https://guotie.github.io/about/</guid><description>&lt;h2 id="铁叔"&gt;铁叔
+&lt;a class="header-anchor" href="#%e9%93%81%e5%8f%94"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;老年程序员，以代码为生计，正在为世界的去中心化事业而奋斗。&lt;/p&gt;
+&lt;p&gt;Older programmers, who coding for a living, and fighting for a decentralize world.&lt;/p&gt;
+&lt;h2 id="projects"&gt;projects
+&lt;a class="header-anchor" href="#projects"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;h2 id="technology"&gt;technology
+&lt;a class="header-anchor" href="#technology"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;h3 id="rust"&gt;Rust
+&lt;a class="header-anchor" href="#rust"&gt;&lt;/a&gt;
+&lt;/h3&gt;&lt;h3 id="golang"&gt;golang
+&lt;a class="header-anchor" href="#golang"&gt;&lt;/a&gt;
+&lt;/h3&gt;&lt;h3 id="cc"&gt;C/C++
+&lt;a class="header-anchor" href="#cc"&gt;&lt;/a&gt;
+&lt;/h3&gt;&lt;h3 id="smart-contract--solidity"&gt;smart contract &amp;amp; solidity
+&lt;a class="header-anchor" href="#smart-contract--solidity"&gt;&lt;/a&gt;
+&lt;/h3&gt;&lt;h3 id="javaspring"&gt;java/Spring
+&lt;a class="header-anchor" href="#javaspring"&gt;&lt;/a&gt;
+&lt;/h3&gt;&lt;h3 id="frontend"&gt;frontend
+&lt;a class="header-anchor" href="#frontend"&gt;&lt;/a&gt;
+&lt;/h3&gt;&lt;h2 id="contract-me"&gt;contract me
+&lt;a class="header-anchor" href="#contract-me"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;Email: &lt;code&gt;guotie.9#gmail.com&lt;/code&gt;&lt;/p&gt;</description></item><item><title>AAVE Source Code Analysis: Introduction to the AAVE Lending Protocol</title><link>https://guotie.github.io/post/aave/brief-introduction-to-aave-protocol/</link><pubDate>Wed, 01 Sep 2021 14:28:11 +0000</pubDate><guid>https://guotie.github.io/post/aave/brief-introduction-to-aave-protocol/</guid><description>&lt;p&gt;Lending was one of the earliest major applications in DeFi. A lending protocol is a smart-contract system that allows users to deposit and borrow tokens. In that sense it resembles a bank: depositors place assets into a lending application, the application lends those assets to borrowers, and depositors earn interest over time. When a borrower&amp;rsquo;s position becomes undercollateralized, liquidation is triggered. Anyone can participate in the liquidation process, and successful liquidators receive a reward. The liquidation system protects the solvency of the lending market and, in turn, the interests of depositors.&lt;/p&gt;</description></item><item><title>libuv and TCP Keepalive</title><link>https://guotie.github.io/post/libuv-and-tcp-keepalive/</link><pubDate>Sun, 02 Jul 2017 15:36:21 +0800</pubDate><guid>https://guotie.github.io/post/libuv-and-tcp-keepalive/</guid><description>&lt;h1 id="libuv-and-tcp-keepalive"&gt;libuv and TCP Keepalive
+&lt;a class="header-anchor" href="#libuv-and-tcp-keepalive"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;h2 id="about-keepalive"&gt;About Keepalive
+&lt;a class="header-anchor" href="#about-keepalive"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;The keepalive discussed here is different from HTTP keepalive. Here we are talking about TCP-level keepalive. Its purpose is to detect network failures between two communicating machines when neither endpoint can immediately observe that the path has broken.&lt;/p&gt;
+&lt;p&gt;HTTP keepalive means adding a &lt;code&gt;keep-alive&lt;/code&gt; header so the server does not close the TCP connection after a single request, allowing the same connection to be reused for later requests.&lt;/p&gt;
+&lt;p&gt;The Linux kernel documentation for TCP keepalive is here: 
+&lt;a href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html" title="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item><item><title/><link>https://guotie.github.io/post/matching-engine/02-matching-engine-details/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://guotie.github.io/post/matching-engine/02-matching-engine-details/</guid><description>&lt;h2 id="redis-高可用"&gt;redis 高可用
+&lt;a class="header-anchor" href="#redis-%e9%ab%98%e5%8f%af%e7%94%a8"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;h2 id="redis-事务"&gt;redis 事务
+&lt;a class="header-anchor" href="#redis-%e4%ba%8b%e5%8a%a1"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;h2 id="orderbook-在-redis-中的存储"&gt;orderbook 在 redis 中的存储
+&lt;a class="header-anchor" href="#orderbook-%e5%9c%a8-redis-%e4%b8%ad%e7%9a%84%e5%ad%98%e5%82%a8"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;h2 id="数据库结构及订单存储"&gt;数据库结构及订单存储
+&lt;a class="header-anchor" href="#%e6%95%b0%e6%8d%ae%e5%ba%93%e7%bb%93%e6%9e%84%e5%8f%8a%e8%ae%a2%e5%8d%95%e5%ad%98%e5%82%a8"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;h2 id="撮合引起启动时初始数据及同步验证"&gt;撮合引起启动时初始数据，及同步验证
+&lt;a class="header-anchor" href="#%e6%92%ae%e5%90%88%e5%bc%95%e8%b5%b7%e5%90%af%e5%8a%a8%e6%97%b6%e5%88%9d%e5%a7%8b%e6%95%b0%e6%8d%ae%e5%8f%8a%e5%90%8c%e6%ad%a5%e9%aa%8c%e8%af%81"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;启动&lt;/p&gt;
+&lt;h2 id="异步"&gt;异步
+&lt;a class="header-anchor" href="#%e5%bc%82%e6%ad%a5"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;哪些可以异步，哪些必须顺序执行?&lt;/p&gt;
+&lt;h2 id="故障定位故障解决"&gt;故障定位，故障解决
+&lt;a class="header-anchor" href="#%e6%95%85%e9%9a%9c%e5%ae%9a%e4%bd%8d%e6%95%85%e9%9a%9c%e8%a7%a3%e5%86%b3"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;h2 id="性能"&gt;性能
+&lt;a class="header-anchor" href="#%e6%80%a7%e8%83%bd"&gt;&lt;/a&gt;
+&lt;/h2&gt;</description></item></channel></rss>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ABI on Coding Life</title><link>https://guotie.github.io/tags/abi/</link><description>Recent content in ABI on Coding Life</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Tue, 12 Oct 2021 10:43:50 +0000</lastBuildDate><atom:link href="https://guotie.github.io/tags/abi/rss.xml" rel="self" type="application/rss+xml"/><item><title>Meta Transactions and Their Implementation</title><link>https://guotie.github.io/post/meta-transaction-and-implement/</link><pubDate>Tue, 12 Oct 2021 10:43:50 +0000</pubDate><guid>https://guotie.github.io/post/meta-transaction-and-implement/</guid><description>&lt;h1 id="what-is-a-meta-transaction"&gt;What Is a Meta Transaction?
+&lt;a class="header-anchor" href="#what-is-a-meta-transaction"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;p&gt;In simple terms, a meta transaction is a transaction submitted by a third party on behalf of the user.&lt;/p&gt;
+&lt;p&gt;The usual flow is:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The user constructs the transaction parameters and signs them.&lt;/li&gt;
+&lt;li&gt;A third party sends the signed payload to a Relay or Forwarder contract.&lt;/li&gt;
+&lt;li&gt;The Relay or Forwarder contract verifies the user&amp;rsquo;s signature.&lt;/li&gt;
+&lt;li&gt;The Relay or Forwarder contract calls the target contract.&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

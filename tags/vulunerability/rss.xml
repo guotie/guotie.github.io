@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Vulunerability on Coding Life</title><link>https://guotie.github.io/tags/vulunerability/</link><description>Recent content in Vulunerability on Coding Life</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Sun, 31 Oct 2021 10:43:50 +0000</lastBuildDate><atom:link href="https://guotie.github.io/tags/vulunerability/rss.xml" rel="self" type="application/rss+xml"/><item><title>Critical UUPS Proxy Vulnerability in OpenZeppelin 4.1.0-4.3.1</title><link>https://guotie.github.io/post/contract-proxy/uups-proxy-vulunerability/</link><pubDate>Sun, 31 Oct 2021 10:43:50 +0000</pubDate><guid>https://guotie.github.io/post/contract-proxy/uups-proxy-vulunerability/</guid><description>&lt;p&gt;OpenZeppelin supports two main proxy patterns:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Transparent proxy&lt;/li&gt;
+&lt;li&gt;UUPS proxy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The most important difference is where the &lt;code&gt;upgradeTo&lt;/code&gt; logic lives. In a transparent proxy, the upgrade logic is implemented in the proxy contract. In a UUPS proxy, the upgrade logic lives in the implementation contract.&lt;/p&gt;</description></item></channel></rss>

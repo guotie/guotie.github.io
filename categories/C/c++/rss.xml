@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>C/C++ on Coding Life</title><link>https://guotie.github.io/categories/c/c++/</link><description>Recent content in C/C++ on Coding Life</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Sun, 02 Jul 2017 15:36:21 +0800</lastBuildDate><atom:link href="https://guotie.github.io/categories/c/c++/rss.xml" rel="self" type="application/rss+xml"/><item><title>libuv and TCP Keepalive</title><link>https://guotie.github.io/post/libuv-and-tcp-keepalive/</link><pubDate>Sun, 02 Jul 2017 15:36:21 +0800</pubDate><guid>https://guotie.github.io/post/libuv-and-tcp-keepalive/</guid><description>&lt;h1 id="libuv-and-tcp-keepalive"&gt;libuv and TCP Keepalive
+&lt;a class="header-anchor" href="#libuv-and-tcp-keepalive"&gt;&lt;/a&gt;
+&lt;/h1&gt;&lt;h2 id="about-keepalive"&gt;About Keepalive
+&lt;a class="header-anchor" href="#about-keepalive"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;The keepalive discussed here is different from HTTP keepalive. Here we are talking about TCP-level keepalive. Its purpose is to detect network failures between two communicating machines when neither endpoint can immediately observe that the path has broken.&lt;/p&gt;
+&lt;p&gt;HTTP keepalive means adding a &lt;code&gt;keep-alive&lt;/code&gt; header so the server does not close the TCP connection after a single request, allowing the same connection to be reused for later requests.&lt;/p&gt;
+&lt;p&gt;The Linux kernel documentation for TCP keepalive is here: 
+&lt;a href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html" title="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;</description></item></channel></rss>
