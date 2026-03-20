@@ -1,2 +1,18 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Web3 on Coding Life</title><link>https://guotie.github.io/categories/web3/</link><description>Recent content in Web3 on Coding Life</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Sun, 12 Nov 2023 15:36:21 +0800</lastBuildDate><atom:link href="https://guotie.github.io/categories/web3/rss.xml" rel="self" type="application/rss+xml"/><item><title>Centralized exchanges and wallets should take the lead in using Account abstraction</title><link>https://guotie.github.io/post/centrals-instructions-should-using-account-abstraction/</link><pubDate>Sun, 12 Nov 2023 15:36:21 +0800</pubDate><guid>https://guotie.github.io/post/centrals-instructions-should-using-account-abstraction/</guid><description>&lt;p&gt;Centralized exchanges and wallets should take the lead in using Account abstraction&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Web3 on Coding Life</title><link>https://guotie.github.io/categories/web3/</link><description>Recent content in Web3 on Coding Life</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Fri, 20 Mar 2026 16:26:00 +0800</lastBuildDate><atom:link href="https://guotie.github.io/categories/web3/rss.xml" rel="self" type="application/rss+xml"/><item><title>How APY is Calculated for Grid Orders on Gridtrade.xyz</title><link>https://guotie.github.io/post/gridtrade/how-apy-is-calculated-for-grid-orders-on-gridtrade/</link><pubDate>Fri, 20 Mar 2026 16:26:00 +0800</pubDate><guid>https://guotie.github.io/post/gridtrade/how-apy-is-calculated-for-grid-orders-on-gridtrade/</guid><description>&lt;p&gt;How APY is Calculated for Grid Orders on 
+&lt;a href="https://www.gridtrade.xyz" title="Gridtrade" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Gridtrade
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;a href="https://www.gridtrade.xyz" title="Gridtrade" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ Gridtrade
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt; uses a grid trading mechanism to generate yield by systematically buying low and selling high within a predefined price range. The APY (Annual Percentage Yield) of a grid order reflects the compounded return generated from grid execution, trading fees, and price dynamics over time.&lt;/p&gt;
+&lt;h2 id="1-price-impact-on-apy"&gt;1. Price Impact on APY
+&lt;a class="header-anchor" href="#1-price-impact-on-apy"&gt;&lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;Price movement is the primary driver of grid trading profitability.&lt;/p&gt;</description></item><item><title>Centralized exchanges and wallets should take the lead in using Account abstraction</title><link>https://guotie.github.io/post/centrals-instructions-should-using-account-abstraction/</link><pubDate>Sun, 12 Nov 2023 15:36:21 +0800</pubDate><guid>https://guotie.github.io/post/centrals-instructions-should-using-account-abstraction/</guid><description>&lt;p&gt;Centralized exchanges and wallets should take the lead in using Account abstraction&lt;/p&gt;
 &lt;p&gt;Currently, when centralized exchanges and wallets process user tokens, the usual practices are as follows:&lt;/p&gt;</description></item></channel></rss>
