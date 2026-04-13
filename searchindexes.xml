@@ -1,4 +1,67 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>How APY is Calculated for Grid Orders on Gridtrade.xyz</title><url>/post/gridtrade/how-apy-is-calculated-for-grid-orders-on-gridtrade/</url><categories><category>web3</category><category>crypto</category><category>gridtrade</category><category>gridtrading</category><category>defi</category></categories><tags><tag>web3</tag><tag>crypto</tag><tag>gridtrade</tag><tag>gridtrading</tag><tag>defi</tag></tags><content type="html">  How APY is Calculated for Grid Orders on Gridtrade Gridtrade uses a grid trading mechanism to generate yield by systematically buying low and selling high within a predefined price range. The APY (Annual Percentage Yield) of a grid order reflects the compounded return generated from grid execution, trading fees, and price dynamics over time.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>All You Need Is Chasing Momentum</title><url>/post/all-you-need-is-chasing-momentum/</url><categories><category>Chasing-Momentum</category></categories><tags><tag>Chasing-Momentum</tag></tags><content type="html">  All You Need Is Chasing Momentum In many people’s minds, “chasing highs and cutting losses” carries a negative connotation—irrational, emotional, and destined to be exploited by the market. But if you look at it from another angle, it is actually a very simple, almost fundamental principle:
+Follow the trend.
+Once you strip “chasing highs and cutting losses” away from short-term speculation, it becomes a powerful lens for understanding how success works in the real world.
+1. Investing: Respecting the Trend Most people lose money in the market not because they chase highs and cut losses, but because:
+They don’t chase when prices rise (fear of buying high) They refuse to cut when prices fall (they hold and hope) Effective “chasing highs and cutting losses” actually means:
+Adding to positions when a trend is confirmed Exiting when the trend breaks This is not emotional trading—it’s trend-following.
+You’re not “chasing”; you’re acknowledging that the market is smarter than you.
+2. Startups: Why Pigs Fly in a Tailwind There’s a famous saying: “Even a pig can fly if it stands in the wind.” That’s essentially “chasing highs.”
+When a sector is clearly working:
+Users are growing Capital is flowing in Infrastructure is improving Entering at that point is not “too late”—it’s entering with confirmed momentum.
+And “cutting losses” matters just as much:
+The market cools down Growth stagnates Capital withdraws If you don’t exit, you become the one holding the bag.
+Many startups don’t fail because of lack of effort, but because they cling to a trend that is already declining.
+3. Content Creation: Chasing Trends Is the Game Anyone doing content knows:
+You write about what’s trending You follow what’s going viral That’s pure “chasing highs.”
+A trend is simply rising attention.
+If you don’t follow it, you’re producing content against the flow.
+And “cutting losses” applies here too:
+Drop topics that don’t perform Pivot when your content direction doesn’t work Content creation is not creativity-first—it’s distribution and trend-first.
+4. Politics: Following Public Sentiment At a macro level, this principle even applies to politics:
+Policy follows public sentiment Rising social emotions are “uptrends” Losing support is “downtrend” “Listening to the people” is essentially:
+Identify the trend → Follow it → Amplify it
+There’s no fundamental difference from markets.
+5. The Misunderstanding: Mistaking Reversal for Wisdom Many people pride themselves on being contrarian:
+“I’m a value investor” “I don’t chase trends” “I believe in long-term thinking” It sounds sophisticated, but in reality:
+👉 Many so-called “contrarian” strategies are just fighting the trend.
+Real experts are neither blindly following nor blindly opposing:
+They follow early They exit decisively 6. The Core Skill: Information Processing Speed “Chasing highs and cutting losses” gets a bad reputation because most people do it poorly:
+They chase too late They hesitate to cut The effective version is:
+Recognizing upward signals early Accepting downward reality quickly So the real question is not whether you chase or not, but:
+👉 Can you see the trend earlier than others?
+Conclusion All you need is chasing momentum.
+It’s not blind following, but alignment with reality; Not emotion, but judgment; Not speculation, but rapid adaptation.
+The world changes too fast. The only stable strategy might be:
+Go where things are rising. Leave where they are falling.
+  </content></entry><entry><title>Local Deploy First</title><url>/post/local-first-local-depoly-first/</url><categories><category>Local-First</category></categories><tags><tag>Local-First</tag><tag>Local LLM</tag></tags><content type="html"><![CDATA[  In today’s cloud-dominated development landscape, many teams rely heavily on integrated platforms like Supabase, AWS, and Vercel to accelerate deployment. While convenient, this approach introduces risks such as vendor lock-in, reduced control over data, and long-term cost unpredictability.
+For systems like OPC—where stability, security, and full ownership are critical—it is both practical and strategic to build a fully self-controlled technology stack, minimizing dependency on third-party cloud providers.
+1. Core Principle: Control Over Convenience The foundation of this architecture is simple:
+Own your data Avoid vendor lock-in Ensure infrastructure portability Maintain offline-capable core services (especially AI) This mindset prioritizes long-term sustainability over short-term speed.
+2. Database Layer: Self-Hosted PostgreSQL (No Supabase) Instead of relying on managed solutions like Supabase, deploy a self-hosted PostgreSQL instance.
+Why: Full control over data storage and backups No dependency on third-party APIs Flexible tuning for performance and scaling Recommended Setup: Run PostgreSQL via Docker or on bare metal
+Enable replication for redundancy
+Use tools like:
+pgBackRest (backups) Patroni (high availability) pgBouncer (connection pooling) 3. Compute Infrastructure: OVH Dedicated Servers (No AWS) Avoid hyperscalers like AWS and instead use dedicated servers from OVHcloud.
+Why: Predictable fixed pricing Full hardware control Consistent performance Recommended Setup: 1 server for database 1+ servers for applications Optional GPU server for AI Use:
+Proxmox / KVM for virtualization Docker (optionally Kubernetes) for orchestration 4. CDN &amp; Edge Layer: Cloudflare (No Vercel) For global delivery, use Cloudflare instead of Vercel.
+Why: Global CDN with strong caching Built-in DDoS protection Integrated DNS, SSL, and WAF Recommended Usage: Cache static assets Use Workers for edge logic Enable WAF and rate limiting 5. LLM Layer: Local Deployment (Gemma) Instead of external APIs, deploy local LLMs using Gemma.
+Why: Full data privacy No per-token costs Offline capability Recommended Stack: Runtime: llama.cpp or vLLM Hardware: GPU preferred Optional: FAISS for RAG 6. Deployment &amp; Automation: Dokploy To simplify operations while maintaining full control, use Dokploy for deployment automation.
+Why: Self-hosted alternative to platforms like Vercel or Heroku Git-based CI/CD pipelines Native Docker integration Simple UI for managing services Recommended Workflow: Connect your Git repositories to Dokploy
+Define services (PostgreSQL, backend, frontend, LLM) via Docker
+Automate:
+Build Deployment Rollbacks Benefits: Eliminates manual SSH deployments Keeps full control (runs on your own OVH server) Provides “platform-like” experience without vendor lock-in 7. Networking &amp; Observability WireGuard for secure internal networking
+Firewall + SSH key-only access
+Monitoring:
+Prometheus + Grafana Loki / ELK for logs 8. Trade-offs Pros: Full control Predictable cost No vendor lock-in Cons: Higher DevOps complexity Requires in-house expertise Slightly more setup compared to SaaS 9. Cost Comparison: Self-Hosted vs Cloud Self-Hosted (OVH) Using OVHcloud:
+Cost: ~$10–$20/month
+Specs:
+Up to 64 GB RAM Dedicated CPU &amp; storage 👉 Everything included: DB, backend, deployment (Dokploy), and even AI workloads (depending on hardware)
+Cloud Equivalent (AWS-style) Using Amazon Web Services:
+Component Monthly Cost RDS (Postgres) $300–$800 EC2 (Compute) $200–$600 CDN / Edge $50–$200+ LLM API $100–$1000+ Deployment (CI/CD tools) $0–$100+ Total $650–$2700+ 10. Final Takeaway Self-hosted: ~$10–$20/month Cloud: ~$650–$2700+/month 👉 30x–100x cost difference
+By combining:
+PostgreSQL (self-hosted) OVHcloud infrastructure Cloudflare for edge Local LLMs like Gemma Automated deployment via Dokploy …you achieve a system that is:
+Fully sovereign Cost-efficient Automated yet controlled Independent from hyperscale cloud vendors This is not just an alternative architecture—it is a deliberate shift toward engineering ownership and long-term resilience.
+  ]]></content></entry><entry><title>How APY is Calculated for Grid Orders on Gridtrade.xyz</title><url>/post/gridtrade/how-apy-is-calculated-for-grid-orders-on-gridtrade/</url><categories><category>web3</category><category>crypto</category><category>gridtrade</category><category>gridtrading</category><category>defi</category></categories><tags><tag>web3</tag><tag>crypto</tag><tag>gridtrade</tag><tag>gridtrading</tag><tag>defi</tag></tags><content type="html">  How APY is Calculated for Grid Orders on Gridtrade Gridtrade uses a grid trading mechanism to generate yield by systematically buying low and selling high within a predefined price range. The APY (Annual Percentage Yield) of a grid order reflects the compounded return generated from grid execution, trading fees, and price dynamics over time.
 1. Price Impact on APY Price movement is the primary driver of grid trading profitability.
 Oscillating Market (Ideal Scenario): When the price fluctuates within the grid range, orders are continuously filled:
 Buy orders execute at lower grid levels Sell orders execute at higher grid levels Each completed cycle locks in a fixed spread profit
