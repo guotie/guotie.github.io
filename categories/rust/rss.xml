@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Rust on Coding Life</title><link>https://guotie.github.io/categories/rust/</link><description>Recent content in Rust on Coding Life</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Tue, 05 May 2026 15:39:33 +0800</lastBuildDate><atom:link href="https://guotie.github.io/categories/rust/rss.xml" rel="self" type="application/rss+xml"/><item><title>Buns Rust Migration Might End Up Proving Zig Value</title><link>https://guotie.github.io/post/buns-rust-migration-might-end-up-proving-zig-value/</link><pubDate>Tue, 05 May 2026 15:39:33 +0800</pubDate><guid>https://guotie.github.io/post/buns-rust-migration-might-end-up-proving-zig-value/</guid><description>&lt;p&gt;Bun moving from Zig to Rust feels like a pragmatic engineering decision in the short term, but it might actually end up highlighting Zig’s strengths in the long run (see the discussion on Hacker News: 
+&lt;a href="https://news.ycombinator.com/item?id=48016880%29" title="https://news.ycombinator.com/item?id=48016880)" rel="noopener external nofollow noreferrer" target="_blank" class=" exturl"&gt;
+ https://news.ycombinator.com/item?id=48016880)
+ 
+ &lt;i class="fa fa-external-link-alt"&gt;&lt;/i&gt;
+ 
+&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id="first-point-performance-is-something-you-really-notice-only-after-you-lose-it"&gt;First point: performance is something you really notice only after you lose it
+&lt;a class="header-anchor" href="#first-point-performance-is-something-you-really-notice-only-after-you-lose-it"&gt;&lt;/a&gt;
+&lt;/h3&gt;&lt;p&gt;A big part of why Bun was so fast early on is tightly coupled to Zig’s design—minimal abstraction, explicit control over memory, and very little “hidden cost.” That combination makes it easier to squeeze out performance in real-world hot paths.&lt;/p&gt;</description></item></channel></rss>

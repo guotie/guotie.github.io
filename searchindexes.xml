@@ -1,4 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>All You Need Is Chasing Momentum</title><url>/post/all-you-need-is-chasing-momentum/</url><categories><category>Chasing-Momentum</category></categories><tags><tag>Chasing-Momentum</tag></tags><content type="html">  All You Need Is Chasing Momentum In many people’s minds, “chasing highs and cutting losses” carries a negative connotation—irrational, emotional, and destined to be exploited by the market. But if you look at it from another angle, it is actually a very simple, almost fundamental principle:
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><search><entry><title>Buns Rust Migration Might End Up Proving Zig Value</title><url>/post/buns-rust-migration-might-end-up-proving-zig-value/</url><categories><category>bun</category><category>zig</category><category>rust</category></categories><tags><tag>zig</tag><tag>bun</tag><tag>rust</tag></tags><content type="html">  Bun moving from Zig to Rust feels like a pragmatic engineering decision in the short term, but it might actually end up highlighting Zig’s strengths in the long run (see the discussion on Hacker News: https://news.ycombinator.com/item?id=48016880) .
+First point: performance is something you really notice only after you lose it A big part of why Bun was so fast early on is tightly coupled to Zig’s design—minimal abstraction, explicit control over memory, and very little “hidden cost.” That combination makes it easier to squeeze out performance in real-world hot paths.
+Rust can get very close to C/C++ performance, but in practice, the abstractions, borrow checker constraints, and typical idioms often introduce overhead—especially in large, evolving codebases. So I wouldn’t be surprised if we end up in a situation where:
+→ the Rust version is more maintainable and ecosystem-friendly → but the old Zig implementation (or parts of it) still outperform it in critical paths
+And once you start profiling seriously, that gap tends to become very obvious.
+Second point (more interesting): AI changes the calculus of language choice. As discussed in that Hacker News thread, part of the friction here involves contributing AI-assisted patches upstream. That detail matters more than it seems—it hints at a bigger shift:
+👉 code is becoming something you can systematically migrate
+If a team can use AI to help move a non-trivial codebase from Zig → Rust, then the reverse is also true:
+Rust → Zig Go → Zig C++ → Zig At that point, language choice stops being a one-way door.
+Zig is already positioned as a “closer-to-the-metal” language with fewer abstractions. If AI makes large-scale rewrites cheaper, it’s not hard to imagine a pattern emerging:
+→ build in Rust (for ecosystem, safety, iteration speed) → rewrite hot paths in Zig (for maximum performance)
+Or even more directly:
+→ “AI-assisted rewrite to Zig” becomes a standard optimization step
+So ironically, this move might not weaken Zig’s position at all.
+Rust wins on ecosystem, tooling, and contributor friendliness Zig may increasingly win as the final form for performance-critical code In a world where codebases are more fluid and AI-assisted migration is viable, Zig doesn’t have to win first—it just has to win last.
+  </content></entry><entry><title>All You Need Is Chasing Momentum</title><url>/post/all-you-need-is-chasing-momentum/</url><categories><category>Chasing-Momentum</category></categories><tags><tag>Chasing-Momentum</tag></tags><content type="html">  All You Need Is Chasing Momentum In many people’s minds, “chasing highs and cutting losses” carries a negative connotation—irrational, emotional, and destined to be exploited by the market. But if you look at it from another angle, it is actually a very simple, almost fundamental principle:
 Follow the trend.
 Once you strip “chasing highs and cutting losses” away from short-term speculation, it becomes a powerful lens for understanding how success works in the real world.
 1. Investing: Respecting the Trend Most people lose money in the market not because they chase highs and cut losses, but because:
